@@ -5,7 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submission Successful | FlowAI Agent</title>
-    <meta name="description" content="Your analysis request has been submitted successfully. The AI-generated competitor analysis report will be sent to your email shortly.">
+    
+    <link rel="canonical" href="https://flowaiagent.com/success_en.html">
+    <meta property="og:title" content="Submission Successful | FlowAI Agent">
+    <meta property="og:description" content="Your analysis request has been submitted successfully. The AI-generated competitor analysis report will be sent to your email shortly.">
+    <meta property="og:url" content="https://flowaiagent.com/success_en.html">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://flowaiagent.com/icon-512.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Submission Successful | FlowAI Agent">
+    <meta name="twitter:description" content="Your analysis request has been submitted successfully. The AI-generated competitor analysis report will be sent to your email shortly.">
+    <meta name="twitter:image" content="https://flowaiagent.com/icon-512.png">
+<meta name="description" content="Your analysis request has been submitted successfully. The AI-generated competitor analysis report will be sent to your email shortly.">
     <link rel="icon" href="favicon.png" type="image/png">
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -82,16 +93,16 @@
                         your strategic report.
                     </p>
                     <div class="email-notice">
-                        <p class="notice-title">🎁 1 Free Report Remaining</p>
+                        <p class="notice-title" id="quotaNotice">Checking remaining free credits...</p>
                         <p>The complete analysis report will be sent to your email within <strong>15-30
                                 minutes</strong>.</p>
                         <p class="sub-text">Please check your inbox (and spam folder).</p>
                     </div>
 
                     <!-- Second Report CTA -->
-                    <div class="cta-box">
+                    <div class="cta-box" id="ctaBox">
                         <h3>💡 Strike while the iron is hot!</h3>
-                        <p>You have <strong>1 Free Analysis</strong> left. Why not compare another competitor?</p>
+                        <p>You have <strong id="ctaRemaining">-</strong> free analysis credits left. Why not compare another competitor?</p>
                         <a href="create_en.html" class="cta-btn primary btn-primary-gradient">Get 2nd Report Now →</a>
                         <a href="cases_en.html" class="btn-secondary-link">Or view case studies</a>
                     </div>
@@ -146,6 +157,42 @@
     </div>
 
     <script>
+        // Dynamic quota display
+        document.addEventListener('DOMContentLoaded', async function () {
+            const email = localStorage.getItem('user_email') || localStorage.getItem('userEmail') || '';
+            const noticeEl = document.getElementById('quotaNotice');
+            const ctaRemainingEl = document.getElementById('ctaRemaining');
+            const ctaBox = document.getElementById('ctaBox');
+            let remaining = 0;
+
+            if (email) {
+                try {
+                    const resp = await fetch('/api/check_quota', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: email })
+                    });
+                    if (resp.ok) {
+                        const data = await resp.json();
+                        remaining = Math.max(0, 2 - (data.usage || 0));
+                    }
+                } catch (e) {
+                    const usageKey = 'flowai_usage_' + email;
+                    const usage = parseInt(localStorage.getItem(usageKey) || '0');
+                    remaining = Math.max(0, 2 - usage);
+                }
+            }
+
+            if (remaining > 0) {
+                noticeEl.textContent = 'You have ' + remaining + ' free analysis credits remaining';
+                ctaRemainingEl.textContent = remaining;
+            } else {
+                noticeEl.textContent = 'Your 2 free analysis credits are fully used';
+                ctaBox.style.display = 'none';
+            }
+        });
+    </script>
+    <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Hamburger Menu
             const hamburgerBtn = document.getElementById('hamburgerBtn');
@@ -169,48 +216,6 @@
             }
         });
     </script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('SW registered'))
-                    .catch(err => console.log('SW failed', err));
-            });
-        }
-    </script>
-</body>
-
-<main class="main-content">
-    <div class="success-container">
-        <div class="success-card">
-            <div class="success-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-mail-check">
-                    <path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h8" />
-                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                    <path d="m16 19 2 2 4-4" />
-                </svg>
-            </div>
-            <h1 class="success-title">Submission Successful!</h1>
-            <p class="success-message">
-                We have received your analysis request. Our AI is now deep-diving into the ASIN data to generate
-                your strategic report.
-            </p>
-            <div class="email-notice">
-                <p>The complete analysis report will be sent to your email within <strong>15-30
-                        minutes</strong>.</p>
-                <p class="sub-text">Please check your inbox (and spam folder).</p>
-            </div>
-            <a href="index_en.html" class="cta-btn primary">Back to Home</a>
-        </div>
-    </div>
-</main>
-
-<footer class="main-footer">
-    <p>AI Competitor Analysis © 2025 AI Competitor Analysis - Data Driven Decisions</p>
-</footer>
-</div>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

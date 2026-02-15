@@ -142,9 +142,10 @@ document.addEventListener('DOMContentLoaded', function () {
         // Basic validation for main form
         const mainAsin = document.getElementById('main-asin').value;
         const compAsin = document.getElementById('comp-asin').value;
+        const selectedLanguage = (document.querySelector('#analysisForm select[name="language"]') || {}).value || 'zh';
 
         if (!mainAsin || !compAsin) {
-            alert('请填写必填的 ASIN 字段。');
+            alert(selectedLanguage === 'en' ? 'Please fill in required ASIN fields.' : '请填写必填的 ASIN 字段。');
             return;
         }
 
@@ -181,7 +182,43 @@ document.addEventListener('DOMContentLoaded', function () {
         btnLoading.style.display = 'inline-block';
 
         try {
+            // Gather Data from BOTH forms early so we can create a paid order when quota is exceeded
+            const mainFormData = new FormData(analysisForm);
+            const modalFormData = new FormData(leadGenForm);
+
+            const rawData = {};
+            for (let [key, value] of mainFormData.entries()) {
+                if (value instanceof File) continue;
+                rawData[key] = value;
+            }
+            for (let [key, value] of modalFormData.entries()) {
+                rawData[key] = value;
+            }
+
+            if (rawData.userEmail) {
+                const normalizedEmail = rawData.userEmail.trim().toLowerCase();
+                localStorage.setItem('user_email', normalizedEmail);
+                localStorage.setItem('userEmail', normalizedEmail);
+            }
+
+            const buildOrderData = () => ({
+                user_name: rawData.userName || '',
+                user_email: (rawData.userEmail || '').trim().toLowerCase(),
+                industry: rawData.industry || '',
+                main_asins: rawData.mainAsin ? rawData.mainAsin.split('\n').map(s => s.trim()).filter(s => s) : [],
+                competitor_asins: rawData.compAsin ? rawData.compAsin.split('\n').map(s => s.trim()).filter(s => s) : [],
+                language: rawData.language || 'zh',
+                custom_prompt: rawData.customPrompt || '',
+                reference_site_count: parseInt(rawData.siteCount) || 10,
+                reference_youtube_count: parseInt(rawData.youtubeCount) || 10,
+                report_type: 'paid_manual_confirm',
+                submitted_at: new Date().toISOString()
+            });
+
             // --- Server-Side Quota Check with Client-Side Fallback ---
+            let useLocalQuotaFallback = false;
+            let localUsageKey = '';
+            let localUsage = 0;
             if (userEmail) {
                 let quotaData = { allowed: true, usage: 0 };
                 try {
@@ -198,43 +235,38 @@ document.addEventListener('DOMContentLoaded', function () {
                 } catch (e) {
                     console.log('Backend unreachable, using client-side demo quota.');
                     // Fallback to localStorage for Demo Mode
-                    const usageKey = 'flowai_usage_' + userEmail;
-                    let usage = parseInt(localStorage.getItem(usageKey) || '0');
-                    if (usage >= 2) {
-                        quotaData = { allowed: false, usage: usage };
-                    } else {
-                        localStorage.setItem(usageKey, usage + 1);
-                        quotaData = { allowed: true, usage: usage + 1 };
-                    }
+                    useLocalQuotaFallback = true;
+                    localUsageKey = 'flowai_usage_' + userEmail;
+                    localUsage = parseInt(localStorage.getItem(localUsageKey) || '0');
+                    quotaData = { allowed: localUsage < 2, usage: localUsage };
                 }
 
                 if (!quotaData.allowed) {
-                    alert('您的 2 次免费深度分析额度已用完。\n\n感谢您的体验！请升级专业版以解锁无限次分析。');
-                    window.location.href = 'payment.html';
+                    const quotaExceededMessage = (rawData.language === 'en')
+                        ? 'Your 2 free deep-analysis credits are used up. Redirecting to payment.'
+                        : '您的 2 次免费深度分析额度已用完，正在跳转到支付页面。';
+                    alert(quotaExceededMessage);
+
+                    const createOrderRes = await fetch('/api/create_order', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            email: (rawData.userEmail || '').trim().toLowerCase(),
+                            order_data: buildOrderData()
+                        })
+                    });
+                    if (!createOrderRes.ok) {
+                        throw new Error('Failed to create order before payment');
+                    }
+
+                    const createOrderData = await createOrderRes.json();
+                    window.location.href = 'payment.html?order_id=' + encodeURIComponent(createOrderData.order_id);
                     return; // Stop execution
                 }
 
                 console.log(`User ${userEmail} quota check passed. Usage: ${quotaData.usage}`);
             }
             // -------------------------------
-
-            // Gather Data from BOTH forms
-            const mainFormData = new FormData(analysisForm);
-            const modalFormData = new FormData(leadGenForm);
-
-            // Combine data into a JSON object
-            const rawData = {};
-
-            // Add main form data (excluding files)
-            for (let [key, value] of mainFormData.entries()) {
-                if (value instanceof File) continue;
-                rawData[key] = value;
-            }
-
-            // Add modal form data
-            for (let [key, value] of modalFormData.entries()) {
-                rawData[key] = value;
-            }
 
             // Handle Multi-file Content Reading
             const csvFiles = (multiFileStores && multiFileStores['csv-upload']) || [];
@@ -271,6 +303,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 persona_files: personaContents,
                 analysis_id: "",
                 submitted_at: new Date().toISOString()
+            };
+
+            const recordUsageAfterSuccess = async () => {
+                if (!rawData.userEmail) return;
+                if (useLocalQuotaFallback && localUsageKey) {
+                    localStorage.setItem(localUsageKey, String(localUsage + 1));
+                    return;
+                }
+                try {
+                    await fetch('/api/record_usage', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: rawData.userEmail })
+                    });
+                } catch (e) {
+                    console.warn('Failed to record usage:', e);
+                }
             };
 
             // Show Progress Overlay
@@ -311,24 +360,36 @@ document.addEventListener('DOMContentLoaded', function () {
                         body: JSON.stringify(payload)
                     });
                 } catch (e) {
-                    console.warn('Webhook network error (likely CORS), proceeding as success:', e);
-                    response = { ok: true }; // Assume success on network error
+                    console.warn('Webhook network error:', e);
+                    clearInterval(interval);
+                    if (progressBar) progressBar.style.width = '0%';
+                    progressStatus.textContent = (rawData.language === 'en')
+                        ? 'Network error. Please retry.'
+                        : '网络异常，请重试。';
+                    if (progressOverlay) progressOverlay.classList.remove('active');
+                    alert((rawData.language === 'en')
+                        ? 'Network error. Please retry your submission.'
+                        : '网络异常，请重试提交。');
+                    return;
+                }
+
+                if (!response.ok) {
+                    clearInterval(interval);
+                    progressStatus.textContent = (rawData.language === 'en')
+                        ? 'Submission failed. Please retry.'
+                        : '提交失败，请重试。';
+                    if (progressOverlay) progressOverlay.classList.remove('active');
+                    alert((rawData.language === 'en')
+                        ? 'Submission failed. Please retry.'
+                        : '提交失败，请重试。');
+                    return;
                 }
 
                 clearInterval(interval);
                 if (progressBar) progressBar.style.width = '100%';
                 progressStatus.textContent = (rawData.language === 'en') ? 'Analysis Complete!' : '分析完成！';
 
-                // Record Usage
-                try {
-                    await fetch('/api/record_usage', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email: rawData.userEmail })
-                    });
-                } catch (e) {
-                    console.warn('Failed to record usage:', e);
-                }
+                await recordUsageAfterSuccess();
 
                 setTimeout(() => {
                     // Redirect to success page
@@ -338,17 +399,21 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 // Fallback if overlay is missing
                 try {
-                    await fetch('https://tony4927.app.n8n.cloud/webhook/1573cd32-8e6a-46ac-9d74-1e6f7c9ea5e7', {
+                    const fallbackRes = await fetch('https://tony4927.app.n8n.cloud/webhook/1573cd32-8e6a-46ac-9d74-1e6f7c9ea5e7', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify(payload)
                     });
+                    if (!fallbackRes.ok) throw new Error('Webhook failed');
                 } catch (e) {
                     console.warn('Fallback webhook error:', e);
+                    alert((rawData.language === 'en') ? 'Submission failed. Please retry.' : '提交失败，请重试。');
+                    return;
                 }
 
+                await recordUsageAfterSuccess();
                 alert((rawData.language === 'en') ? 'Analysis started! Please check your email.' : '分析已开始！请查收您的邮箱。');
                 window.location.href = (rawData.language === 'en') ? 'success_en.html' : 'success.html';
             }

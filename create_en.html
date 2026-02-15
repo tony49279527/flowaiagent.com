@@ -5,6 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Analysis - AI Competitor Analysis Assistant</title>
+    <meta name="description" content="Generate AI-powered Amazon competitor analysis reports by entering ASINs. Get fast, data-driven insights for listings and strategy.">
+    <link rel="canonical" href="https://flowaiagent.com/create_en.html">
+    <meta property="og:title" content="Create Analysis | FlowAI Agent">
+    <meta property="og:description" content="Generate AI-powered Amazon competitor analysis reports by entering ASINs. Get fast, data-driven insights for listings and strategy.">
+    <meta property="og:url" content="https://flowaiagent.com/create_en.html">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://flowaiagent.com/icon-512.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Create Analysis | FlowAI Agent">
+    <meta name="twitter:description" content="Generate AI-powered Amazon competitor analysis reports by entering ASINs.">
+    <meta name="twitter:image" content="https://flowaiagent.com/icon-512.png">
     <link rel="icon" href="favicon.png" type="image/png">
     <link rel="stylesheet" href="styles.css?v=2.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -341,211 +352,6 @@
             });
         }
     </script>
-</body>
-
-</html>
-
-<main class="main-content">
-    <div class="page-header">
-        <h1>
-            <span class="gradient-text">AI Driven Analysis</span>
-            <br>
-            Create Competitor Analysis Report
-        </h1>
-        <p class="page-subtitle">Enter ASIN to generate a deep competitor analysis report with one click
-        </p>
-    </div>
-    <form class="analysis-form" id="analysisForm">
-        <div class="form-grid">
-            <!-- Main Product ASIN -->
-            <div class="form-group">
-                <label for="main-asin">Main Product ASIN <span class="required">*</span></label>
-                <textarea id="main-asin" name="mainAsin" placeholder="Enter main product ASIN..." required></textarea>
-                <div class="helper-text">Please enter the core product ASIN you want to analyze</div>
-            </div>
-
-            <!-- Competitor ASINs -->
-            <div class="form-group">
-                <label for="comp-asin">Competitor ASINs <span class="required">*</span></label>
-                <textarea id="comp-asin" name="compAsin" placeholder="Enter competitor ASINs (one per line)..."
-                    required></textarea>
-                <div class="helper-text">Please enter competitor ASINs, 3-5 recommended</div>
-            </div>
-        </div>
-
-        <!-- Configuration Section -->
-        <div class="config-section">
-            <h3 class="section-title">Analysis Configuration</h3>
-            <!-- First Row: 3 Dropdowns -->
-            <div class="config-grid-selects">
-                <div class="config-item">
-                    <label>Report Language</label>
-                    <select class="custom-select" name="language">
-                        <option value="en" selected>English</option>
-                        <option value="zh">中文 (Chinese)</option>
-                    </select>
-                </div>
-                <div class="config-item">
-                    <label>Reference Sites</label>
-                    <select class="custom-select" name="siteCount">
-                        <option value="10">10 Websites</option>
-                        <option value="20">20 Websites</option>
-                        <option value="30">30 Websites</option>
-                        <option value="40">40 Websites</option>
-                        <option value="50">50 Websites</option>
-                    </select>
-                </div>
-                <div class="config-item">
-                    <label>Reference YouTube</label>
-                    <select class="custom-select" name="youtubeCount">
-                        <option value="10">10 Videos</option>
-                        <option value="20">20 Videos</option>
-                        <option value="30">30 Videos</option>
-                        <option value="40">40 Videos</option>
-                        <option value="50">50 Videos</option>
-                    </select>
-                </div>
-            </div>
-            <!-- Second Row: 2 File Uploads -->
-            <div class="config-grid-uploads">
-                <div class="config-item upload-item">
-                    <label>Upload Return CSV (Optional)</label>
-                    <div class="file-upload-box">
-                        <input type="file" id="csv-upload" name="csvFile" accept=".csv" hidden>
-                        <label for="csv-upload" class="upload-label">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                <polyline points="17 8 12 3 7 8" />
-                                <line x1="12" x2="12" y1="3" y2="15" />
-                            </svg>
-                            Select File
-                        </label>
-                        <span class="file-name" id="csv-file-name">No file selected</span>
-                    </div>
-                </div>
-                <div class="config-item upload-item">
-                    <label>Upload Product Persona CSV/TXT (Optional)</label>
-                    <div class="file-upload-box">
-                        <input type="file" id="persona-upload" name="personaFile" accept=".csv,.txt" hidden>
-                        <label for="persona-upload" class="upload-label">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                <polyline points="17 8 12 3 7 8" />
-                                <line x1="12" x2="12" y1="3" y2="15" />
-                            </svg>
-                            Select File
-                        </label>
-                        <span class="file-name" id="persona-file-name">No file selected</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Custom Prompt Section -->
-        <div class="prompt-section">
-            <h3 class="section-title">Custom Prompt</h3>
-            <div class="prompt-chips">
-                <button type="button" class="chip"
-                    onclick="fillPrompt('Analyze product pros and cons comprehensively and give improvement suggestions.')">Prompt
-                    A - Comprehensive</button>
-                <button type="button" class="chip"
-                    onclick="fillPrompt('Focus on analyzing user return reasons and provide solutions.')">Prompt
-                    B - Returns Analysis</button>
-                <button type="button" class="chip"
-                    onclick="fillPrompt('Analyze competitor usage scenarios and expand new marketing ideas.')">Prompt
-                    C - Marketing Ideas</button>
-            </div>
-            <textarea id="custom-prompt" name="customPrompt"
-                placeholder="Enter custom analysis requirements..."></textarea>
-        </div>
-
-        <!-- Submit Button -->
-        <div class="submit-section">
-            <button type="submit" class="submit-btn" id="submitBtn">
-                <span class="btn-text">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path
-                            d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 3Z" />
-                    </svg>
-                    Start AI Analysis
-                </span>
-                <span class="btn-loading" style="display: none;">Processing...</span>
-            </button>
-        </div>
-    </form>
-</main>
-
-<!-- Lead Gen Modal -->
-<div class="modal-overlay" id="leadGenModal">
-    <div class="modal-container">
-        <div class="modal-header">
-            <h3>Get Your Analysis Report</h3>
-            <button class="close-modal" id="closeModal">&times;</button>
-        </div>
-        <div class="modal-body">
-            <p class="modal-desc">Please complete the following info. The report will be sent to
-                your email.</p>
-            <form id="leadGenForm">
-                <div class="form-group">
-                    <label for="modal-name">Name <span class="required">*</span></label>
-                    <input type="text" id="modal-name" name="userName" required placeholder="Enter your name">
-                </div>
-                <div class="form-group">
-                    <label for="modal-email">Email <span class="required">*</span></label>
-                    <input type="email" id="modal-email" name="userEmail" required placeholder="name@example.com">
-                </div>
-                <div class="form-group">
-                    <label for="modal-industry">Industry <span class="required">*</span></label>
-                    <input type="text" id="modal-industry" name="industry" required
-                        placeholder="e.g. Electronics, Home...">
-                </div>
-                <button type="submit" class="submit-btn modal-submit-btn">
-                    <span class="btn-text">Confirm & Start Analysis</span>
-                    <span class="btn-loading" style="display: none;">Processing...</span>
-                </button>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Footer -->
-<footer class="main-footer">
-    <p>AI Competitor Analysis © 2025 AI Competitor Analysis - Data Driven Decisions</p>
-</footer>
-</div>
-
-<!-- Progress Overlay -->
-<div class="progress-overlay" id="progressOverlay">
-    <div class="progress-container">
-        <div class="progress-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                class="lucide lucide-loader-2 animate-spin">
-                <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-            </svg>
-        </div>
-        <h3 class="progress-title">AI Deep Analysis in Progress...</h3>
-        <p class="progress-status" id="progressStatus">Connecting to Amazon API...</p>
-        <div class="progress-bar-bg">
-            <div class="progress-bar-fill" id="progressBar"></div>
-        </div>
-    </div>
-</div>
-<script src="script.js"></script>
-<script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js')
-                .then(reg => console.log('SW registered'))
-                .catch(err => console.log('SW failed', err));
-        });
-    }
-</script>
 </body>
 
 </html>

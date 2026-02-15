@@ -5,7 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Case Studies - AI Competitor Analysis</title>
-    <meta name="description"
+    
+    <link rel="canonical" href="https://flowaiagent.com/cases_en.html">
+    <meta property="og:title" content="Case Studies - AI Competitor Analysis">
+    <meta property="og:description" content="Explore real-world examples of how FlowAI Agent helps Amazon sellers achieve success through AI-powered competitor analysis.">
+    <meta property="og:url" content="https://flowaiagent.com/cases_en.html">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://flowaiagent.com/icon-512.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Case Studies - AI Competitor Analysis">
+    <meta name="twitter:description" content="Explore real-world examples of how FlowAI Agent helps Amazon sellers achieve success through AI-powered competitor analysis.">
+    <meta name="twitter:image" content="https://flowaiagent.com/icon-512.png">
+<meta name="description"
         content="Explore real-world examples of how FlowAI Agent helps Amazon sellers achieve success through AI-powered competitor analysis.">
     <link rel="icon" href="favicon.png" type="image/png">
     <link rel="stylesheet" href="styles.css?v=2.0">
@@ -150,6 +161,15 @@
         </header>
 
         <!-- Mobile Menu Overlay -->
+        <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+            <nav class="mobile-nav">
+                <a href="index_en.html" class="mobile-nav-link">Home</a>
+                <a href="create_en.html" class="mobile-nav-link">Create Analysis</a>
+                <a href="cases_en.html" class="mobile-nav-link">Case Studies</a>
+                <a href="blog_en.html" class="mobile-nav-link">Blog</a>
+                <a href="cases.html" class="mobile-nav-link">🇨🇳 Chinese</a>
+            </nav>
+        </div>
 
 
         <main class="main-content">
@@ -218,14 +238,14 @@
         document.addEventListener('DOMContentLoaded', async function () {
             const grid = document.getElementById('cases-grid');
             try {
-                const res = await fetch('data/reports/index.json');
+                const res = await fetch('data/reports/index_en.json');
                 const reports = await res.json();
 
                 grid.innerHTML = ''; // Clear loader
 
                 reports.forEach(report => {
                     const card = `
-                        <a href="report_en.html?id=${report.id}" class="blog-card-link">
+                        <a href="report.html?id=${report.id}" class="blog-card-link">
                             <article class="case-card-visual">
                                 <div class="case-image-container">
                                     <img src="${report.cover_image}" alt="${report.title}" class="case-image" loading="lazy">

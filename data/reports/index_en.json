@@ -1,0 +1,58 @@
+[
+    {
+        "id": "cat-litter-box",
+        "title": "Amazon AI Competitor Analysis: Litter Box - C4.5",
+        "date": "2025-12-05",
+        "tag": "Pet Supplies",
+        "summary": "Deep-dive into 1,261 reviews to uncover core pain points and listing optimization strategy.",
+        "cover_image": "images/cat-litter-box-hero.jpg"
+    },
+    {
+        "id": "pressure-washer",
+        "title": "Amazon AI Competitor Analysis: Pressure Washer - C4.5",
+        "date": "2025-12-05",
+        "tag": "Outdoor Tools",
+        "summary": "Comparative analysis of leakage, pressure issues, and the most effective improvement tactics.",
+        "cover_image": "images/pressure-washer-hero.jpg"
+    },
+    {
+        "id": "polisher",
+        "title": "Amazon AI Competitor Analysis: Polisher Kit - C4.5",
+        "date": "2025-12-05",
+        "tag": "Automotive",
+        "summary": "Differentiation insights for entry-level and pro markets with 2025 best-seller patterns.",
+        "cover_image": "images/polisher-hero.jpg"
+    },
+    {
+        "id": "torque-wrench",
+        "title": "Amazon AI Competitor Analysis: Torque Wrench - O5.1",
+        "date": "2025-12-05",
+        "tag": "Hardware Tools",
+        "summary": "Focus on accuracy, trust signals, and mid-to-high torque performance positioning.",
+        "cover_image": "images/torque-wrench-hero.jpg"
+    },
+    {
+        "id": "power-tools",
+        "title": "Amazon Deep Competitor Analysis: Home Power Tools - G3.0",
+        "date": "2025-12-05",
+        "tag": "Hardware Tools",
+        "summary": "From DIY to home installs, uncover the 8V-20V segment growth opportunities.",
+        "cover_image": "images/power-tools-hero.jpg"
+    },
+    {
+        "id": "ice-maker",
+        "title": "Amazon Ice Maker Deep AI Competitor Analysis - G3.0",
+        "date": "2025-12-05",
+        "tag": "Home Appliances",
+        "summary": "Based on Antarctic Star & Silonn reviews to reveal core pain points and optimization moves.",
+        "cover_image": "images/ice-maker-hero.jpg"
+    },
+    {
+        "id": "fabric-shaver-demo",
+        "title": "Amazon Competitor Analysis: Fabric Shaver (Demo)",
+        "date": "2025-01-28",
+        "tag": "Home & Living",
+        "summary": "Top 10 seller analysis focused on battery life and blade durability feedback.",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=Fabric+Shaver"
+    }
+]

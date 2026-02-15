@@ -1,5 +1,5 @@
 
-const CACHE_NAME = 'flowai-v2';
+const CACHE_NAME = 'flowai-v3';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -7,7 +7,8 @@ const ASSETS_TO_CACHE = [
     './script.js',
     './mobile-menu.js',
     './favicon.png',
-    './icon-192.png'
+    './icon-192.png',
+    './icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {
@@ -18,17 +19,39 @@ self.addEventListener('install', (event) => {
     );
 });
 
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((keys) => {
+            return Promise.all(
+                keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+            );
+        })
+    );
+});
+
 self.addEventListener('fetch', (event) => {
+    const request = event.request;
+    if (request.method !== 'GET' || request.url.includes('/api/')) {
+        return;
+    }
+
+    if (request.mode === 'navigate' || request.destination === 'document') {
+        event.respondWith(
+            fetch(request)
+                .then((response) => response)
+                .catch(() => caches.match('./index.html'))
+        );
+        return;
+    }
+
     event.respondWith(
-        caches.match(event.request).then((response) => {
-            return response || fetch(event.request).then((fetchRes) => {
-                return caches.open(CACHE_NAME).then((cache) => {
-                    // Cache regular requests, but be careful with API calls or non-GET
-                    if (event.request.method === 'GET') {
-                        cache.put(event.request, fetchRes.clone());
-                    }
-                    return fetchRes;
-                });
+        caches.match(request).then((cached) => {
+            if (cached) return cached;
+            return fetch(request).then((response) => {
+                if (!response || response.status !== 200) return response;
+                const responseClone = response.clone();
+                caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
+                return response;
             });
         })
     );

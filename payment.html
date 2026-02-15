@@ -5,7 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>解锁完整报告 - 支付 | FlowAI Agent</title>
-    <meta name="description" content="解锁FlowAI Agent完整竞品分析报告。包含20+维度竞品对比、用户痛点挖掘、YouTube营销洞察，支持PDF导出。">
+    
+    <meta property="og:image" content="https://flowaiagent.com/icon-512.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="解锁完整报告 - 支付 | FlowAI Agent">
+    <meta name="twitter:description" content="解锁FlowAI Agent完整竞品分析报告。包含20+维度竞品对比、用户痛点挖掘、YouTube营销洞察，支持PDF导出。">
+    <meta name="twitter:image" content="https://flowaiagent.com/icon-512.png">
+<meta name="description" content="解锁FlowAI Agent完整竞品分析报告。包含20+维度竞品对比、用户痛点挖掘、YouTube营销洞察，支持PDF导出。">
     <meta name="keywords" content="竞品分析报告,解锁报告,FlowAI Agent付费,亚马逊分析工具">
 
     <!-- Open Graph -->
@@ -709,8 +715,25 @@
     </div>
     <script src="mobile-menu.js"></script>
     <script>
-        // 初始化订单号
-        document.getElementById('orderId').textContent = Date.now().toString().slice(-10);
+        const params = new URLSearchParams(window.location.search);
+        const isEnglishUI = params.get('lang') === 'en';
+        const t = (zhText, enText) => isEnglishUI ? enText : zhText;
+
+        const orderIdElement = document.getElementById('orderId');
+        const confirmBtn = document.querySelector('.confirm-btn');
+        const orderIdFromUrl = params.get('order_id');
+        const activeOrderId = /^\d+$/.test(orderIdFromUrl || '') ? orderIdFromUrl : '';
+
+        if (!activeOrderId) {
+            orderIdElement.textContent = 'INVALID';
+            if (confirmBtn) confirmBtn.disabled = true;
+            showMsg(
+                t('订单创建失败，请返回创建分析页面重新提交。', 'Order creation failed. Please go back and submit again.'),
+                'warn'
+            );
+        } else {
+            orderIdElement.textContent = activeOrderId;
+        }
 
         // 切换支付方式
         function switchQR(method) {
@@ -722,38 +745,32 @@
 
             if (method === 'wechat') {
                 qrImg.src = 'wechat_qr.jpg';
-                methodText.textContent = '微信';
+                methodText.textContent = t('微信', 'WeChat');
             } else {
                 qrImg.src = 'alipay_qr.jpg';
-                methodText.textContent = '支付宝';
+                methodText.textContent = t('支付宝', 'Alipay');
             }
         }
 
         // 确认支付 (手动)
         function confirmPayment() {
-            showMsg('正在验证支付状态...', 'info');
+            if (!activeOrderId) return;
+            showMsg(t('正在验证支付状态...', 'Checking payment status...'), 'info');
             setTimeout(() => {
                 // 主动调用查询 API
-                const orderId = document.getElementById('orderId').textContent;
-                fetch('/api/check_status?order_id=' + orderId)
+                fetch('/api/check_status?order_id=' + encodeURIComponent(activeOrderId))
                     .then(res => res.json())
                     .then(data => {
                         if (data.status === 'SUCCESS') {
-                            window.location.href = 'payment_success.html?order=' + orderId;
+                            window.location.href = 'payment_success.html?order=' + activeOrderId;
+                        } else if (data.status === 'FAILED') {
+                            window.location.href = 'payment_failed.html';
                         } else {
-                            if (confirm('服务器尚未收到付款通知。您确定已完成支付吗？\n\n如果已支付请点击"确定"强制跳转，否则点击"取消"等待自动确认。')) {
-                                window.location.href = 'payment_success.html?order=' + orderId;
-                            } else {
-                                showMsg('请稍候，系统正在自动同步状态...', 'warn');
-                            }
+                            showMsg(t('尚未收到付款通知，请稍后重试。', 'Payment not confirmed yet. Please try again shortly.'), 'warn');
                         }
                     })
                     .catch(err => {
-                        // 离线/演示模式
-                        const confirmed = confirm('请确认您已完成支付\n\n点击"确定"进入报告页面\n点击"取消"返回重试');
-                        if (confirmed) {
-                            window.location.href = 'payment_success.html?order=' + document.getElementById('orderId').textContent;
-                        }
+                        showMsg(t('状态查询失败，请稍后重试。', 'Status check failed. Please try again.'), 'warn');
                     });
             }, 1000);
         }
@@ -766,16 +783,16 @@
 
         // --- 自动轮询支付状态 ---
         let checkInterval = setInterval(() => {
-            const orderId = document.getElementById('orderId').textContent;
-            fetch('/api/check_status?order_id=' + orderId)
+            if (!activeOrderId) return;
+            fetch('/api/check_status?order_id=' + encodeURIComponent(activeOrderId))
                 .then(res => res.json())
                 .then(data => {
                     console.log('Payment Status:', data.status);
                     if (data.status === 'SUCCESS') {
                         clearInterval(checkInterval);
-                        showMsg('已收到付款通知！正在跳转...', 'success');
+                        showMsg(t('已收到付款通知！正在跳转...', 'Payment confirmed. Redirecting...'), 'success');
                         setTimeout(() => {
-                            window.location.href = 'payment_success.html?order=' + orderId;
+                            window.location.href = 'payment_success.html?order=' + activeOrderId;
                         }, 1000);
                     } else if (data.status === 'FAILED') {
                         window.location.href = 'payment_failed.html';

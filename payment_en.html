@@ -5,6 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Preview - AI Competitor Analysis Assistant</title>
+    <meta name="description" content="Preview your AI competitor analysis report and proceed to payment to unlock the full content.">
+    <link rel="canonical" href="https://flowaiagent.com/payment_en.html">
+    <meta property="og:title" content="Report Preview | FlowAI Agent">
+    <meta property="og:description" content="Preview your AI competitor analysis report and proceed to payment to unlock the full content.">
+    <meta property="og:url" content="https://flowaiagent.com/payment_en.html">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://flowaiagent.com/icon-512.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Report Preview | FlowAI Agent">
+    <meta name="twitter:description" content="Preview your AI competitor analysis report and proceed to payment to unlock the full content.">
+    <meta name="twitter:image" content="https://flowaiagent.com/icon-512.png">
     <link rel="icon" href="favicon.png" type="image/png">
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -53,6 +64,15 @@
         </header>
 
         <!-- Mobile Menu Overlay -->
+        <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+            <nav class="mobile-nav">
+                <a href="index_en.html" class="mobile-nav-link">Home</a>
+                <a href="create_en.html" class="mobile-nav-link">Create Analysis</a>
+                <a href="cases_en.html" class="mobile-nav-link">Case Studies</a>
+                <a href="blog_en.html" class="mobile-nav-link">Blog</a>
+                <a href="payment.html" class="mobile-nav-link">🇨🇳 Chinese</a>
+            </nav>
+        </div>
         
         <main class="main-content">
             <div class="payment-preview">
@@ -140,13 +160,16 @@
                     <span class="discount-badge">50% OFF</span>
                 </div>
                 <ul class="feature-list">
-                    <li>�?Full Competitor Comparison</li>
-                    <li>�?User Sentiment & Pain Points</li>
-                    <li>�?YouTube Marketing Insights</li>
-                    <li>�?Export to PDF/Excel</li>
-                    <li>�?7-Day Money-Back Guarantee</li>
+                    <li>Full Competitor Comparison</li>
+                    <li>User Sentiment & Pain Points</li>
+                    <li>YouTube Marketing Insights</li>
+                    <li>Export to PDF/Excel</li>
+                    <li>7-Day Money-Back Guarantee</li>
                 </ul>
                 <button class="unlock-btn" id="payButton">Unlock Report Now</button>
+                <p style="margin-top: 10px; color: #64748b; font-size: 0.9rem;">
+                    Checkout currently uses the unified payment page and supports manual confirmation.
+                </p>
                 <div class="payment-methods">
                     <span>Supported Payments:</span>
                     <div class="methods-icons">
@@ -199,16 +222,11 @@
 
     <script>
         document.getElementById('payButton').addEventListener('click', function () {
-            // Simulate payment process
-            const btn = this;
-            const originalText = btn.textContent;
-            btn.textContent = 'Processing...';
-            btn.disabled = true;
-
-            setTimeout(() => {
-                alert('Payment Successful! Full report sent to your email.');
-                window.location.href = 'success_en.html';
-            }, 1500);
+            const orderId = new URLSearchParams(window.location.search).get('order_id');
+            const target = orderId
+                ? `payment.html?order_id=${encodeURIComponent(orderId)}&lang=en`
+                : 'payment.html?lang=en';
+            window.location.href = target;
         });
     </script>
     <script>
@@ -247,4 +265,3 @@
 </body>
 
 </html>
-

@@ -147,6 +147,36 @@
         .log-info {
             color: #60a5fa;
         }
+        .token-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .token-row input {
+            flex: 1;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.9rem;
+        }
+        .token-row button {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: none;
+            background: #0f172a;
+            color: #e2e8f0;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .console-alert {
+            background: #fff7ed;
+            border: 1px solid #fdba74;
+            color: #9a3412;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
     </style>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#667eea">
@@ -174,6 +204,18 @@
         <div class="status-box status-PENDING" id="statusBox">
             <span style="font-size: 0.9rem; opacity: 0.8;">Current Status</span>
             <span class="status-value" id="statusDisplay">PENDING</span>
+        </div>
+
+        <div class="console-alert" id="consoleAlert" style="display:none;">
+            Admin console is disabled on public hosts. Use localhost with an admin token.
+        </div>
+        <div class="token-row">
+            <input type="password" id="adminToken" placeholder="Admin token (optional)">
+            <button id="saveTokenBtn" type="button">Save</button>
+        </div>
+        <div class="token-row">
+            <input type="text" id="orderIdInput" placeholder="Order ID (ORD123... or 123)">
+            <button id="loadOrderBtn" type="button">Load</button>
         </div>
 
         <div class="control-grid">
@@ -207,6 +249,30 @@
 
     <script>
         const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:8080' : '';
+        const isLocalHost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+        const adminTokenInput = document.getElementById('adminToken');
+        const orderIdInput = document.getElementById('orderIdInput');
+        const saveTokenBtn = document.getElementById('saveTokenBtn');
+        const loadOrderBtn = document.getElementById('loadOrderBtn');
+        const consoleAlert = document.getElementById('consoleAlert');
+        const controls = document.querySelectorAll('.btn-control');
+
+        adminTokenInput.value = localStorage.getItem('flowai_admin_token') || '';
+        const orderIdFromUrl = new URLSearchParams(window.location.search).get('order_id') || '';
+        orderIdInput.value = orderIdFromUrl;
+
+        saveTokenBtn.addEventListener('click', () => {
+            localStorage.setItem('flowai_admin_token', adminTokenInput.value.trim());
+            addLog('Admin token saved locally.', 'info');
+        });
+        loadOrderBtn.addEventListener('click', () => {
+            loadOrderStatus();
+        });
+
+        if (!isLocalHost) {
+            consoleAlert.style.display = 'block';
+            controls.forEach(btn => btn.disabled = true);
+        }
 
         function addLog(msg, type = 'info') {
             const log = document.getElementById('logArea');
@@ -222,31 +288,57 @@
             box.className = `status-box status-${status}`;
         }
 
+        function readOrderId() {
+            const raw = orderIdInput.value.trim().toUpperCase();
+            const normalized = raw.replace(/^ORD[-_:\s]*/, '');
+            if (!/^\d+$/.test(normalized)) return '';
+            return normalized;
+        }
+
+        function loadOrderStatus() {
+            const orderId = readOrderId();
+            if (!orderId) {
+                addLog('Order ID is required.', 'fail');
+                return;
+            }
+            fetch(`${API_BASE}/api/check_status?order_id=${encodeURIComponent(orderId)}`, {
+                headers: { 'X-Admin-Token': adminTokenInput.value.trim() }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) throw new Error(data.error);
+                    updateUI(data.status);
+                    addLog(`Order ${orderId} status: ${data.status}`, 'info');
+                })
+                .catch(err => addLog(`Load failed: ${err.message}`, 'fail'));
+        }
+
         function updateStatus(status) {
+            const orderId = readOrderId();
+            if (!orderId) {
+                addLog('Order ID is required before updating status.', 'fail');
+                return;
+            }
             addLog(`Setting status to ${status}...`, 'info');
 
             const orderData = {
                 status: status,
-                order_data: {
-                    order_id: 'ORD' + Date.now(),
-                    email: 'aurotony4927@gmail.com',
-                    main_asin: 'B08N5WRWNW',
-                    competitor_asin: 'B09GYQ5SY7',
-                    payment_amount: 299,
-                    payment_time: new Date().toISOString(),
-                    report_type: 'paid'
-                }
+                order_id: orderId
             };
 
             fetch(`${API_BASE}/api/update_status`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Admin-Token': adminTokenInput.value.trim()
+                },
                 body: JSON.stringify(orderData)
             })
                 .then(res => res.json())
                 .then(data => {
+                    if (data.error) throw new Error(data.error);
                     updateUI(status);
-                    addLog(`Status updated: ${status}`, status === 'SUCCESS' ? 'success' : status === 'FAILED' ? 'fail' : 'info');
+                    addLog(`Order ${orderId} updated: ${status}`, status === 'SUCCESS' ? 'success' : status === 'FAILED' ? 'fail' : 'info');
                 })
                 .catch(err => {
                     addLog(`Error: ${err.message}`, 'fail');
@@ -254,13 +346,11 @@
         }
 
         // Init
-        fetch(`${API_BASE}/api/check_status`)
-            .then(res => res.json())
-            .then(data => {
-                updateUI(data.status);
-                addLog(`Current State: ${data.status}`);
-            })
-            .catch(err => addLog('Connection Error', 'fail'));
+        if (readOrderId()) {
+            loadOrderStatus();
+        } else {
+            addLog('Enter an Order ID to load status.', 'info');
+        }
     </script>
     <script>
         if ('serviceWorker' in navigator) {
