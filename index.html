@@ -27,6 +27,26 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
+    <!-- =====================================================================
+         📊 网站统计代码（待配置）
+         请在上线后替换以下注释，接入真实的统计平台：
+
+         方案一：Google Analytics 4（GA4）
+         <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"><\/script>
+         <script>
+           window.dataLayer = window.dataLayer || [];
+           function gtag(){dataLayer.push(arguments);}
+           gtag('js', new Date());
+           gtag('config', 'G-XXXXXXXXXX');  // ← 替换为真实 GA4 Measurement ID
+         <\/script>
+
+         方案二：百度统计
+         <script>var _hmt = _hmt || []; (function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();<\/script>
+
+         方案三：Cloudflare Web Analytics
+         <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"}'><\/script>
+         ===================================================================== -->
+
     <!-- Structured Data: Organization Schema -->
     <script type="application/ld+json">
     {
@@ -249,6 +269,44 @@
                 </div>
             </section>
 
+            <!-- Report Showcase Section -->
+            <section class="report-showcase-section" style="padding: 60px 0;">
+                <h2 class="section-heading">真实报告样例</h2>
+                <p style="text-align:center; color: var(--text-secondary); margin-bottom: 36px; font-size: 1rem;">以下为 AI 生成的真实竞品分析报告，点击即可查看完整内容</p>
+                <div class="showcase-cards" style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center; max-width:960px; margin:0 auto;">
+                    <a href="report.html?id=cat-litter-box" class="showcase-card" style="flex:1; min-width:260px; max-width:300px; border:1px solid var(--border-color); border-radius:12px; overflow:hidden; text-decoration:none; color:inherit; transition:box-shadow 0.2s, transform 0.2s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(0,0,0,0.12)';this.style.transform='translateY(-4px)'" onmouseout="this.style.boxShadow='';this.style.transform=''">
+                        <img src="images/cat-litter-box-hero.jpg" alt="猫砂盆竞品分析" style="width:100%; height:160px; object-fit:cover;">
+                        <div style="padding:16px;">
+                            <span style="font-size:12px; background:#e8f4fd; color:#1a73e8; padding:3px 8px; border-radius:20px;">宠物用品</span>
+                            <h4 style="margin:10px 0 6px; font-size:15px; line-height:1.4;">猫砂盆竞品深度分析</h4>
+                            <p style="font-size:13px; color:var(--text-secondary); margin:0;">挖掘 1,261 条评论，揭秘核心痛点</p>
+                            <div style="margin-top:12px; font-size:12px; color:var(--text-secondary);">⏱️ 12 分钟阅读 &nbsp;·&nbsp; 📅 2025-12</div>
+                        </div>
+                    </a>
+                    <a href="report.html?id=pressure-washer" class="showcase-card" style="flex:1; min-width:260px; max-width:300px; border:1px solid var(--border-color); border-radius:12px; overflow:hidden; text-decoration:none; color:inherit; transition:box-shadow 0.2s, transform 0.2s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(0,0,0,0.12)';this.style.transform='translateY(-4px)'" onmouseout="this.style.boxShadow='';this.style.transform=''">
+                        <img src="images/pressure-washer-hero.jpg" alt="高压清洗机竞品分析" style="width:100%; height:160px; object-fit:cover;">
+                        <div style="padding:16px;">
+                            <span style="font-size:12px; background:#fff3e0; color:#e65100; padding:3px 8px; border-radius:20px;">户外工具</span>
+                            <h4 style="margin:10px 0 6px; font-size:15px; line-height:1.4;">电动高压清洗机竞品分析</h4>
+                            <p style="font-size:13px; color:var(--text-secondary); margin:0;">漏水痛点解法，退货率下降 22%</p>
+                            <div style="margin-top:12px; font-size:12px; color:var(--text-secondary);">⏱️ 9 分钟阅读 &nbsp;·&nbsp; 📅 2025-12</div>
+                        </div>
+                    </a>
+                    <a href="report.html?id=ice-maker" class="showcase-card" style="flex:1; min-width:260px; max-width:300px; border:1px solid var(--border-color); border-radius:12px; overflow:hidden; text-decoration:none; color:inherit; transition:box-shadow 0.2s, transform 0.2s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(0,0,0,0.12)';this.style.transform='translateY(-4px)'" onmouseout="this.style.boxShadow='';this.style.transform=''">
+                        <img src="images/ice-maker-hero.jpg" alt="制冰机竞品分析" style="width:100%; height:160px; object-fit:cover;">
+                        <div style="padding:16px;">
+                            <span style="font-size:12px; background:#f3e5f5; color:#7b1fa2; padding:3px 8px; border-radius:20px;">家用电器</span>
+                            <h4 style="margin:10px 0 6px; font-size:15px; line-height:1.4;">台式制冰机深度AI分析</h4>
+                            <p style="font-size:13px; color:var(--text-secondary); margin:0;">颗粒冰市场核心痛点与优化对策</p>
+                            <div style="margin-top:12px; font-size:12px; color:var(--text-secondary);">⏱️ 10 分钟阅读 &nbsp;·&nbsp; 📅 2025-12</div>
+                        </div>
+                    </a>
+                </div>
+                <div style="text-align:center; margin-top:32px;">
+                    <a href="cases.html" style="display:inline-block; padding:12px 32px; background:var(--primary-color); color:#fff; border-radius:8px; text-decoration:none; font-weight:600; font-size:15px; transition:opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">查看全部报告样例 →</a>
+                </div>
+            </section>
+
             <!-- FAQ Section -->
             <section class="faq-section">
                 <h2 class="section-heading">常见问题</h2>
@@ -301,6 +359,78 @@
                             <p>当然！您可以将生成的报告导出为 PDF 格式，方便分享和存档。</p>
                         </div>
                     </div>
+                    <div class="faq-accordion-item">
+                        <button class="faq-accordion-header">
+                            <span>报告生成后多久可以收到？通过什么方式交付？</span>
+                            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </button>
+                        <div class="faq-accordion-content">
+                            <p>提交分析请求后，系统通常在 15–30 分钟内完成报告生成，并自动发送到您填写的邮箱。同时，您也可以在线查看完整的交互式报告页面，随时分享给团队成员。</p>
+                        </div>
+                    </div>
+                    <div class="faq-accordion-item">
+                        <button class="faq-accordion-header">
+                            <span>支持同时分析多个 ASIN 吗？有数量限制吗？</span>
+                            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </button>
+                        <div class="faq-accordion-content">
+                            <p>支持！您可以在"主产品 ASIN"和"竞品 ASIN"栏中各填写最多 5 个 ASIN（每行一个）。系统会对所有 ASIN 进行交叉对比分析，输出统一的竞品对比报告。如需批量分析更多 ASIN，欢迎联系我们定制方案。</p>
+                        </div>
+                    </div>
+                    <div class="faq-accordion-item">
+                        <button class="faq-accordion-header">
+                            <span>报告内容多久更新一次？数据是实时的吗？</span>
+                            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </button>
+                        <div class="faq-accordion-content">
+                            <p>每次提交分析，系统都会实时抓取最新的亚马逊前台数据（评论、价格、排名、Listing 等），确保报告反映当前市场状态。已生成的报告为快照版本，如需获取最新数据，重新提交分析即可。</p>
+                        </div>
+                    </div>
+                    <div class="faq-accordion-item">
+                        <button class="faq-accordion-header">
+                            <span>报告支持中英文双语输出吗？</span>
+                            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </button>
+                        <div class="faq-accordion-content">
+                            <p>支持！在分析表单中选择"报告语言"即可切换中文或英文输出。中文报告适合国内团队沟通，英文报告便于对接海外合作方或亚马逊品牌注册材料。</p>
+                        </div>
+                    </div>
+                    <div class="faq-accordion-item">
+                        <button class="faq-accordion-header">
+                            <span>付费后如果对报告不满意，可以退款吗？</span>
+                            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </button>
+                        <div class="faq-accordion-content">
+                            <p>我们提供 2 次免费深度分析体验，建议您先试用后再决定购买。付费报告因涉及实时数据抓取和 AI 算力消耗，一经生成原则上不支持退款。如报告存在明显错误或系统故障导致无法交付，请联系我们（微信：flowaiagent），我们将优先安排重新生成或协商处理。</p>
+                        </div>
+                    </div>
+                    <div class="faq-accordion-item">
+                        <button class="faq-accordion-header">
+                            <span>免费额度用完后，付费方式和价格是怎样的？</span>
+                            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </button>
+                        <div class="faq-accordion-content">
+                            <p>免费额度（2 次）用完后，每份深度竞品分析报告定价 <strong>¥99</strong>，支持微信支付和支付宝。付款完成后由人工确认订单，报告将在 30 分钟内发送至您的邮箱。如需企业批量采购或订阅套餐，欢迎联系我们获取定制报价。</p>
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>
@@ -338,7 +468,11 @@
                     <h4>联系我们</h4>
                     <ul class="footer-links">
                         <li>📧 support@flowaiagent.com</li>
-                        <li>💬 微信: FlowAI_Agent</li>
+                        <li>
+                            <button id="wechat-footer-btn" onclick="document.getElementById('wechat-qr-popup').classList.toggle('active')" style="background:none; border:none; cursor:pointer; padding:0; color:inherit; font-size:inherit; font-family:inherit;">
+                                💬 微信: FlowAI_Agent（点击查看二维码）
+                            </button>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -352,6 +486,31 @@
             </div>
         </footer>
     </div>
+    <!-- WeChat QR Floating Button -->
+    <div id="wechat-float-btn" title="微信联系我们" onclick="document.getElementById('wechat-qr-popup').classList.toggle('active')" style="position:fixed; bottom:24px; right:24px; width:52px; height:52px; background:#07c160; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 16px rgba(7,193,96,0.4); z-index:999; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M8.5 10a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zm4 0a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/><path d="M0 6.5C0 3.46 3.582 1 8 1s8 2.46 8 5.5c0 1.983-1.31 3.72-3.3 4.736C13.252 12.388 14 13.884 14 15.5c0 2.485-2.596 4.5-5.8 4.5-.913 0-1.776-.176-2.544-.488L3 21l.78-2.34C1.514 17.674 0 16.686 0 15.5c0-1.616.748-3.112 2.3-4.264C.784 10.22 0 8.483 0 6.5zm8-4C4.134 2.5 1 4.243 1 6.5c0 1.526.943 2.885 2.517 3.78l.534.306-.193.58L3.3 12.7l1.583-.92.43.177C6.03 12.3 7 12.5 8 12.5c3.866 0 7-1.743 7-4s-3.134-4-7-4zm-1.9 9.34C5.49 12.29 4.8 12.5 4.2 12.5 2.43 12.5 1 13.897 1 15.5c0 .982.713 1.912 1.943 2.541l.535.278-.21.63L3 20.222l1.4-.933.41.16C5.47 19.807 6.22 20 7.2 20c2.646 0 4.8-1.57 4.8-3.5 0-1.378-.97-2.592-2.466-3.214l-.435-.18.001-.466z"/></svg>
+    </div>
+    <div id="wechat-qr-popup" style="display:none; position:fixed; bottom:86px; right:24px; background:#fff; border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,0.18); padding:20px; z-index:1000; text-align:center; width:180px;" onclick="event.stopPropagation()">
+        <p style="margin:0 0 12px; font-size:13px; color:#333; font-weight:600;">扫码添加微信</p>
+        <img src="wechat_qr.jpg" alt="微信二维码" style="width:140px; height:140px; object-fit:contain; border-radius:8px;">
+        <p style="margin:10px 0 0; font-size:12px; color:#888;">FlowAI_Agent</p>
+        <button onclick="document.getElementById('wechat-qr-popup').classList.remove('active')" style="margin-top:8px; font-size:12px; color:#999; background:none; border:none; cursor:pointer;">关闭</button>
+    </div>
+    <style>
+        #wechat-qr-popup { display: none; }
+        #wechat-qr-popup.active { display: block; }
+    </style>
+    <script>
+        // Close WeChat popup on outside click
+        document.addEventListener('click', function(e) {
+            const popup = document.getElementById('wechat-qr-popup');
+            const btn = document.getElementById('wechat-float-btn');
+            const footerBtn = document.getElementById('wechat-footer-btn');
+            if (popup && popup.classList.contains('active') && !popup.contains(e.target) && e.target !== btn && e.target !== footerBtn && !btn.contains(e.target)) {
+                popup.classList.remove('active');
+            }
+        });
+    </script>
     <script src="mobile-menu.js"></script>
     <script src="script.js"></script>
     <script>

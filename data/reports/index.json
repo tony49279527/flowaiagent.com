@@ -5,7 +5,8 @@
         "date": "2025-12-05",
         "tag": "宠物用品",
         "summary": "深度挖掘 1,261 条评论，揭秘猫砂盆市场的核心用户痛点与 Listing 优化策略。",
-        "cover_image": "images/cat-litter-box-hero.jpg"
+        "cover_image": "images/cat-litter-box-hero.jpg",
+        "read_time": "12 分钟阅读"
     },
     {
         "id": "pressure-washer",
@@ -13,7 +14,8 @@
         "date": "2025-12-05",
         "tag": "户外工具",
         "summary": "对比 Paxcess 与核心竞品，提供针对漏水、压力不足等核心痛点的全套解决方案。",
-        "cover_image": "images/pressure-washer-hero.jpg"
+        "cover_image": "images/pressure-washer-hero.jpg",
+        "read_time": "9 分钟阅读"
     },
     {
         "id": "polisher",
@@ -21,7 +23,8 @@
         "date": "2025-12-05",
         "tag": "汽配保养",
         "summary": "针对入门与专业抛光市场，分析 2025 年热销套件的差异化卖点与运营方向。",
-        "cover_image": "images/polisher-hero.jpg"
+        "cover_image": "images/polisher-hero.jpg",
+        "read_time": "11 分钟阅读"
     },
     {
         "id": "torque-wrench",
@@ -29,7 +32,8 @@
         "date": "2025-12-05",
         "tag": "五金工具",
         "summary": "聚焦 CRAFTSMAN 等品牌，探讨中高扭矩范围内工具的精度保证与用户信任建立。",
-        "cover_image": "images/torque-wrench-hero.jpg"
+        "cover_image": "images/torque-wrench-hero.jpg",
+        "read_time": "8 分钟阅读"
     },
     {
         "id": "power-tools",
@@ -37,7 +41,8 @@
         "date": "2025-12-05",
         "tag": "五金工具",
         "summary": "从家具组装到挂画安装，全方位分析 8V-20V 电动工具的细分市场机遇。",
-        "cover_image": "images/power-tools-hero.jpg"
+        "cover_image": "images/power-tools-hero.jpg",
+        "read_time": "14 分钟阅读"
     },
     {
         "id": "ice-maker",
@@ -45,6 +50,7 @@
         "date": "2025-12-05",
         "tag": "家用电器",
         "summary": "基于 Antarctic Star & Silonn 与多款竞品深度分析，揭秘颗粒冰市场的核心痛点与优化对策。",
-        "cover_image": "images/ice-maker-hero.jpg"
+        "cover_image": "images/ice-maker-hero.jpg",
+        "read_time": "10 分钟阅读"
     }
 ]
