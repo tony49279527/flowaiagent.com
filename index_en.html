@@ -27,6 +27,23 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#667eea">
     <link rel="apple-touch-icon" href="icon-192.png">
+
+    <!-- =====================================================================
+         📊 Analytics Code (Pending Configuration)
+         Replace the comments below after going live:
+
+         Option 1: Google Analytics 4 (GA4)
+         <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"><\/script>
+         <script>
+           window.dataLayer = window.dataLayer || [];
+           function gtag(){dataLayer.push(arguments);}
+           gtag('js', new Date());
+           gtag('config', 'G-XXXXXXXXXX');  // ← Replace with real GA4 Measurement ID
+         <\/script>
+
+         Option 2: Cloudflare Web Analytics
+         <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"}'><\/script>
+         ===================================================================== -->
 </head>
 
 <body>
@@ -238,17 +255,114 @@
                     </div>
                     <div class="faq-accordion-item">
                         <button class="faq-accordion-header">
-                            <span>What if the report is inaccurate?</span>
+                            <span>How and when will I receive the report after submission?</span>
                             <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2">
                                 <path d="M6 9l6 6 6-6" />
                             </svg>
                         </button>
                         <div class="faq-accordion-content">
-                            <p>We offer a satisfaction guarantee. If you are not satisfied with the report quality,
-                                contact us for a re-run or refund.</p>
+                            <p>After submitting your analysis request, the system typically completes the report within 15–30 minutes and automatically sends it to your provided email address. You can also view the full interactive report online and share it with your team at any time.</p>
                         </div>
                     </div>
+                    <div class="faq-accordion-item">
+                        <button class="faq-accordion-header">
+                            <span>Can I analyze multiple ASINs at once? Is there a limit?</span>
+                            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </button>
+                        <div class="faq-accordion-content">
+                            <p>Yes! You can enter up to 5 ASINs each in the "Main Product ASIN" and "Competitor ASIN" fields (one per line). The system performs cross-comparative analysis across all ASINs and delivers a unified competitor report. For bulk analysis of more ASINs, contact us for a custom plan.</p>
+                        </div>
+                    </div>
+                    <div class="faq-accordion-item">
+                        <button class="faq-accordion-header">
+                            <span>How fresh is the data? Is it real-time?</span>
+                            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </button>
+                        <div class="faq-accordion-content">
+                            <p>Each analysis submission triggers a real-time crawl of the latest Amazon frontend data (reviews, pricing, rankings, listing content, etc.), ensuring the report reflects current market conditions. Generated reports are point-in-time snapshots — simply resubmit to get updated data.</p>
+                        </div>
+                    </div>
+                    <div class="faq-accordion-item">
+                        <button class="faq-accordion-header">
+                            <span>Are reports available in both English and Chinese?</span>
+                            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </button>
+                        <div class="faq-accordion-content">
+                            <p>Yes! Select your preferred report language in the analysis form. English reports are ideal for international partners, brand registry materials, or overseas team communication.</p>
+                        </div>
+                    </div>
+                    <div class="faq-accordion-item">
+                        <button class="faq-accordion-header">
+                            <span>What if I'm not satisfied with the report? Can I get a refund?</span>
+                            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </button>
+                        <div class="faq-accordion-content">
+                            <p>We offer 2 free deep-analysis credits so you can try before you buy. Because paid reports involve real-time data collection and AI processing costs, they are generally non-refundable once generated. If the report contains clear errors or cannot be delivered due to a system issue, please contact us (WeChat: flowaiagent) and we will prioritize a re-run or work out a resolution.</p>
+                        </div>
+                    </div>
+                    <div class="faq-accordion-item">
+                        <button class="faq-accordion-header">
+                            <span>How much does a paid report cost, and what payment methods are accepted?</span>
+                            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </button>
+                        <div class="faq-accordion-content">
+                            <p>After your 2 free credits are used, each deep competitor analysis report is priced at <strong>¥99</strong>, with WeChat Pay and Alipay accepted. After payment confirmation, your report will be delivered to your email within 30 minutes. For enterprise bulk purchases or subscription plans, contact us for custom pricing.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Report Showcase Section -->
+            <section class="report-showcase-section" style="padding: 60px 0;">
+                <h2 class="section-heading">Real Report Samples</h2>
+                <p style="text-align:center; color: var(--text-secondary); margin-bottom: 36px; font-size: 1rem;">The following are real AI-generated competitor analysis reports — click to view the full content</p>
+                <div class="showcase-cards" style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center; max-width:960px; margin:0 auto;">
+                    <a href="report.html?id=cat-litter-box" class="showcase-card" style="flex:1; min-width:260px; max-width:300px; border:1px solid var(--border-color); border-radius:12px; overflow:hidden; text-decoration:none; color:inherit; transition:box-shadow 0.2s, transform 0.2s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(0,0,0,0.12)';this.style.transform='translateY(-4px)'" onmouseout="this.style.boxShadow='';this.style.transform=''">
+                        <img src="images/cat-litter-box-hero.jpg" alt="Litter Box Competitor Analysis" style="width:100%; height:160px; object-fit:cover;">
+                        <div style="padding:16px;">
+                            <span style="font-size:12px; background:#e8f4fd; color:#1a73e8; padding:3px 8px; border-radius:20px;">Pet Supplies</span>
+                            <h4 style="margin:10px 0 6px; font-size:15px; line-height:1.4;">Litter Box Deep Analysis</h4>
+                            <p style="font-size:13px; color:var(--text-secondary); margin:0;">1,261 reviews mined, core pain points revealed</p>
+                            <div style="margin-top:12px; font-size:12px; color:var(--text-secondary);">⏱️ 12 min read &nbsp;·&nbsp; 📅 2025-12</div>
+                        </div>
+                    </a>
+                    <a href="report.html?id=pressure-washer" class="showcase-card" style="flex:1; min-width:260px; max-width:300px; border:1px solid var(--border-color); border-radius:12px; overflow:hidden; text-decoration:none; color:inherit; transition:box-shadow 0.2s, transform 0.2s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(0,0,0,0.12)';this.style.transform='translateY(-4px)'" onmouseout="this.style.boxShadow='';this.style.transform=''">
+                        <img src="images/pressure-washer-hero.jpg" alt="Pressure Washer Competitor Analysis" style="width:100%; height:160px; object-fit:cover;">
+                        <div style="padding:16px;">
+                            <span style="font-size:12px; background:#fff3e0; color:#e65100; padding:3px 8px; border-radius:20px;">Outdoor Tools</span>
+                            <h4 style="margin:10px 0 6px; font-size:15px; line-height:1.4;">Pressure Washer Analysis</h4>
+                            <p style="font-size:13px; color:var(--text-secondary); margin:0;">Leakage fix strategy, return rate down 22%</p>
+                            <div style="margin-top:12px; font-size:12px; color:var(--text-secondary);">⏱️ 9 min read &nbsp;·&nbsp; 📅 2025-12</div>
+                        </div>
+                    </a>
+                    <a href="report.html?id=ice-maker" class="showcase-card" style="flex:1; min-width:260px; max-width:300px; border:1px solid var(--border-color); border-radius:12px; overflow:hidden; text-decoration:none; color:inherit; transition:box-shadow 0.2s, transform 0.2s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(0,0,0,0.12)';this.style.transform='translateY(-4px)'" onmouseout="this.style.boxShadow='';this.style.transform=''">
+                        <img src="images/ice-maker-hero.jpg" alt="Ice Maker Competitor Analysis" style="width:100%; height:160px; object-fit:cover;">
+                        <div style="padding:16px;">
+                            <span style="font-size:12px; background:#f3e5f5; color:#7b1fa2; padding:3px 8px; border-radius:20px;">Home Appliances</span>
+                            <h4 style="margin:10px 0 6px; font-size:15px; line-height:1.4;">Countertop Ice Maker Deep AI Analysis</h4>
+                            <p style="font-size:13px; color:var(--text-secondary); margin:0;">Nugget ice market pain points and optimization</p>
+                            <div style="margin-top:12px; font-size:12px; color:var(--text-secondary);">⏱️ 10 min read &nbsp;·&nbsp; 📅 2025-12</div>
+                        </div>
+                    </a>
+                </div>
+                <div style="text-align:center; margin-top:32px;">
+                    <a href="cases_en.html" style="display:inline-block; padding:12px 32px; background:var(--primary-color); color:#fff; border-radius:8px; text-decoration:none; font-weight:600; font-size:15px; transition:opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">View All Report Samples →</a>
                 </div>
             </section>
         </main>
@@ -284,7 +398,11 @@
                     <h4>Contact Us</h4>
                     <ul class="footer-links">
                         <li>📧 support@flowaiagent.com</li>
-                        <li>💬 WeChat: FlowAI_Agent</li>
+                        <li>
+                            <button id="wechat-footer-btn" onclick="document.getElementById('wechat-qr-popup').classList.toggle('active')" style="background:none; border:none; cursor:pointer; padding:0; color:inherit; font-size:inherit; font-family:inherit;">
+                                💬 WeChat: FlowAI_Agent (tap for QR code)
+                            </button>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -299,6 +417,20 @@
         </footer>
     </div>
 
+    <!-- WeChat QR Floating Button -->
+    <div id="wechat-float-btn" title="Contact us on WeChat" onclick="document.getElementById('wechat-qr-popup').classList.toggle('active')" style="position:fixed; bottom:24px; right:24px; width:52px; height:52px; background:#07c160; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 16px rgba(7,193,96,0.4); z-index:999; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M8.5 10a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zm4 0a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/><path d="M0 6.5C0 3.46 3.582 1 8 1s8 2.46 8 5.5c0 1.983-1.31 3.72-3.3 4.736C13.252 12.388 14 13.884 14 15.5c0 2.485-2.596 4.5-5.8 4.5-.913 0-1.776-.176-2.544-.488L3 21l.78-2.34C1.514 17.674 0 16.686 0 15.5c0-1.616.748-3.112 2.3-4.264C.784 10.22 0 8.483 0 6.5zm8-4C4.134 2.5 1 4.243 1 6.5c0 1.526.943 2.885 2.517 3.78l.534.306-.193.58L3.3 12.7l1.583-.92.43.177C6.03 12.3 7 12.5 8 12.5c3.866 0 7-1.743 7-4s-3.134-4-7-4zm-1.9 9.34C5.49 12.29 4.8 12.5 4.2 12.5 2.43 12.5 1 13.897 1 15.5c0 .982.713 1.912 1.943 2.541l.535.278-.21.63L3 20.222l1.4-.933.41.16C5.47 19.807 6.22 20 7.2 20c2.646 0 4.8-1.57 4.8-3.5 0-1.378-.97-2.592-2.466-3.214l-.435-.18.001-.466z"/></svg>
+    </div>
+    <div id="wechat-qr-popup" style="display:none; position:fixed; bottom:86px; right:24px; background:#fff; border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,0.18); padding:20px; z-index:1000; text-align:center; width:180px;" onclick="event.stopPropagation()">
+        <p style="margin:0 0 12px; font-size:13px; color:#333; font-weight:600;">Scan to add on WeChat</p>
+        <img src="wechat_qr.jpg" alt="WeChat QR Code" style="width:140px; height:140px; object-fit:contain; border-radius:8px;">
+        <p style="margin:10px 0 0; font-size:12px; color:#888;">FlowAI_Agent</p>
+        <button onclick="document.getElementById('wechat-qr-popup').classList.remove('active')" style="margin-top:8px; font-size:12px; color:#999; background:none; border:none; cursor:pointer;">Close</button>
+    </div>
+    <style>
+        #wechat-qr-popup { display: none; }
+        #wechat-qr-popup.active { display: block; }
+    </style>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Hamburger Menu
@@ -321,6 +453,16 @@
                     });
                 });
             }
+
+            // Close WeChat popup on outside click
+            document.addEventListener('click', function(e) {
+                const popup = document.getElementById('wechat-qr-popup');
+                const btn = document.getElementById('wechat-float-btn');
+                const footerBtn = document.getElementById('wechat-footer-btn');
+                if (popup && popup.classList.contains('active') && !popup.contains(e.target) && e.target !== btn && e.target !== footerBtn && !btn.contains(e.target)) {
+                    popup.classList.remove('active');
+                }
+            });
 
             // FAQ Accordion
             document.querySelectorAll('.faq-accordion-header').forEach(button => {
