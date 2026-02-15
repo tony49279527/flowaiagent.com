@@ -63,6 +63,10 @@ async function loadReport(id) {
             return `<h${level} id="${escapedText}" style="scroll-margin-top: 100px;">${safeText}</h${level}>`;
         };
 
+        // Remove skeleton before injecting content
+        const skeleton = document.getElementById('report-skeleton');
+        if (skeleton) skeleton.remove();
+
         reportBody.innerHTML = marked.parse(markdown, { renderer: renderer });
 
         // 4. Generate TOC

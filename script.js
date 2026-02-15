@@ -360,10 +360,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }, 500);
 
-                // Send to n8n Webhook
+                // Send via backend proxy (keeps n8n URL server-side only)
                 let response;
                 try {
-                    response = await fetch('https://tony4927.app.n8n.cloud/webhook/1573cd32-8e6a-46ac-9d74-1e6f7c9ea5e7', {
+                    response = await fetch('/api/submit_analysis', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -408,9 +408,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 }, 1000);
 
             } else {
-                // Fallback if overlay is missing
+                // Fallback if overlay is missing — also goes via backend proxy
                 try {
-                    const fallbackRes = await fetch('https://tony4927.app.n8n.cloud/webhook/1573cd32-8e6a-46ac-9d74-1e6f7c9ea5e7', {
+                    const fallbackRes = await fetch('/api/submit_analysis', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

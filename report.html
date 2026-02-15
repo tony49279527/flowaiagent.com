@@ -639,7 +639,27 @@
                     </div>
 
                     <article id="report-body">
-                        <!-- Markdown content is rendered here -->
+                        <!-- Skeleton loader — replaced by report-loader.js on load -->
+                        <div id="report-skeleton" style="animation: skeletonPulse 1.4s ease-in-out infinite;">
+                            <div style="height:28px;background:#e2e8f0;border-radius:6px;margin-bottom:16px;width:55%;"></div>
+                            <div style="height:14px;background:#e2e8f0;border-radius:4px;margin-bottom:10px;width:100%;"></div>
+                            <div style="height:14px;background:#e2e8f0;border-radius:4px;margin-bottom:10px;width:90%;"></div>
+                            <div style="height:14px;background:#e2e8f0;border-radius:4px;margin-bottom:32px;width:75%;"></div>
+                            <div style="height:22px;background:#e2e8f0;border-radius:6px;margin-bottom:14px;width:40%;"></div>
+                            <div style="height:14px;background:#e2e8f0;border-radius:4px;margin-bottom:10px;width:100%;"></div>
+                            <div style="height:14px;background:#e2e8f0;border-radius:4px;margin-bottom:10px;width:85%;"></div>
+                            <div style="height:14px;background:#e2e8f0;border-radius:4px;margin-bottom:32px;width:95%;"></div>
+                            <div style="height:22px;background:#e2e8f0;border-radius:6px;margin-bottom:14px;width:45%;"></div>
+                            <div style="height:14px;background:#e2e8f0;border-radius:4px;margin-bottom:10px;width:100%;"></div>
+                            <div style="height:14px;background:#e2e8f0;border-radius:4px;margin-bottom:10px;width:80%;"></div>
+                            <div style="height:14px;background:#e2e8f0;border-radius:4px;margin-bottom:10px;width:92%;"></div>
+                        </div>
+                        <style>
+                            @keyframes skeletonPulse {
+                                0%, 100% { opacity: 1; }
+                                50% { opacity: 0.4; }
+                            }
+                        </style>
                     </article>
 
                     <!-- CTA Section -->
