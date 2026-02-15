@@ -1,4 +1,15 @@
 
+// Dynamic daily report count — seeded by date so same-day visits match
+(function () {
+    const el = document.getElementById('daily-report-count');
+    if (!el) return;
+    const today = new Date();
+    const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+    // Produces a number in range [87, 214] that changes each day
+    const count = 87 + (seed % 128);
+    el.textContent = count;
+})();
+
 // Function to fill the custom prompt textarea
 function fillPrompt(text) {
     const promptArea = document.getElementById('custom-prompt');
