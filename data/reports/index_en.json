@@ -46,13 +46,5 @@
         "tag": "Home Appliances",
         "summary": "Based on Antarctic Star & Silonn reviews to reveal core pain points and optimization moves.",
         "cover_image": "images/ice-maker-hero.jpg"
-    },
-    {
-        "id": "fabric-shaver-demo",
-        "title": "Amazon Competitor Analysis: Fabric Shaver (Demo)",
-        "date": "2025-01-28",
-        "tag": "Home & Living",
-        "summary": "Top 10 seller analysis focused on battery life and blade durability feedback.",
-        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=Fabric+Shaver"
     }
 ]

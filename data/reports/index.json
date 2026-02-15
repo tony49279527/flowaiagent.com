@@ -46,13 +46,5 @@
         "tag": "家用电器",
         "summary": "基于 Antarctic Star & Silonn 与多款竞品深度分析，揭秘颗粒冰市场的核心痛点与优化对策。",
         "cover_image": "images/ice-maker-hero.jpg"
-    },
-    {
-        "id": "fabric-shaver-demo",
-        "title": "Amazon 竞品分析: 充电式毛球修剪器 (Demo)",
-        "date": "2025-01-28",
-        "tag": "家居生活",
-        "summary": "分析 Top 10 热销款，挖掘用户对续航 and 刀网耐用性的真实反馈。",
-        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=Fabric+Shaver"
     }
 ]

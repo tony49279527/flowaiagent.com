@@ -29,37 +29,42 @@
 <body>
     <div class="app-container">
         <header class="main-header">
-            <div class="logo-section">
-                <div class="logo-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="lucide lucide-bot">
-                        <path d="M12 8V4H8" />
-                        <rect width="16" height="12" x="4" y="8" rx="2" />
-                        <path d="M2 14h2" />
-                        <path d="M20 14h2" />
-                        <path d="M15 13v2" />
-                        <path d="M9 13v2" />
-                    </svg>
+            <div class="header-inner">
+                <a href="index.html" class="logo-link">
+                    <div class="logo-section">
+                        <div class="logo-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-bot">
+                                <path d="M12 8V4H8" />
+                                <rect width="16" height="12" x="4" y="8" rx="2" />
+                                <path d="M2 14h2" />
+                                <path d="M20 14h2" />
+                                <path d="M15 13v2" />
+                                <path d="M9 13v2" />
+                            </svg>
+                        </div>
+                        <span class="logo-text">AI 竞品分析 <span class="logo-sub">Amazon Analysis Platform</span></span>
+                    </div>
+                </a>
+                <nav class="main-nav" id="mainNav" aria-label="Main navigation">
+                    <a href="index.html" class="nav-link">首页</a>
+                    <a href="create-analysis.html" class="nav-link">创建分析</a>
+                    <a href="cases.html" class="nav-link">案例展示</a>
+                    <a href="blog.html" class="nav-link">博客</a>
+                </nav>
+                <div class="header-right">
+                    <div class="lang-switch">
+                        <span class="lang-btn active">CN</span>
+                        <span class="lang-separator">/</span>
+                        <a href="success_en.html" class="lang-btn">EN</a>
+                    </div>
+                    <button class="hamburger-btn" id="hamburgerBtn" aria-label="菜单" aria-expanded="false">
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                    </button>
                 </div>
-                <span class="logo-text">AI 竞品分析 <span class="logo-sub">Amazon Analysis Platform</span></span>
-            </div>
-            <nav class="main-nav">
-                <a href="index.html" class="nav-link">首页</a>
-                <a href="create-analysis.html" class="nav-link">创建分析</a>
-                <a href="cases.html" class="nav-link">案例展示</a>
-                <a href="blog.html" class="nav-link">博客</a>
-            </nav>
-            <div class="header-right">
-                <div class="lang-switch">
-                    <span class="lang-btn active">CN</span>
-                    <a href="success_en.html" class="lang-btn">EN</a>
-                </div>
-                <button class="hamburger-btn" id="hamburgerBtn" aria-label="菜单" aria-expanded="false">
-                    <span class="hamburger-line"></span>
-                    <span class="hamburger-line"></span>
-                    <span class="hamburger-line"></span>
-                </button>
             </div>
         </header>
 
