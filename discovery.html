@@ -31,81 +31,92 @@
         }
 
         .discovery-hero {
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(16, 185, 129, 0.08));
-            border: 1px solid rgba(37, 99, 235, 0.18);
-            border-radius: 20px;
-            padding: 26px;
-            margin-bottom: 22px;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
         .discovery-hero h2 {
-            margin: 0 0 8px 0;
-            font-size: 1.38rem;
+            margin: 0 0 12px 0;
+            font-size: 1.5rem;
+            font-weight: 700;
             color: var(--text-main);
+            letter-spacing: -0.02em;
         }
 
         .discovery-hero p {
             margin: 0;
             color: var(--text-secondary);
             line-height: 1.7;
+            font-size: 1rem;
         }
 
         .quick-badges {
-            margin-top: 12px;
+            margin-top: 16px;
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px;
         }
 
         .quick-badge {
-            padding: 6px 10px;
-            font-size: 0.8rem;
+            padding: 6px 14px;
+            font-size: 0.85rem;
             border-radius: 999px;
-            border: 1px solid rgba(15, 23, 42, 0.08);
-            background: #fff;
-            color: #334155;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            background: white;
+            color: #4f46e5;
             font-weight: 600;
         }
 
         .discovery-form {
             background: var(--card-bg);
-            border-radius: 20px;
-            padding: 24px;
+            border-radius: 24px;
+            padding: 40px;
             border: 1px solid var(--border-color);
-            box-shadow: 0 12px 34px -24px rgba(15, 23, 42, 0.28);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .discovery-form:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.12);
         }
 
         .section-block {
-            padding: 18px;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
+            padding: 24px;
+            border: 1px solid #f1f5f9;
+            border-radius: 18px;
             background: #fbfdff;
-            margin-bottom: 14px;
+            margin-bottom: 24px;
         }
 
         .section-title {
-            margin: 0 0 6px 0;
-            font-size: 1.02rem;
-            color: #0f172a;
+            margin: 0 0 10px 0;
+            font-size: 1.15rem;
+            color: var(--text-main);
             font-weight: 700;
         }
 
         .section-note {
-            margin: 0 0 14px 0;
-            color: #64748b;
-            font-size: 0.86rem;
+            margin: 0 0 20px 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
         }
 
         .layout-2 {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 14px;
+            gap: 20px;
         }
 
         .layout-3 {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 12px;
+            gap: 20px;
         }
 
         .field {
@@ -115,8 +126,8 @@
         }
 
         .field label {
-            font-size: 0.9rem;
-            color: #0f172a;
+            font-size: 0.95rem;
+            color: var(--text-main);
             font-weight: 600;
         }
 
@@ -125,94 +136,135 @@
         .field textarea {
             width: 100%;
             padding: 12px 14px;
-            border-radius: 10px;
-            border: 1px solid #d5dde8;
-            background: #fff;
-            color: #0f172a;
-            font-size: 0.93rem;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background: var(--input-bg);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all 0.2s ease;
         }
 
         .field input:focus,
         .field select:focus,
         .field textarea:focus {
             outline: none;
-            border-color: rgba(37, 99, 235, 0.7);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+            border-color: var(--primary-color);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
         }
 
         .field textarea {
-            min-height: 90px;
+            min-height: 100px;
             resize: vertical;
         }
 
         .field-hint {
-            color: #64748b;
-            font-size: 0.82rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
             line-height: 1.5;
+            margin-top: 2px;
         }
 
         .focus-grid {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 10px;
+            gap: 12px;
         }
 
         .focus-btn {
-            border: 1px solid #d5dde8;
-            border-radius: 12px;
-            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            background: white;
             text-align: left;
-            padding: 12px;
+            padding: 16px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .focus-btn strong {
             display: block;
-            margin-bottom: 5px;
-            font-size: 0.92rem;
-            color: #0f172a;
+            font-size: 1rem;
+            color: var(--text-main);
+            font-weight: 700;
         }
 
         .focus-btn span {
-            color: #64748b;
-            font-size: 0.82rem;
-            line-height: 1.4;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .focus-btn:hover {
+            border-color: #cbd5e1;
+            background: #f8fafc;
+            transform: translateY(-2px);
         }
 
         .focus-btn.active {
-            border-color: #2563eb;
-            background: rgba(37, 99, 235, 0.06);
-            box-shadow: 0 10px 24px -20px rgba(37, 99, 235, 0.8);
+            border-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.04);
+            box-shadow: 0 10px 20px -10px rgba(37, 99, 235, 0.3);
+            position: relative;
+        }
+
+        .focus-btn.active::after {
+            content: '✓';
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--primary-color);
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
         }
 
         .error-text {
-            color: #b91c1c;
-            font-size: 0.82rem;
+            color: #ef4444;
+            font-size: 0.85rem;
             min-height: 20px;
             margin-top: 6px;
         }
 
         .summary-box {
             border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 12px;
+            border-radius: 14px;
+            padding: 16px;
             background: #f8fafc;
             color: #334155;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             line-height: 1.7;
-            margin-bottom: 14px;
+            margin-bottom: 20px;
             white-space: pre-line;
         }
 
         .submit-row {
-            margin-top: 18px;
+            margin-top: 30px;
             display: flex;
-            justify-content: flex-end;
+            justify-content: center;
+        }
+
+        .submit-btn {
+            padding: 16px 64px;
+            font-size: 1.15rem;
+        }
+
+        .page-header {
+            padding: 20px 24px 20px;
+            text-align: center;
         }
 
         @media (max-width: 900px) {
+
             .layout-2,
             .layout-3,
             .focus-grid {
@@ -220,11 +272,11 @@
             }
 
             .discovery-form {
-                padding: 16px;
+                padding: 24px 16px;
             }
 
             .discovery-hero {
-                padding: 18px;
+                padding: 24px 20px;
             }
 
             .submit-row .submit-btn {
@@ -308,104 +360,162 @@
 
                 <form class="discovery-form" id="discoveryForm">
                     <div class="section-block">
-                        <h3 class="section-title">1. 市场与类目</h3>
-                        <p class="section-note">使用接近亚马逊站点目录的英文类目，便于后续检索和对比。</p>
+                        <h3 class="section-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                stroke-linejoin="round"
+                                style="margin-right: 8px; vertical-align: bottom; color: var(--primary-color);">
+                                <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z" />
+                                <path d="M3 9V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4" />
+                            </svg>
+                            1. 市场基础定义 (Market Context)
+                        </h3>
+                        <p class="section-note">精准的类目和关键词是 AI 生成高质量报告的基础。</p>
+
                         <div class="layout-3">
                             <div class="field">
-                                <label for="cat-level-1">Main Category <span class="required">*</span></label>
+                                <label for="cat-level-1">主类目 (Main Category) <span class="required">*</span></label>
                                 <select id="cat-level-1" required>
-                                    <option value="">选择 Main Category</option>
+                                    <option value="">选择主类目</option>
                                 </select>
                             </div>
                             <div class="field">
-                                <label for="cat-level-2">Sub-Category</label>
+                                <label for="cat-level-2">子类目 (Sub-Category)</label>
                                 <select id="cat-level-2" disabled>
-                                    <option value="">选择 Sub-Category</option>
+                                    <option value="">选择子类目 (Sub-Category)</option>
                                 </select>
                             </div>
                             <div class="field">
-                                <label for="cat-level-3">Product Type</label>
+                                <label for="cat-level-3">产品类型 (Product Type)</label>
                                 <select id="cat-level-3" disabled>
-                                    <option value="">选择 Product Type</option>
+                                    <option value="">选择产品类型 (Product Type)</option>
                                 </select>
                             </div>
                         </div>
 
-                        <div class="layout-2" style="margin-top: 12px;">
+                        <div class="field" style="margin-top: 20px;">
+                            <label for="product-keywords">产品关键词 (Product Keywords) <span
+                                    class="required">*</span></label>
+                            <input id="product-keywords" type="text"
+                                placeholder="例如：cordless vacuum cleaner, anti-slip yoga mat" required>
+                            <div class="field-hint">建议填写 2-6 个核心英文词，确保 AI 抓取的竞争环境准确且具备代表性。</div>
+                        </div>
+
+                        <div class="layout-2"
+                            style="margin-top: 24px; padding-top: 20px; border-top: 1px dashed #e2e8f0;">
                             <div class="field">
-                                <label for="product-keywords">Product Keywords（英文） <span class="required">*</span></label>
-                                <input id="product-keywords" type="text"
-                                    placeholder="e.g., cordless vacuum cleaner, anti-slip yoga mat" required>
-                                <div class="field-hint">建议填写 2-6 个核心词，便于精确抓取搜索结果与竞品。</div>
-                            </div>
-                            <div class="field">
-                                <label for="marketplace">Marketplace <span class="required">*</span></label>
+                                <label for="marketplace">目标站点 (Marketplace) <span class="required">*</span></label>
                                 <select id="marketplace" required>
-                                    <option value="US" selected>US - United States</option>
-                                    <option value="CA">CA - Canada</option>
-                                    <option value="GB">GB - United Kingdom</option>
-                                    <option value="DE">DE - Germany</option>
-                                    <option value="FR">FR - France</option>
-                                    <option value="IT">IT - Italy</option>
-                                    <option value="ES">ES - Spain</option>
-                                    <option value="JP">JP - Japan</option>
+                                    <option value="US" selected>美国站 - United States (US)</option>
+                                    <option value="CA">加拿大站 - Canada (CA)</option>
+                                    <option value="GB">英国站 - United Kingdom (GB)</option>
+                                    <option value="DE">德国站 - Germany (DE)</option>
+                                    <option value="FR">法国站 - France (FR)</option>
+                                    <option value="IT">意大利站 - Italy (IT)</option>
+                                    <option value="ES">西班牙站 - Spain (ES)</option>
+                                    <option value="JP">日本站 - Japan (JP)</option>
                                 </select>
                             </div>
+                            <div class="field">
+                                <label for="analysis-lang">报告生成语言</label>
+                                <select id="analysis-lang">
+                                    <option value="zh" selected>中文 (核心叙述)</option>
+                                    <option value="en">English (Full)</option>
+                                </select>
+                                <div class="field-hint" style="font-size: 0.8em; color: var(--primary-color);">*
+                                    选定中文时，系统将以中文为主叙述，原始关键词与原话保留站点语言。</div>
+                            </div>
+                        </div>
+
+                        <div class="field" style="margin-top: 16px;">
+                            <label>目标价格区间 (可选)</label>
+                            <div style="display: flex; align-items: center; gap: 12px; max-width: 320px;">
+                                <input id="price-min" type="number" min="0" step="0.01" placeholder="Min"
+                                    style="flex: 1;">
+                                <span style="color: var(--text-secondary); font-weight: bold;">-</span>
+                                <input id="price-max" type="number" min="0" step="0.01" placeholder="Max"
+                                    style="flex: 1;">
+                            </div>
+                            <div class="error-text" id="priceError" style="min-height: 0; margin-top: 4px;"></div>
                         </div>
                     </div>
 
                     <div class="section-block">
-                        <h3 class="section-title">2. 竞品与价格范围（可选）</h3>
-                        <div class="layout-2">
-                            <div class="field">
-                                <label for="reference-asins">Reference ASINs</label>
-                                <textarea id="reference-asins"
-                                    placeholder="B0XXXXXXXX\nB0YYYYYYYY\n留空则按关键词自动发现"></textarea>
-                                <div class="field-hint">每行一个 ASIN。系统会自动清洗成 10 位大写编码。</div>
-                            </div>
-                            <div class="field">
-                                <label>目标价格带</label>
-                                <div class="layout-2">
-                                    <input id="price-min" type="number" min="0" step="0.01" placeholder="Min">
-                                    <input id="price-max" type="number" min="0" step="0.01" placeholder="Max">
-                                </div>
-                                <div class="field-hint">币种按站点解释：US=USD, DE=EUR, JP=JPY。</div>
-                                <div class="error-text" id="priceError"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="section-block">
-                        <h3 class="section-title">3. 分析重点与输出</h3>
-                        <p class="section-note">可多选，至少保留 1 项。</p>
+                        <h3 class="section-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                stroke-linejoin="round"
+                                style="margin-right: 8px; vertical-align: bottom; color: var(--primary-color);">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="m9 12 2 2 4-4" />
+                            </svg>
+                            2. 分析重点 (Analysis Focus)
+                        </h3>
+                        <p class="section-note">请选择您最关注的分析维度（可多选）。</p>
                         <div class="focus-grid" id="focusGrid">
                             <button type="button" class="focus-btn active" data-value="market-entry">
-                                <strong>Market Entry</strong>
+                                <strong>市场进入评估 (Market Entry)</strong>
                                 <span>评估进入价值与竞争门槛</span>
                             </button>
                             <button type="button" class="focus-btn" data-value="differentiation">
-                                <strong>Differentiation</strong>
+                                <strong>产品差异化 (Differentiation)</strong>
                                 <span>识别功能和卖点差异化机会</span>
                             </button>
                             <button type="button" class="focus-btn" data-value="pricing">
-                                <strong>Pricing Strategy</strong>
+                                <strong>定价策略 (Pricing Strategy)</strong>
                                 <span>建议价格区间与利润风险</span>
                             </button>
                         </div>
+                    </div>
 
-                        <div class="layout-2" style="margin-top: 12px;">
-                            <div class="field">
-                                <label for="analysis-lang">报告语言</label>
-                                <select id="analysis-lang">
-                                    <option value="zh" selected>中文（默认）</option>
-                                    <option value="en">English</option>
-                                </select>
-                            </div>
-                            <div class="field">
-                                <label for="discovery-prompt">补充要求（可选）</label>
-                                <textarea id="discovery-prompt" style="min-height: 86px;"
-                                    placeholder="例如：重点关注德国站中评差评里的结构性痛点"></textarea>
-                            </div>
+                    <div class="section-block">
+                        <h3 class="section-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                stroke-linejoin="round"
+                                style="margin-right: 8px; vertical-align: bottom; color: var(--primary-color);">
+                                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                                <polyline points="14 2 14 8 20 8" />
+                            </svg>
+                            3. 补充参考信息 (Supplementary)
+                        </h3>
+
+                        <div class="field" style="margin-bottom: 24px;">
+                            <label for="reference-asins">参考 ASIN (可选)</label>
+                            <textarea id="reference-asins"
+                                placeholder="B0XXXXXXXX&#10;B0YYYYYYYY&#10;留空则按关键词由系统自动发现竞品"></textarea>
+                            <div class="field-hint">如果您已有确定的核心竞品，填入其 ASIN 能让分析更具针对性。</div>
+                        </div>
+
+                        <div class="field">
+                            <label for="discovery-prompt">个性化提示要求 (可选)</label>
+                            <textarea id="discovery-prompt" style="min-height: 100px;"
+                                placeholder="例如：重点关注该类目在德国站中评差评里的结构性痛点，或指定分析特定功能模块。"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="section-block">
+                        <h3 class="section-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                stroke-linejoin="round"
+                                style="margin-right: 8px; vertical-align: bottom; color: var(--primary-color);">
+                                <path
+                                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                                <line x1="12" y1="22.08" x2="12" y2="12" />
+                            </svg>
+                            4. 模型选择 (AI Model Selection)
+                        </h3>
+                        <div class="field">
+                            <label for="ai-model">选择 AI 模型</label>
+                            <select id="ai-model" class="modern-select">
+                                <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet (最强逻辑)</option>
+                                <option value="openai/gpt-4o">GPT-4o (全面均衡)</option>
+                                <option value="google/gemini-2.0-flash-001">Gemini 2.0 Flash (响应极速)</option>
+                                <option value="deepseek/deepseek-chat">DeepSeek Chat (深度思考)</option>
+                                <option value="anthropic/claude-3-haiku">Claude 3 Haiku (高效性价比)</option>
+                            </select>
                         </div>
                     </div>
 
@@ -434,7 +544,8 @@
                         </div>
                         <div class="form-group">
                             <label for="modal-email">接收邮箱 <span class="required">*</span></label>
-                            <input type="email" id="modal-email" name="userEmail" required placeholder="name@example.com">
+                            <input type="email" id="modal-email" name="userEmail" required
+                                placeholder="name@example.com">
                         </div>
                         <div class="form-group">
                             <label for="modal-industry">行业类目 <span class="required">*</span></label>
@@ -541,7 +652,13 @@
             ? amazonCategories
             : fallbackDiscoveryCategories;
 
-        const WEBHOOK_URL = 'https://tony4927.app.n8n.cloud/webhook/1573cd32-8e6a-46ac-9d74-1e6f7c9ea5e7';
+        // Analysis methodology configuration
+        const DISCOVERY_STEPS = [
+            { text: '正在进行市场存量与类目竞争度分析...', duration: 2000 },
+            { text: '正在探测潜在的蓝海差异化切入点...', duration: 2000 },
+            { text: '正在基于竞品价格分布进行定价策略建模...', duration: 1500 },
+            { text: '正在合成您的中外双语对照决策报告...', duration: 1500 }
+        ];
 
         const discoveryForm = document.getElementById('discoveryForm');
         const leadGenModal = document.getElementById('leadGenModal');
@@ -646,7 +763,8 @@
                 target_price_min: document.getElementById('price-min').value.trim(),
                 target_price_max: document.getElementById('price-max').value.trim(),
                 report_language: document.getElementById('analysis-lang').value,
-                custom_prompt: document.getElementById('discovery-prompt').value.trim()
+                custom_prompt: document.getElementById('discovery-prompt').value.trim(),
+                ai_model: document.getElementById('ai-model').value
             };
         }
 
@@ -657,6 +775,7 @@
                 'Category: ' + (payload.category_path || payload.category_main),
                 'Keywords: ' + payload.keywords,
                 'Marketplace: ' + payload.marketplace,
+                'AI Model: ' + payload.ai_model,
                 'Focus: ' + payload.focus_areas.join(', '),
                 'Reference ASINs: ' + asins,
                 (payload.invalid_asin_count > 0 ? ('Invalid ASIN dropped: ' + payload.invalid_asin_count) : '')
@@ -676,8 +795,8 @@
         }
 
         level1.addEventListener('change', function () {
-            resetSelect(level2, '选择 Sub-Category');
-            resetSelect(level3, '选择 Product Type');
+            resetSelect(level2, '选择子类目 (Sub-Category)');
+            resetSelect(level3, '选择产品类型 (Product Type)');
             const main = level1.value;
             if (!main) return;
 
@@ -724,11 +843,11 @@
 
             const payload = getFormData();
             if (!payload.category_main || !payload.keywords) {
-                alert('请先完成必填项：Main Category 和 Product Keywords。');
+                alert('请先完成必填项：主类目 (Main Category) 和 产品关键词 (Product Keywords)。');
                 return;
             }
             if (!/[A-Za-z]/.test(payload.keywords)) {
-                alert('Product Keywords 建议使用英文关键词，以匹配 Amazon US/GB/DE 站点搜索语义。');
+                alert('产品关键词 (Product Keywords) 建议使用英文关键词，以更精准匹配 Amazon 站点的搜索语义。');
                 return;
             }
 
@@ -752,55 +871,79 @@
             const submitBtn = leadGenForm.querySelector('.modal-submit-btn');
             const btnText = submitBtn.querySelector('.btn-text');
             const btnLoading = submitBtn.querySelector('.btn-loading');
-            const interval = startProgress('正在提交任务...');
-            let submitSuccess = false;
 
+            // UI state
             submitBtn.disabled = true;
             btnText.style.display = 'none';
             btnLoading.style.display = 'inline-block';
 
             try {
                 const formPayload = getFormData();
+                const userName = document.getElementById('modal-name').value.trim();
+                const userEmail = document.getElementById('modal-email').value.trim().toLowerCase();
+                const industry = document.getElementById('modal-industry').value.trim();
+
                 const finalPayload = {
                     ...formPayload,
-                    user_name: document.getElementById('modal-name').value.trim(),
-                    user_email: document.getElementById('modal-email').value.trim().toLowerCase(),
-                    industry: document.getElementById('modal-industry').value.trim(),
+                    user_name: userName,
+                    user_email: userEmail,
+                    industry: industry,
                     submitted_at: new Date().toISOString()
                 };
 
-                const controller = new AbortController();
-                const timeout = setTimeout(function () { controller.abort(); }, 25000);
-                let response;
-                try {
-                    response = await fetch(WEBHOOK_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(finalPayload),
-                        signal: controller.signal
-                    });
-                } finally {
-                    clearTimeout(timeout);
-                }
+                // Store submission locally for session reference
+                localStorage.setItem('last_discovery_request', JSON.stringify(finalPayload));
+
+                // Show Progress Overlay (Initial Step)
+                progressOverlay.classList.add('active');
+                leadGenModal.classList.remove('active');
+                progressStatus.textContent = '正在初始化 AI 选品引擎...';
+                progressBar.style.width = '10%';
+
+                // --- NEW: Submit to Local Python Backend ---
+                // Default port 8081 as per discovery_server.py
+                const BACKEND_URL = 'http://localhost:8081/api/discovery/submit';
+
+                const response = await fetch(BACKEND_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(finalPayload)
+                });
 
                 if (!response.ok) {
-                    throw new Error('request_failed');
+                    throw new Error('Backend submission failed');
                 }
 
-                submitSuccess = true;
-                progressBar.style.width = '100%';
-                progressStatus.textContent = '提交成功，正在跳转...';
-                setTimeout(function () {
-                    window.location.href = 'success.html';
-                }, 900);
-            } catch (error) {
-                progressOverlay.classList.remove('active');
-                alert('提交失败，请稍后重试。若重复失败，请联系 support@flowaiagent.com。');
-            } finally {
-                clearInterval(interval);
-                if (submitSuccess) {
-                    leadGenModal.classList.remove('active');
+                const result = await response.json();
+                const taskId = result.task_id;
+
+                // For the "Effect", we still run the methodology simulation for a few seconds
+                // so the user sees the "Discovery Steps" as requested, then redirect.
+
+                let currentStep = 0;
+                const totalSteps = DISCOVERY_STEPS.length;
+
+                for (const step of DISCOVERY_STEPS) {
+                    currentStep++;
+                    progressStatus.textContent = step.text;
+                    const baseProgress = 10 + ((currentStep - 1) / totalSteps) * 90;
+                    progressBar.style.width = baseProgress + '%';
+                    await new Promise(resolve => setTimeout(resolve, 800)); // Faster simulation since backend is working
                 }
+
+                progressBar.style.width = '100%';
+                progressStatus.textContent = '初始化完成，跳转至进度页...';
+
+                setTimeout(function () {
+                    // Redirect to a dedicated processing page that polls for task status
+                    window.location.href = `discovery_processing.html?taskId=${taskId}&email=${encodeURIComponent(userEmail)}&model=${encodeURIComponent(finalPayload.ai_model)}`;
+                }, 800);
+
+            } catch (error) {
+                console.error('Discovery process error:', error);
+                progressOverlay.classList.remove('active');
+                alert('系统繁忙或服务器未启动，请稍后重试。');
+            } finally {
                 submitBtn.disabled = false;
                 btnText.style.display = 'inline-block';
                 btnLoading.style.display = 'none';

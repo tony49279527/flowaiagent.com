@@ -285,6 +285,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 personaContents.push({ filename: personaFiles[i].name, content: content });
             }
 
+            // Bilingual Language Strategy: Main Chinese, Auxiliary Marketplace Language
+            const isChinese = (rawData.language === 'zh');
+            let finalPrompt = rawData.customPrompt || '';
+
+            if (isChinese) {
+                const langInstruction = "\n\n[Language Requirement]: \n1. 整体报告必须以中文（简体）撰写，确保叙述逻辑符合中国卖家的阅读习惯。\n2. 亚马逊站点的原始关键词、应用场景词、用户原话引用以及特定术语，请保留原始语言（英文/德文/日文等）或采用中外文对照形式，以确保数据分析的精准性和专业度。";
+                finalPrompt += langInstruction;
+            }
+
             // Construct the final payload with correct keys and types
             const payload = {
                 user_name: rawData.userName,
@@ -293,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 main_asins: rawData.mainAsin ? rawData.mainAsin.split('\n').map(s => s.trim()).filter(s => s) : [],
                 competitor_asins: rawData.compAsin ? rawData.compAsin.split('\n').map(s => s.trim()).filter(s => s) : [],
                 language: rawData.language,
-                custom_prompt: rawData.customPrompt,
+                custom_prompt: finalPrompt,
                 reference_site_count: parseInt(rawData.siteCount) || 10,
                 reference_youtube_count: parseInt(rawData.youtubeCount) || 10,
                 review_doc_link: "",
