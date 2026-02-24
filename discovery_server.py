@@ -23,13 +23,19 @@ CORS(app)
 DB_FILE = 'discovery_tasks.db'
 
 # --- Configuration (To be provided by user via Env Vars) ---
-OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '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')
+try:
+    from dotenv import load_dotenv
+    load_dotenv('.env.discovery')
+except ImportError:
+    pass
+
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
 OPENAI_BASE_URL = os.environ.get('OPENAI_BASE_URL', 'https://openrouter.ai/api/v1')
 DEFAULT_MODEL = os.environ.get('OPENAI_MODEL', 'anthropic/claude-3.5-sonnet')
 SMTP_SERVER = os.environ.get('SMTP_SERVER', 'smtp.gmail.com')
 SMTP_PORT = int(os.environ.get('SMTP_PORT', 587))
-SMTP_USER = os.environ.get('SMTP_USER', 'leetony4927@gmail.com')
-SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD', 'yxscamljdghumpco')
+SMTP_USER = os.environ.get('SMTP_USER', '')
+SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD', '')
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', SMTP_USER)
 
 def get_db_connection():
