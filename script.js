@@ -361,7 +361,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Send to n8n Webhook
                 let response;
                 try {
-                    response = await fetch('https://tony4927.app.n8n.cloud/webhook/1573cd32-8e6a-46ac-9d74-1e6f7c9ea5e7', {
+                    response = await fetch('/api/submit_analysis', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -408,7 +408,7 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 // Fallback if overlay is missing
                 try {
-                    const fallbackRes = await fetch('https://tony4927.app.n8n.cloud/webhook/1573cd32-8e6a-46ac-9d74-1e6f7c9ea5e7', {
+                    const fallbackRes = await fetch('/api/submit_analysis', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

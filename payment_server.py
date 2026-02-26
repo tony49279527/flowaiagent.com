@@ -198,8 +198,8 @@ def create_order():
     finally:
         conn.close()
 
-# n8n Webhook URL for report generation
-N8N_WEBHOOK_URL = 'https://tony4927.app.n8n.cloud/webhook/1573cd32-8e6a-46ac-9d74-1e6f7c9ea5e7'
+# n8n Webhook URL for report generation (use environment variable)
+N8N_WEBHOOK_URL = os.environ.get('N8N_WEBHOOK_URL', '')
 
 def trigger_n8n_webhook(order_data):
     """Trigger n8n webhook to generate report"""
@@ -321,6 +321,36 @@ def update_status():
         })
     except Exception as e:
         logger.error(f"DB Update Error: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/submit_analysis', methods=['POST'])
+def submit_analysis():
+    """Proxy endpoint for frontend to submit analysis requests to n8n webhook"""
+    if not N8N_WEBHOOK_URL:
+        logger.error("N8N_WEBHOOK_URL not configured")
+        return jsonify({"error": "Webhook not configured"}), 500
+
+    try:
+        data = request.get_json(silent=True) or {}
+        logger.info(f"Proxying analysis request to n8n: {list(data.keys())}")
+
+        response = requests.post(
+            N8N_WEBHOOK_URL,
+            json=data,
+            headers={'Content-Type': 'application/json'},
+            timeout=30
+        )
+
+        if response.ok:
+            return jsonify({"ok": True, "status": response.status_code}), 200
+        else:
+            logger.warning(f"n8n webhook returned {response.status_code}")
+            return jsonify({"ok": False, "status": response.status_code}), 502
+    except requests.Timeout:
+        logger.error("n8n webhook timeout")
+        return jsonify({"error": "Webhook timeout"}), 504
+    except Exception as e:
+        logger.error(f"Submit analysis error: {e}")
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':

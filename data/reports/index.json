@@ -3,61 +3,91 @@
         "id": "制冰机-g3-0",
         "title": "亚马逊 AI 竞品分析报告：制冰机",
         "date": "2026-02-01",
-        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=制冰机"
+        "tag": "家用电器",
+        "summary": "台式制冰机市场深度分析，涵盖冰块产量、噪音控制及用户核心痛点。",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=制冰机",
+        "read_time": "10 分钟阅读"
     },
     {
         "id": "汽车抛光机套件-c4-5",
         "title": "亚马逊 AI 竞品分析报告：汽车抛光机套件",
         "date": "2026-02-01",
-        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=汽车抛光机"
+        "tag": "汽配保养",
+        "summary": "入门级与专业级抛光机套件对比分析，差异化卖点挖掘与定价策略。",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=汽车抛光机",
+        "read_time": "11 分钟阅读"
     },
     {
         "id": "折叠露营车-g-3-0",
         "title": "亚马逊 AI 竞品分析报告：折叠露营车",
         "date": "2026-02-01",
-        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=折叠露营车"
+        "tag": "户外运动",
+        "summary": "户外露营车市场调研，承重能力、折叠便携性与材质耐用性分析。",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=折叠露营车",
+        "read_time": "9 分钟阅读"
     },
     {
         "id": "猫砂盆-c4-5",
         "title": "亚马逊 AI 竞品分析报告：猫砂盆",
         "date": "2026-02-01",
-        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=猫砂盆"
+        "tag": "宠物用品",
+        "summary": "智能与传统猫砂盆对比，气味控制、清洁便利性及用户反馈深度分析。",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=猫砂盆",
+        "read_time": "12 分钟阅读"
     },
     {
         "id": "电动高压清洗机-c4-5",
         "title": "亚马逊 AI 竞品分析报告：电动高压清洗机",
         "date": "2026-02-01",
-        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=电动高压清洗机"
+        "tag": "户外工具",
+        "summary": "家用高压清洗机市场分析，压力性能、漏水问题与配件质量调研。",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=电动高压清洗机",
+        "read_time": "14 分钟阅读"
     },
     {
         "id": "4-5-inch-flap-discs-百叶轮-抛光片",
-        "title": "亚马逊 AI 竞品分析报告：4.5 Inch Flap Discs (百叶轮:抛光片)",
+        "title": "亚马逊 AI 竞品分析报告：4.5 Inch Flap Discs (百叶轮/抛光片)",
         "date": "2026-02-01",
-        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=Flap+Discs"
+        "tag": "五金工具",
+        "summary": "工业级百叶轮市场分析，磨削效率、耐用性与性价比对比。",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=Flap+Discs",
+        "read_time": "8 分钟阅读"
     },
     {
         "id": "扭力扳手-torque-wrench-o5-1",
         "title": "亚马逊 AI 竞品分析报告：扭力扳手 (Torque Wrench)",
         "date": "2026-02-01",
-        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=扭力扳手"
+        "tag": "五金工具",
+        "summary": "专业扭力扳手市场深度分析，精度校准、扭矩范围与品牌信任度。",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=扭力扳手",
+        "read_time": "10 分钟阅读"
     },
     {
         "id": "行车记录仪-g3-0",
         "title": "亚马逊 AI 竞品分析报告：行车记录仪",
         "date": "2026-02-01",
-        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=行车记录仪"
+        "tag": "汽车电子",
+        "summary": "前后双录行车记录仪市场调研，画质清晰度、夜视效果与存储方案分析。",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=行车记录仪",
+        "read_time": "9 分钟阅读"
     },
     {
         "id": "家用手电钻-g3-0",
         "title": "亚马逊 AI 竞品分析报告：家用手电钻",
         "date": "2026-02-01",
-        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=家用手电钻"
+        "tag": "五金工具",
+        "summary": "8V-20V家用电钻市场分析，电池续航、扭矩输出与人体工学设计。",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=家用手电钻",
+        "read_time": "11 分钟阅读"
     },
     {
         "id": "激光水平仪-laser-level-o5-1",
         "title": "亚马逊 AI 竞品分析报告：激光水平仪 (Laser Level)",
         "date": "2026-02-01",
-        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=激光水平仪"
+        "tag": "五金工具",
+        "summary": "多线激光水平仪市场调研，精度稳定性、可视距离与自动校准功能分析。",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=激光水平仪",
+        "read_time": "10 分钟阅读"
     },
     {
         "id": "cat-litter-box",
@@ -65,7 +95,8 @@
         "date": "2025-12-05",
         "tag": "宠物用品",
         "summary": "深度挖掘 1,261 条评论，揭秘猫砂盆市场的核心用户痛点与 Listing 优化策略。",
-        "cover_image": "images/cat-litter-box-hero.jpg"
+        "cover_image": "images/cat-litter-box-hero.jpg",
+        "read_time": "12 分钟阅读"
     },
     {
         "id": "pressure-washer",
@@ -73,7 +104,8 @@
         "date": "2025-12-05",
         "tag": "户外工具",
         "summary": "对比 Paxcess 与核心竞品，提供针对漏水、压力不足等核心痛点的全套解决方案。",
-        "cover_image": "images/pressure-washer-hero.jpg"
+        "cover_image": "images/pressure-washer-hero.jpg",
+        "read_time": "9 分钟阅读"
     },
     {
         "id": "polisher",
@@ -81,7 +113,8 @@
         "date": "2025-12-05",
         "tag": "汽配保养",
         "summary": "针对入门与专业抛光市场，分析 2025 年热销套件的差异化卖点与运营方向。",
-        "cover_image": "images/polisher-hero.jpg"
+        "cover_image": "images/polisher-hero.jpg",
+        "read_time": "11 分钟阅读"
     },
     {
         "id": "torque-wrench",
@@ -89,7 +122,8 @@
         "date": "2025-12-05",
         "tag": "五金工具",
         "summary": "聚焦 CRAFTSMAN 等品牌，探讨中高扭矩范围内工具的精度保证与用户信任建立。",
-        "cover_image": "images/torque-wrench-hero.jpg"
+        "cover_image": "images/torque-wrench-hero.jpg",
+        "read_time": "8 分钟阅读"
     },
     {
         "id": "power-tools",
@@ -97,7 +131,8 @@
         "date": "2025-12-05",
         "tag": "五金工具",
         "summary": "从家具组装到挂画安装，全方位分析 8V-20V 电动工具的细分市场机遇。",
-        "cover_image": "images/power-tools-hero.jpg"
+        "cover_image": "images/power-tools-hero.jpg",
+        "read_time": "14 分钟阅读"
     },
     {
         "id": "ice-maker",
@@ -105,14 +140,16 @@
         "date": "2025-12-05",
         "tag": "家用电器",
         "summary": "基于 Antarctic Star & Silonn 与多款竞品深度分析，揭秘颗粒冰市场的核心痛点与优化对策。",
-        "cover_image": "images/ice-maker-hero.jpg"
+        "cover_image": "images/ice-maker-hero.jpg",
+        "read_time": "10 分钟阅读"
     },
     {
         "id": "fabric-shaver-demo",
         "title": "Amazon 竞品分析: 充电式毛球修剪器 (Demo)",
         "date": "2025-01-28",
         "tag": "家居生活",
-        "summary": "分析 Top 10 热销款，挖掘用户对续航 and 刀网耐用性的真实反馈。",
-        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=Fabric+Shaver"
+        "summary": "分析 Top 10 热销款，挖掘用户对续航和刀网耐用性的真实反馈。",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=Fabric+Shaver",
+        "read_time": "8 分钟阅读"
     }
 ]
