@@ -192,36 +192,39 @@ function setupFeatures(data) {
 function generateTOC(contentEl, tocEl) {
     if (!tocEl) return;
 
-    const headings = contentEl.querySelectorAll('h1, h2, h3');
-    if (headings.length === 0) return;
+    const headings = contentEl.querySelectorAll('h2, h3');
+    if (headings.length === 0) {
+        tocEl.parentElement.style.display = 'none';
+        return;
+    }
 
     const tocList = document.createElement('ul');
     tocList.className = 'toc-list';
 
-    headings.forEach((heading, index) => {
+    headings.forEach((heading) => {
         const level = parseInt(heading.tagName.substring(1));
-        if (level === 1 && index > 0) return; // Skip title if it's already in the header
-
         const li = document.createElement('li');
         li.className = `toc-item toc-level-${level}`;
 
         const a = document.createElement('a');
         a.href = '#' + heading.id;
         a.textContent = heading.textContent;
+
         a.addEventListener('click', (e) => {
             e.preventDefault();
             const targetElement = document.getElementById(heading.id);
             if (targetElement) {
                 const offset = 100;
-                const bodyRect = document.body.getBoundingClientRect().top;
-                const elementRect = targetElement.getBoundingClientRect().top;
-                const elementPosition = elementRect - bodyRect;
+                const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
                 const offsetPosition = elementPosition - offset;
 
                 window.scrollTo({
                     top: offsetPosition,
                     behavior: 'smooth'
                 });
+
+                // Update URL without jump
+                history.pushState(null, null, '#' + heading.id);
             }
         });
 
@@ -229,43 +232,50 @@ function generateTOC(contentEl, tocEl) {
         tocList.appendChild(li);
     });
 
-    tocEl.innerHTML = '<h3>目录</h3>';
+    tocEl.innerHTML = ''; // Already has "报告目录" in HTML
     tocEl.appendChild(tocList);
 
     // Initial highlight
-    highlightTOC(headings);
+    setupScrollSpy(headings);
 
-    // Scroll highlight
-    window.addEventListener('scroll', () => {
-        highlightTOC(headings);
-        updateProgressBar();
-    });
+    // Progress Bar
+    window.addEventListener('scroll', updateProgressBar);
+}
+
+function setupScrollSpy(headings) {
+    const tocLinks = document.querySelectorAll('.toc-list a');
+
+    const observerOptions = {
+        root: null,
+        rootMargin: '-100px 0px -70% 0px',
+        threshold: 0
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.getAttribute('id');
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + id) {
+                        link.classList.add('active');
+                        // Ensure active item is visible in sidebar
+                        link.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+                    }
+                });
+            }
+        });
+    }, observerOptions);
+
+    headings.forEach(heading => observer.observe(heading));
 }
 
 function updateProgressBar() {
     const progressBar = document.getElementById('reading-progress');
     if (!progressBar) return;
 
-    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const winScroll = document.documentElement.scrollTop;
     const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
     const scrolled = (winScroll / height) * 100;
     progressBar.style.width = scrolled + "%";
-}
-
-function highlightTOC(headings) {
-    let currentId = '';
-    headings.forEach(heading => {
-        const top = heading.getBoundingClientRect().top;
-        if (top < 150) {
-            currentId = heading.id;
-        }
-    });
-
-    const tocLinks = document.querySelectorAll('.toc-list a');
-    tocLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === '#' + currentId) {
-            link.classList.add('active');
-        }
-    });
 }

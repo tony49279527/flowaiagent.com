@@ -1,5 +1,95 @@
 [
     {
+        "id": "制冰机-g3-0",
+        "title": "Amazon AI Competitor Analysis: Ice Maker",
+        "date": "2026-02-01",
+        "tag": "Home Appliances",
+        "summary": "Countertop ice maker market analysis covering ice production, noise control, and user pain points.",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=Ice+Maker",
+        "read_time": "10 min read"
+    },
+    {
+        "id": "汽车抛光机套件-c4-5",
+        "title": "Amazon AI Competitor Analysis: Car Polisher Kit",
+        "date": "2026-02-01",
+        "tag": "Automotive",
+        "summary": "Entry-level vs professional polisher kit comparison with differentiation insights and pricing strategy.",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=Car+Polisher",
+        "read_time": "11 min read"
+    },
+    {
+        "id": "折叠露营车-g-3-0",
+        "title": "Amazon AI Competitor Analysis: Folding Camping Wagon",
+        "date": "2026-02-01",
+        "tag": "Outdoor Sports",
+        "summary": "Outdoor wagon market research on load capacity, portability, and material durability.",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=Camping+Wagon",
+        "read_time": "9 min read"
+    },
+    {
+        "id": "猫砂盆-c4-5",
+        "title": "Amazon AI Competitor Analysis: Cat Litter Box",
+        "date": "2026-02-01",
+        "tag": "Pet Supplies",
+        "summary": "Smart vs traditional litter box comparison covering odor control and user feedback analysis.",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=Litter+Box",
+        "read_time": "12 min read"
+    },
+    {
+        "id": "电动高压清洗机-c4-5",
+        "title": "Amazon AI Competitor Analysis: Electric Pressure Washer",
+        "date": "2026-02-01",
+        "tag": "Outdoor Tools",
+        "summary": "Home pressure washer market analysis on pressure performance, leakage issues, and accessory quality.",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=Pressure+Washer",
+        "read_time": "14 min read"
+    },
+    {
+        "id": "4-5-inch-flap-discs-百叶轮-抛光片",
+        "title": "Amazon AI Competitor Analysis: 4.5 Inch Flap Discs",
+        "date": "2026-02-01",
+        "tag": "Hardware Tools",
+        "summary": "Industrial flap disc market analysis on grinding efficiency, durability, and value comparison.",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=Flap+Discs",
+        "read_time": "8 min read"
+    },
+    {
+        "id": "扭力扳手-torque-wrench-o5-1",
+        "title": "Amazon AI Competitor Analysis: Torque Wrench",
+        "date": "2026-02-01",
+        "tag": "Hardware Tools",
+        "summary": "Professional torque wrench deep analysis on precision calibration, torque range, and brand trust.",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=Torque+Wrench",
+        "read_time": "10 min read"
+    },
+    {
+        "id": "行车记录仪-g3-0",
+        "title": "Amazon AI Competitor Analysis: Dash Cam",
+        "date": "2026-02-01",
+        "tag": "Car Electronics",
+        "summary": "Front and rear dash cam market research on video quality, night vision, and storage solutions.",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=Dash+Cam",
+        "read_time": "9 min read"
+    },
+    {
+        "id": "家用手电钻-g3-0",
+        "title": "Amazon AI Competitor Analysis: Home Power Drill",
+        "date": "2026-02-01",
+        "tag": "Hardware Tools",
+        "summary": "8V-20V home drill market analysis on battery life, torque output, and ergonomic design.",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=Power+Drill",
+        "read_time": "11 min read"
+    },
+    {
+        "id": "激光水平仪-laser-level-o5-1",
+        "title": "Amazon AI Competitor Analysis: Laser Level",
+        "date": "2026-02-01",
+        "tag": "Hardware Tools",
+        "summary": "Multi-line laser level research on precision stability, visibility range, and auto-leveling features.",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=Laser+Level",
+        "read_time": "10 min read"
+    },
+    {
         "id": "cat-litter-box",
         "title": "Amazon AI Competitor Analysis: Litter Box - C4.5",
         "date": "2025-12-05",
@@ -52,5 +142,14 @@
         "summary": "Based on Antarctic Star & Silonn reviews to reveal core pain points and optimization moves.",
         "cover_image": "images/ice-maker-hero.jpg",
         "read_time": "10 min read"
+    },
+    {
+        "id": "fabric-shaver-demo",
+        "title": "Amazon Competitor Analysis: Fabric Shaver (Demo)",
+        "date": "2025-01-28",
+        "tag": "Home & Living",
+        "summary": "Top 10 seller analysis focused on battery life and blade durability feedback.",
+        "cover_image": "https://placehold.co/600x400/e2e8f0/475569?text=Fabric+Shaver",
+        "read_time": "8 min read"
     }
 ]

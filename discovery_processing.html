@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分析进行中 - Product Discovery | FlowAI Agent</title>
+    <link rel="stylesheet" href="styles.css?v=2.0">
+    <style>
+        .processing-container {
+            max-width: 800px;
+            margin: 80px auto;
+            padding: 40px;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .status-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            background: var(--bg-soft);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+        }
+
+        .live-log {
+            margin-top: 40px;
+            padding: 20px;
+            background: #1e293b;
+            border-radius: 12px;
+            color: #94a3b8;
+            font-family: 'Courier New', Courier, monospace;
+            text-align: left;
+            font-size: 0.9em;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+        }
+
+        .log-entry.active {
+            color: #38bdf8;
+        }
+
+        .log-entry.success {
+            color: #4ade80;
+        }
+
+        .log-time {
+            color: #64748b;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <main class="main-content">
+            <div class="processing-container">
+                <div class="status-icon">
+                    <svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="40" height="40"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                    </svg>
+                </div>
+                <h1 id="main-status">AI 选品专家正在分析中...</h1>
+                <p id="sub-status">正在调取全球亚马逊实时数据，这通常需要 2-5 分钟。</p>
+
+                <div class="progress-bar-bg" style="margin-top: 30px;">
+                    <div class="progress-bar-fill" id="main-progress" style="width: 10%;"></div>
+                </div>
+
+                <div class="live-log" id="log-container">
+                    <div class="log-entry"><span class="log-time"></span> [系统] 选品引擎初始化成功...</div>
+                </div>
+
+                <div style="margin-top: 20px; font-size: 0.85em; color: #94a3b8;">
+                    正在使用模型: <span id="ai-model-display" style="color: #60a5fa; font-weight: 500;">...</span>
+                </div>
+
+                <div style="margin-top: 40px; padding: 20px; border-top: 1px solid #f1f5f9;">
+                    <p style="color: #64748b; font-size: 0.9em;">完成后报告将发送至：<strong id="user-email-display">...</strong>
+                    </p>
+                    <p style="color: #94a3b8; font-size: 0.8em; margin-top: 10px;">您可以关闭此页面，分析不受影响。</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const taskId = urlParams.get('taskId');
+        const userEmail = urlParams.get('email');
+        const aiModel = urlParams.get('model') || 'Default';
+
+        document.getElementById('user-email-display').textContent = userEmail || '您的邮箱';
+        document.getElementById('ai-model-display').textContent = aiModel;
+
+        const logContainer = document.getElementById('log-container');
+        const mainStatus = document.getElementById('main-status');
+        const progressBar = document.getElementById('main-progress');
+
+        function addLog(text, type = '') {
+            const time = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            div.className = `log-entry ${type}`;
+            div.innerHTML = `<span class="log-time">${time}</span> ${text}`;
+            logContainer.appendChild(div);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        let dots = 0;
+        const dotInterval = setInterval(() => {
+            dots = (dots + 1) % 4;
+            mainStatus.textContent = 'AI 选品专家正在分析中' + '.'.repeat(dots);
+        }, 500);
+
+        async function pollStatus() {
+            if (!taskId) return;
+
+            try {
+                const res = await fetch(`http://localhost:8081/api/discovery/status?task_id=${taskId}`);
+                const data = await res.json();
+
+                if (data.status === 'ANALYZING') {
+                    progressBar.style.width = '60%';
+                    addLog('多维数据矩阵构建完成，开始 AI 深度建模...', 'active');
+                } else if (data.status === 'COMPLETED' || data.status === 'COMPLETED_NO_EMAIL') {
+                    clearInterval(dotInterval);
+                    progressBar.style.width = '100%';
+                    mainStatus.textContent = '分析完成！';
+                    addLog('报告生成成功！', 'success');
+                    if (data.status === 'COMPLETED') {
+                        addLog('邮件已成功发送。', 'success');
+                    }
+                    setTimeout(() => {
+                        window.location.href = `success.html?type=discovery&task=${taskId}`;
+                    }, 2000);
+                } else if (data.status === 'FAILED') {
+                    clearInterval(dotInterval);
+                    mainStatus.textContent = '分析遇到问题';
+                    addLog('错误: ' + data.error_message, 'error');
+                }
+            } catch (e) {
+                console.warn('Poll error:', e);
+            }
+        }
+
+        // Add some simulated initial logs
+        setTimeout(() => addLog('正在扫描指定类目的市场饱和度...'), 2000);
+        setTimeout(() => addLog('探测到 3 个潜在蓝海差异化切入点...', 'active'), 5000);
+
+        setInterval(pollStatus, 5000); // Poll every 5 seconds
+    </script>
+</body>
+
+</html>

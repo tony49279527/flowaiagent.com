@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>分析报告 | FlowAI Agent</title>
-    
+
     <link rel="canonical" href="https://flowaiagent.com/report.html">
     <meta property="og:title" content="分析报告 | FlowAI Agent">
     <meta property="og:description" content="查看AI自动生成的市场概况、用户情感分析和营销策略建议。">
@@ -16,7 +16,7 @@
     <meta name="twitter:title" content="分析报告 | FlowAI Agent">
     <meta name="twitter:description" content="查看AI自动生成的市场概况、用户情感分析和营销策略建议。">
     <meta name="twitter:image" content="https://flowaiagent.com/icon-512.png">
-<meta name="description" content="查看AI自动生成的市场概况、用户情感分析和营销策略建议。">
+    <meta name="description" content="查看AI自动生成的市场概况、用户情感分析和营销策略建议。">
     <link rel="icon" href="favicon.png" type="image/png">
     <link rel="stylesheet" href="styles.css?v=3.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -92,14 +92,14 @@
             flex-direction: column;
         }
 
-        /* Clean Layout */
         .report-layout {
             display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 60px;
+            grid-template-columns: 280px minmax(0, 800px);
+            gap: 80px;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 24px 80px;
+            padding: 60px 24px 100px;
+            align-items: start;
         }
 
         /* Sidebar - Clean & Simple */
@@ -174,7 +174,7 @@
         }
 
         .toc-level-3 {
-            padding-left: 12px;
+            padding-left: 32px;
             font-size: 0.85rem;
         }
 
@@ -588,6 +588,19 @@
 
                 <!-- Premium Main Column -->
                 <div class="report-main-column">
+                    <!-- Breadcrumbs -->
+                    <nav class="report-breadcrumbs" style="margin-bottom: 24px;">
+                        <a href="cases.html"
+                            style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem; display: flex; align-items: center; gap: 4px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="m15 18-6-6 6-6" />
+                            </svg>
+                            返回案例展示
+                        </a>
+                    </nav>
+
                     <div class="report-header-section">
                         <div class="report-title">
                             <h1 id="dynamic-title">加载中...</h1>
@@ -615,7 +628,8 @@
                             </div>
                         </div>
                         <div class="report-actions">
-                            <button class="action-btn primary" id="download-pdf">
+                            <button class="action-btn primary" id="download-pdf"
+                                onclick="alert('请添加官方微信客服：FlowAI_Agent，获取本报告的高清 PDF 版本。')">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
                                     stroke-linejoin="round">
@@ -623,7 +637,7 @@
                                     <polyline points="7 10 12 15 17 10" />
                                     <line x1="12" x2="12" y1="15" y2="3" />
                                 </svg>
-                                下载 PDF
+                                申请完整PDF报告
                             </button>
                             <button class="action-btn secondary" id="share-report">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"

@@ -19,6 +19,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://flowaiagent.com/discovery.html</loc>
+    <lastmod>2026-02-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://flowaiagent.com/create_en.html</loc>
     <lastmod>2026-01-26</lastmod>
     <changefreq>weekly</changefreq>
@@ -136,39 +142,51 @@
   <!-- Report Pages -->
   <url>
     <loc>https://flowaiagent.com/report.html?id=cat-litter-box</loc>
-    <lastmod>2026-02-15</lastmod>
+    <lastmod>2025-12-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://flowaiagent.com/report.html?id=pressure-washer</loc>
-    <lastmod>2026-02-15</lastmod>
+    <lastmod>2025-12-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://flowaiagent.com/report.html?id=polisher</loc>
-    <lastmod>2026-02-15</lastmod>
+    <lastmod>2025-12-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://flowaiagent.com/report.html?id=torque-wrench</loc>
-    <lastmod>2026-02-15</lastmod>
+    <lastmod>2025-12-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://flowaiagent.com/report.html?id=power-tools</loc>
-    <lastmod>2026-02-15</lastmod>
+    <lastmod>2025-12-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://flowaiagent.com/report.html?id=ice-maker</loc>
-    <lastmod>2026-02-15</lastmod>
+    <lastmod>2025-12-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://flowaiagent.com/report.html?id=fabric-shaver-demo</loc>
+    <lastmod>2025-01-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://flowaiagent.com/discovery_processing.html</loc>
+    <lastmod>2026-02-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>
   <!-- Legal Pages -->
   <url>
