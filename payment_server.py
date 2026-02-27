@@ -323,16 +323,59 @@ def update_status():
         logger.error(f"DB Update Error: {e}")
         return jsonify({"error": str(e)}), 500
 
+# --- Simple rate limiter (per IP, 10 requests per minute) ---
+_rate_limit_store = {}
+
+def _check_rate_limit(ip, max_requests=10, window_seconds=60):
+    now = time.time()
+    if ip not in _rate_limit_store:
+        _rate_limit_store[ip] = []
+    _rate_limit_store[ip] = [t for t in _rate_limit_store[ip] if now - t < window_seconds]
+    if len(_rate_limit_store[ip]) >= max_requests:
+        return False
+    _rate_limit_store[ip].append(now)
+    return True
+
+import re
+_ASIN_REGEX = re.compile(r'^[A-Z0-9]{10}$', re.IGNORECASE)
+_EMAIL_REGEX = re.compile(r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
+
 @app.route('/api/submit_analysis', methods=['POST'])
 def submit_analysis():
     """Proxy endpoint for frontend to submit analysis requests to n8n webhook"""
+    # Rate limiting
+    client_ip = request.remote_addr or 'unknown'
+    if not _check_rate_limit(client_ip):
+        return jsonify({"error": "Too many requests. Please try again later."}), 429
+
     if not N8N_WEBHOOK_URL:
         logger.error("N8N_WEBHOOK_URL not configured")
         return jsonify({"error": "Webhook not configured"}), 500
 
     try:
         data = request.get_json(silent=True) or {}
-        logger.info(f"Proxying analysis request to n8n: {list(data.keys())}")
+
+        # Server-side validation
+        user_email = (data.get('user_email') or '').strip()
+        if not user_email or not _EMAIL_REGEX.match(user_email):
+            return jsonify({"error": "Invalid email address"}), 400
+
+        main_asins = data.get('main_asins', [])
+        comp_asins = data.get('competitor_asins', [])
+        if not isinstance(main_asins, list) or not isinstance(comp_asins, list):
+            return jsonify({"error": "ASINs must be arrays"}), 400
+        if len(main_asins) > 5 or len(comp_asins) > 5:
+            return jsonify({"error": "Maximum 5 ASINs per field"}), 400
+        for asin in main_asins + comp_asins:
+            if not isinstance(asin, str) or not _ASIN_REGEX.match(asin.strip()):
+                return jsonify({"error": f"Invalid ASIN format: {asin}"}), 400
+
+        # Limit payload size (reject if custom_prompt > 10KB)
+        custom_prompt = data.get('custom_prompt', '')
+        if len(custom_prompt) > 10240:
+            return jsonify({"error": "Custom prompt too long (max 10KB)"}), 400
+
+        logger.info(f"Proxying analysis request for {user_email}: {len(main_asins)} main + {len(comp_asins)} comp ASINs")
 
         response = requests.post(
             N8N_WEBHOOK_URL,

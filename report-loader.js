@@ -25,8 +25,13 @@ async function loadReport(id) {
     try {
         // 1. Fetch metadata to get the title
         const metadataResponse = await fetch('data/reports/index.json');
+        if (!metadataResponse.ok) throw new Error('无法加载报告索引 (HTTP ' + metadataResponse.status + ')');
         const metadataList = await metadataResponse.json();
         const metadata = metadataList.find(r => r.id === id);
+        if (!metadata) {
+            reportBody.innerHTML = '<p style="color:#e74c3c; padding:20px; text-align:center;">未找到 ID 为「' + id + '」的报告。<br><a href="cases.html" style="color:#3498db;">返回案例列表</a></p>';
+            return;
+        }
 
         if (metadata) {
             reportTitle.textContent = metadata.title;
@@ -77,7 +82,7 @@ async function loadReport(id) {
 
     } catch (error) {
         console.error('Failed to load report:', error);
-        reportBody.innerHTML = `<p style="color:red; pading:20px;">抱歉，报告加载失败: ${error.message}<br><small>${error.stack}</small></p>`;
+        reportBody.innerHTML = `<p style="color:#e74c3c; padding:20px; text-align:center;">抱歉，报告加载失败: ${error.message}<br><a href="cases.html" style="color:#3498db;">返回案例列表</a></p>`;
     }
 
     // 6. Load Recommended Reports
@@ -172,8 +177,15 @@ function setupFeatures(data) {
     if (closeBtn) closeBtn.addEventListener('click', () => modal.classList.remove('active'));
     if (copyBtn) {
         copyBtn.addEventListener('click', () => {
-            shareUrlInput.select();
-            document.execCommand('copy');
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(shareUrlInput.value).catch(() => {
+                    shareUrlInput.select();
+                    document.execCommand('copy');
+                });
+            } else {
+                shareUrlInput.select();
+                document.execCommand('copy');
+            }
             copyBtn.textContent = '已复制';
             setTimeout(() => {
                 copyBtn.textContent = '复制';

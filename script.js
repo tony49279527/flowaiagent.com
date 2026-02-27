@@ -187,6 +187,61 @@ document.addEventListener('DOMContentLoaded', function () {
         const emailInput = document.getElementById('modal-email');
         const userEmail = emailInput ? emailInput.value.trim().toLowerCase() : '';
 
+        // --- Input Validation ---
+        const selectedLanguage = (document.querySelector('#analysisForm select[name="language"]') || {}).value || 'zh';
+        const isEn = selectedLanguage === 'en';
+
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!userEmail || !emailRegex.test(userEmail)) {
+            alert(isEn ? 'Please enter a valid email address.' : '请输入有效的邮箱地址。');
+            modalSubmitBtn.disabled = false;
+            btnText.style.display = 'inline-block';
+            btnLoading.style.display = 'none';
+            return;
+        }
+
+        // ASIN validation (10 alphanumeric characters, max 5 per field)
+        const asinRegex = /^[A-Z0-9]{10}$/i;
+        const mainAsinRaw = (document.getElementById('main-asin').value || '').split('\n').map(s => s.trim()).filter(s => s);
+        const compAsinRaw = (document.getElementById('comp-asin').value || '').split('\n').map(s => s.trim()).filter(s => s);
+
+        if (mainAsinRaw.length > 5 || compAsinRaw.length > 5) {
+            alert(isEn ? 'Maximum 5 ASINs per field.' : '每个字段最多填写 5 个 ASIN。');
+            modalSubmitBtn.disabled = false;
+            btnText.style.display = 'inline-block';
+            btnLoading.style.display = 'none';
+            return;
+        }
+
+        const invalidAsins = [...mainAsinRaw, ...compAsinRaw].filter(a => !asinRegex.test(a));
+        if (invalidAsins.length > 0) {
+            alert(isEn
+                ? 'Invalid ASIN format: ' + invalidAsins[0] + '. ASIN must be exactly 10 alphanumeric characters (e.g. B08N5WRWNW).'
+                : 'ASIN 格式不正确：' + invalidAsins[0] + '。ASIN 必须为 10 位字母数字（如 B08N5WRWNW）。');
+            modalSubmitBtn.disabled = false;
+            btnText.style.display = 'inline-block';
+            btnLoading.style.display = 'none';
+            return;
+        }
+
+        // File size validation (max 5MB per file)
+        const MAX_FILE_SIZE = 5 * 1024 * 1024;
+        const allFiles = [
+            ...((multiFileStores && multiFileStores['csv-upload']) || []),
+            ...((multiFileStores && multiFileStores['persona-upload']) || [])
+        ];
+        const oversizedFile = allFiles.find(f => f.size > MAX_FILE_SIZE);
+        if (oversizedFile) {
+            alert(isEn
+                ? 'File "' + oversizedFile.name + '" exceeds 5MB limit.'
+                : '文件「' + oversizedFile.name + '」超过 5MB 大小限制。');
+            modalSubmitBtn.disabled = false;
+            btnText.style.display = 'inline-block';
+            btnLoading.style.display = 'none';
+            return;
+        }
+
         // Show loading state immediately to prevent double clicks
         modalSubmitBtn.disabled = true;
         btnText.style.display = 'none';

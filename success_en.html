@@ -49,6 +49,7 @@
             <nav class="main-nav" id="mainNav">
                 <a href="index_en.html" class="nav-link">Home</a>
                 <a href="create_en.html" class="nav-link">Create Analysis</a>
+                <a href="discovery.html" class="nav-link">Product Discovery</a>
                 <a href="cases_en.html" class="nav-link">Case Studies</a>
                 <a href="blog_en.html" class="nav-link">Blog</a>
             </nav>
@@ -69,6 +70,7 @@
             <nav class="mobile-nav">
                 <a href="index_en.html" class="mobile-nav-link">Home</a>
                 <a href="create_en.html" class="mobile-nav-link">Create Analysis</a>
+                <a href="discovery.html" class="mobile-nav-link">Product Discovery</a>
                 <a href="cases_en.html" class="mobile-nav-link">Case Studies</a>
                 <a href="blog_en.html" class="mobile-nav-link">Blog</a>
                 <a href="success.html" class="mobile-nav-link">🇨🇳 Chinese</a>
@@ -157,13 +159,33 @@
     </div>
 
     <script>
-        // Dynamic quota display
+        // Dynamic quota display + type handling
         document.addEventListener('DOMContentLoaded', async function () {
             const email = localStorage.getItem('user_email') || localStorage.getItem('userEmail') || '';
             const noticeEl = document.getElementById('quotaNotice');
             const ctaRemainingEl = document.getElementById('ctaRemaining');
             const ctaBox = document.getElementById('ctaBox');
             let remaining = 0;
+
+            // Handle type parameter for discovery submissions
+            const urlParams = new URLSearchParams(window.location.search);
+            const submissionType = urlParams.get('type');
+            if (submissionType === 'discovery') {
+                const titleEl = document.querySelector('.success-title');
+                const msgEl = document.querySelector('.success-message');
+                const ctaBtn = ctaBox ? ctaBox.querySelector('.cta-btn.primary') : null;
+                const ctaTitle = ctaBox ? ctaBox.querySelector('h3') : null;
+                const ctaDesc = ctaBox ? ctaBox.querySelector('p') : null;
+
+                if (titleEl) titleEl.textContent = 'Submitted! Product Discovery in Progress';
+                if (msgEl) msgEl.textContent = 'We have received your product discovery request. Our AI is analyzing market trends and competition landscape.';
+                if (ctaTitle) ctaTitle.textContent = 'Explore more product opportunities?';
+                if (ctaDesc) ctaDesc.innerHTML = 'Discover hot categories and find your next winning product.';
+                if (ctaBtn) {
+                    ctaBtn.textContent = 'Continue Discovery →';
+                    ctaBtn.href = 'discovery.html';
+                }
+            }
 
             if (email) {
                 try {
@@ -185,10 +207,10 @@
 
             if (remaining > 0) {
                 noticeEl.textContent = 'You have ' + remaining + ' free analysis credits remaining';
-                ctaRemainingEl.textContent = remaining;
+                if (ctaRemainingEl) ctaRemainingEl.textContent = remaining;
             } else {
                 noticeEl.textContent = 'Your 2 free analysis credits are fully used';
-                ctaBox.style.display = 'none';
+                if (ctaBox) ctaBox.style.display = 'none';
             }
         });
     </script>

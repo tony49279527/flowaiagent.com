@@ -50,6 +50,7 @@
                 <nav class="main-nav" id="mainNav" aria-label="Main navigation">
                     <a href="index.html" class="nav-link">首页</a>
                     <a href="create-analysis.html" class="nav-link">创建分析</a>
+                    <a href="discovery.html" class="nav-link">选品开发</a>
                     <a href="cases.html" class="nav-link">案例展示</a>
                     <a href="blog.html" class="nav-link">博客</a>
                 </nav>
@@ -73,6 +74,7 @@
             <nav class="mobile-nav">
                 <a href="index.html" class="mobile-nav-link">首页</a>
                 <a href="create-analysis.html" class="mobile-nav-link">创建分析</a>
+                <a href="discovery.html" class="mobile-nav-link">选品开发</a>
                 <a href="cases.html" class="mobile-nav-link">案例展示</a>
                 <a href="blog.html" class="mobile-nav-link">博客</a>
             </nav>
@@ -157,13 +159,33 @@
         </footer>
     </div>
     <script>
-        // Dynamic quota display
+        // Dynamic quota display + type handling
         document.addEventListener('DOMContentLoaded', async function () {
             const email = localStorage.getItem('user_email') || localStorage.getItem('userEmail') || '';
             const noticeEl = document.getElementById('quotaNotice');
             const ctaRemainingEl = document.getElementById('ctaRemaining');
             const ctaBox = document.getElementById('ctaBox');
             let remaining = 0;
+
+            // Handle type parameter for discovery submissions
+            const urlParams = new URLSearchParams(window.location.search);
+            const submissionType = urlParams.get('type');
+            if (submissionType === 'discovery') {
+                const titleEl = document.querySelector('.success-title');
+                const msgEl = document.querySelector('.success-message');
+                const ctaBtn = ctaBox ? ctaBox.querySelector('.cta-btn.primary') : null;
+                const ctaTitle = ctaBox ? ctaBox.querySelector('h3') : null;
+                const ctaDesc = ctaBox ? ctaBox.querySelector('p') : null;
+
+                if (titleEl) titleEl.textContent = '提交成功！选品分析正在生成中';
+                if (msgEl) msgEl.textContent = '我们已收到您的选品开发请求。AI 正在深入分析市场趋势和竞争格局。';
+                if (ctaTitle) ctaTitle.textContent = '继续探索更多选品机会？';
+                if (ctaDesc) ctaDesc.innerHTML = '查看更多热门品类，发现下一个爆款潜力产品。';
+                if (ctaBtn) {
+                    ctaBtn.textContent = '继续选品开发 →';
+                    ctaBtn.href = 'discovery.html';
+                }
+            }
 
             if (email) {
                 try {
@@ -186,10 +208,10 @@
 
             if (remaining > 0) {
                 noticeEl.textContent = '您的免费额度还剩 ' + remaining + ' 次';
-                ctaRemainingEl.textContent = remaining;
+                if (ctaRemainingEl) ctaRemainingEl.textContent = remaining;
             } else {
                 noticeEl.textContent = '您的 2 次免费额度已全部使用';
-                ctaBox.style.display = 'none';
+                if (ctaBox) ctaBox.style.display = 'none';
             }
         });
     </script>
