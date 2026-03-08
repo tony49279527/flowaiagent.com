@@ -494,31 +494,6 @@
                         </div>
                     </div>
 
-                    <div class="section-block">
-                        <h3 class="section-title">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                stroke-linejoin="round"
-                                style="margin-right: 8px; vertical-align: bottom; color: var(--primary-color);">
-                                <path
-                                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                                <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-                                <line x1="12" y1="22.08" x2="12" y2="12" />
-                            </svg>
-                            4. 模型选择 (AI Model Selection)
-                        </h3>
-                        <div class="field">
-                            <label for="ai-model">选择 AI 模型</label>
-                            <select id="ai-model" class="modern-select">
-                                <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet (最强逻辑)</option>
-                                <option value="openai/gpt-4o">GPT-4o (全面均衡)</option>
-                                <option value="google/gemini-2.0-flash-001">Gemini 2.0 Flash (响应极速)</option>
-                                <option value="deepseek/deepseek-chat">DeepSeek Chat (深度思考)</option>
-                                <option value="anthropic/claude-3-haiku">Claude 3 Haiku (高效性价比)</option>
-                            </select>
-                        </div>
-                    </div>
-
                     <div class="submit-row">
                         <button type="submit" class="submit-btn" id="submitBtn">
                             <span class="btn-text">开始 Product Discovery</span>
@@ -764,7 +739,7 @@
                 target_price_max: document.getElementById('price-max').value.trim(),
                 report_language: document.getElementById('analysis-lang').value,
                 custom_prompt: document.getElementById('discovery-prompt').value.trim(),
-                ai_model: document.getElementById('ai-model').value
+                ai_model: 'openai/gpt-4o'
             };
         }
 
@@ -775,7 +750,7 @@
                 'Category: ' + (payload.category_path || payload.category_main),
                 'Keywords: ' + payload.keywords,
                 'Marketplace: ' + payload.marketplace,
-                'AI Model: ' + payload.ai_model,
+                'AI Model: GPT-4o (OpenRouter)',
                 'Focus: ' + payload.focus_areas.join(', '),
                 'Reference ASINs: ' + asins,
                 (payload.invalid_asin_count > 0 ? ('Invalid ASIN dropped: ' + payload.invalid_asin_count) : '')
@@ -900,11 +875,8 @@
                 progressStatus.textContent = '正在初始化 AI 选品引擎...';
                 progressBar.style.width = '10%';
 
-                // --- NEW: Submit to Local Python Backend ---
-                // Default port 8081 as per discovery_server.py
-                const BACKEND_URL = 'http://localhost:8081/api/discovery/submit';
-
-                const response = await fetch(BACKEND_URL, {
+                // --- Submit to backend (relative URL works for both local & production) ---
+                const response = await fetch('/api/discovery/submit', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(finalPayload)

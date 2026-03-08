@@ -100,10 +100,11 @@
         const urlParams = new URLSearchParams(window.location.search);
         const taskId = urlParams.get('taskId');
         const userEmail = urlParams.get('email');
-        const aiModel = urlParams.get('model') || 'Default';
+        const aiModelParam = urlParams.get('model') || 'openai/gpt-4o';
+        const aiModelDisplay = aiModelParam === 'openai/gpt-4o' ? 'GPT-4o' : aiModelParam;
 
         document.getElementById('user-email-display').textContent = userEmail || '您的邮箱';
-        document.getElementById('ai-model-display').textContent = aiModel;
+        document.getElementById('ai-model-display').textContent = aiModelDisplay;
 
         const logContainer = document.getElementById('log-container');
         const mainStatus = document.getElementById('main-status');
@@ -128,7 +129,7 @@
             if (!taskId) return;
 
             try {
-                const res = await fetch(`http://localhost:8081/api/discovery/status?task_id=${taskId}`);
+                const res = await fetch(`/api/discovery/status?task_id=${taskId}`);
                 const data = await res.json();
 
                 if (data.status === 'ANALYZING') {
