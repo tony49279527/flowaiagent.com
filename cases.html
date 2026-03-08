@@ -246,6 +246,8 @@
                 grid.innerHTML = ''; // Clear loader
 
                 reports.forEach(report => {
+                    const tag = report.tag || '竞品分析';
+                    const summary = report.summary || report.title;
                     const card = `
                         <a href="report.html?id=${report.id}" class="blog-card-link">
                             <article class="case-card-visual">
@@ -253,9 +255,9 @@
                                     <img src="${report.cover_image}" alt="${report.title}" class="case-image" loading="lazy">
                                 </div>
                                 <div class="case-content">
-                                    <span class="case-tag">${report.tag}</span>
+                                    <span class="case-tag">${tag}</span>
                                     <h3 class="case-title">${report.title}</h3>
-                                    <p class="case-summary">${report.summary}</p>
+                                    <p class="case-summary">${summary}</p>
                                     <div class="case-meta">
                                         <span>📅 ${report.date}</span>
                                         <span>⏱️ 10 分钟阅读</span>
