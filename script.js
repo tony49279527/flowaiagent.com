@@ -135,18 +135,42 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!analysisForm || !leadGenModal || !leadGenForm) return;
 
+    // ASIN format: 10 alphanumeric chars (B0xxxxxxxx is common but not required)
+    function validateAsinList(raw, fieldName) {
+        const parts = raw.split(/[\n\r,;]+/).map(s => s.trim().toUpperCase().replace(/[^A-Z0-9]/g, '')).filter(Boolean);
+        const invalid = parts.filter(p => p.length !== 10);
+        return { valid: parts.filter(p => p.length === 10), invalidCount: invalid.length, invalid };
+    }
+
     // 1. Handle Main Form "Start Analysis" Click
     submitBtn.addEventListener('click', function (e) {
         e.preventDefault(); // Prevent default form submission
 
-        // Basic validation for main form
-        const mainAsin = document.getElementById('main-asin').value;
-        const compAsin = document.getElementById('comp-asin').value;
+        const mainAsin = document.getElementById('main-asin').value.trim();
+        const compAsin = document.getElementById('comp-asin').value.trim();
         const selectedLanguage = (document.querySelector('#analysisForm select[name="language"]') || {}).value || 'zh';
 
         if (!mainAsin || !compAsin) {
             alert(selectedLanguage === 'en' ? 'Please fill in required ASIN fields.' : '请填写必填的 ASIN 字段。');
             return;
+        }
+
+        const mainResult = validateAsinList(mainAsin, 'main');
+        const compResult = validateAsinList(compAsin, 'comp');
+
+        if (mainResult.valid.length === 0) {
+            alert(selectedLanguage === 'en' ? 'Please enter a valid Core Product ASIN (10 alphanumeric characters, e.g. B08N5WRWNW).' : '请输入有效的主产品 ASIN（10 位字母数字，如 B08N5WRWNW）。');
+            return;
+        }
+        if (compResult.valid.length === 0) {
+            alert(selectedLanguage === 'en' ? 'Please enter at least one valid Competitor ASIN (10 alphanumeric characters).' : '请至少输入一个有效的竞品 ASIN（10 位字母数字）。');
+            return;
+        }
+        if (mainResult.invalidCount > 0 || compResult.invalidCount > 0) {
+            const msg = selectedLanguage === 'en'
+                ? `${mainResult.invalidCount + compResult.invalidCount} invalid ASIN(s) were ignored. Each ASIN must be 10 alphanumeric characters.`
+                : `已忽略 ${mainResult.invalidCount + compResult.invalidCount} 个无效 ASIN。每个 ASIN 需为 10 位字母数字。`;
+            if (!confirm(msg + (selectedLanguage === 'en' ? ' Continue?' : ' 是否继续？'))) return;
         }
 
         // Show Modal

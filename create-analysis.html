@@ -195,19 +195,18 @@
                 <!-- Custom Prompt Section -->
                 <div class="prompt-section">
                     <h3 class="section-title">自定义提示词</h3>
+                    <p class="helper-text" style="margin-bottom: 12px;">选择预设或自定义分析重点，默认推荐「全面分析」</p>
                     <div class="prompt-chips">
-                        <button type="button" class="chip" onclick="fillPrompt('全面分析产品优缺点，并给出改进建议。')">提示词 A -
-                            全面分析</button>
-                        <button type="button" class="chip" onclick="fillPrompt('重点分析用户退货原因，并提供解决方案。')">提示词 B -
-                            含退货分析</button>
-                        <button type="button" class="chip" onclick="fillPrompt('分析竞品的使用场景，并拓展新的营销思路。')">提示词 C -
-                            完整版，含场景拓展</button>
+                        <button type="button" class="chip" onclick="fillPrompt('全面分析产品优缺点，并给出改进建议。')" title="适合大多数场景">提示词 A - 全面分析 ⭐推荐</button>
+                        <button type="button" class="chip" onclick="fillPrompt('重点分析用户退货原因，并提供解决方案。')" title="适合退货率高的品类">提示词 B - 含退货分析</button>
+                        <button type="button" class="chip" onclick="fillPrompt('分析竞品的使用场景，并拓展新的营销思路。')" title="适合需要拓展新卖点的产品">提示词 C - 完整版，含场景拓展</button>
                     </div>
                     <textarea id="custom-prompt" name="customPrompt" placeholder="输入自定义分析要求..."></textarea>
                 </div>
 
                 <!-- Submit Button -->
                 <div class="submit-section">
+                    <p class="helper-text" style="margin-bottom: 12px; color: var(--text-secondary);">提交后约 15-30 分钟生成，报告将发送至您的邮箱</p>
                     <button type="submit" class="submit-btn" id="submitBtn">
                         <span class="btn-text">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
@@ -307,6 +306,7 @@
                     <ul class="footer-links">
                         <li>📧 support@flowaiagent.com</li>
                         <li>💬 微信: FlowAI_Agent</li>
+                        <li><img src="wechat_qr.jpg" alt="微信二维码" width="100" height="100" style="margin-top:8px;border-radius:8px;" loading="lazy"></li>
                     </ul>
                 </div>
             </div>

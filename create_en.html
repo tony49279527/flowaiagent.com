@@ -190,16 +190,17 @@
                 <!-- Custom Prompt Section -->
                 <div class="prompt-section">
                     <h3 class="section-title">Custom Prompt</h3>
+                    <p class="helper-text" style="margin-bottom: 12px;">Choose a preset or customize. Default: Comprehensive ⭐</p>
                     <div class="prompt-chips">
                         <button type="button" class="chip"
-                            onclick="fillPrompt('Analyze product pros and cons comprehensively and give improvement suggestions.')">Prompt
-                            A - Comprehensive</button>
+                            onclick="fillPrompt('Analyze product pros and cons comprehensively and give improvement suggestions.')"
+                            title="Best for most scenarios">Prompt A - Comprehensive ⭐</button>
                         <button type="button" class="chip"
-                            onclick="fillPrompt('Focus on analyzing user return reasons and provide solutions.')">Prompt
-                            B - Returns Analysis</button>
+                            onclick="fillPrompt('Focus on analyzing user return reasons and provide solutions.')"
+                            title="Best for high-return categories">Prompt B - Returns Analysis</button>
                         <button type="button" class="chip"
-                            onclick="fillPrompt('Analyze competitor usage scenarios and expand new marketing ideas.')">Prompt
-                            C - Marketing Ideas</button>
+                            onclick="fillPrompt('Analyze competitor usage scenarios and expand new marketing ideas.')"
+                            title="Best for expanding new selling points">Prompt C - Marketing Ideas</button>
                     </div>
                     <textarea id="custom-prompt" name="customPrompt"
                         placeholder="Enter custom analysis requirements..."></textarea>
@@ -207,6 +208,7 @@
 
                 <!-- Submit Button -->
                 <div class="submit-section">
+                    <p class="helper-text" style="margin-bottom: 12px; color: var(--text-secondary);">Report typically ready in 15-30 minutes. Sent to your email.</p>
                     <button type="submit" class="submit-btn" id="submitBtn">
                         <span class="btn-text">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
