@@ -34,7 +34,8 @@ app = Flask(__name__)
 ADMIN_API_TOKEN = os.environ.get('ADMIN_API_TOKEN')
 
 # --- Product Discovery (选品分析) Config ---
-OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
+# 支持 OPENAI_API_KEY 或 OPENROUTER_API_KEY（Cloud Run 任选其一即可）
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY') or os.environ.get('OPENROUTER_API_KEY', '')
 OPENAI_BASE_URL = os.environ.get('OPENAI_BASE_URL', 'https://openrouter.ai/api/v1')
 OPENAI_MODEL = os.environ.get('OPENAI_MODEL', 'anthropic/claude-sonnet-4.5')
 SMTP_SERVER = os.environ.get('SMTP_SERVER', 'smtp.gmail.com')
@@ -143,7 +144,7 @@ init_discovery_db()
 def _generate_discovery_report(form_data):
     """Generate AI report for product discovery."""
     if not OPENAI_API_KEY:
-        return "ERROR: OpenAI API Key not configured. Add OPENAI_API_KEY in Cloud Run environment variables."
+        return "ERROR: API Key not configured. Add OPENAI_API_KEY or OPENROUTER_API_KEY in Cloud Run environment variables."
 
     model_to_use = form_data.get('ai_model', OPENAI_MODEL)
     report_lang = form_data.get('report_language', 'zh')
@@ -323,10 +324,19 @@ def _generate_discovery_report(form_data):
         }
         logger.info(f"Discovery: Generating report using {model_to_use} (target 8000+ chars)")
         response = requests.post(f"{OPENAI_BASE_URL}/chat/completions", json=payload, headers=headers, timeout=300)
-        response.raise_for_status()
+        if not response.ok:
+            err_body = response.text[:500] if response.text else "(empty)"
+            logger.error(f"Discovery OpenRouter API Error: status={response.status_code}, body={err_body}")
+            return f"ERROR: OpenRouter API failed (HTTP {response.status_code}). Check credits at openrouter.ai/settings/credits. Details: {err_body}"
         content = response.json()['choices'][0]['message']['content']
         logger.info(f"Discovery: Report generated, {len(content)} chars")
         return content
+    except requests.exceptions.RequestException as e:
+        err_detail = str(e)
+        if hasattr(e, 'response') and e.response is not None:
+            err_detail = f"HTTP {e.response.status_code}: {e.response.text[:300] if e.response.text else 'no body'}"
+        logger.error(f"Discovery AI Request Error: {err_detail}")
+        return f"ERROR: API request failed. {err_detail}"
     except Exception as e:
         logger.error(f"Discovery AI Error: {e}")
         return f"ERROR: Failed to generate report. {str(e)}"

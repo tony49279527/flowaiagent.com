@@ -18,7 +18,7 @@
 
 | 变量名 | 怎么填 | 获取方式 |
 |--------|--------|----------|
-| `OPENAI_API_KEY` | `sk-or-v1-xxxxxxxxxxxx` | 1. 打开 [OpenRouter](https://openrouter.ai/) 注册/登录<br>2. 点击右上角 **Keys** → **Create Key**<br>3. 复制生成的 Key，格式为 `sk-or-v1-` 开头 |
+| `OPENAI_API_KEY` 或 `OPENROUTER_API_KEY` | `sk-or-v1-xxxxxxxxxxxx` | 任选其一。1. 打开 [OpenRouter](https://openrouter.ai/) 注册/登录<br>2. 点击右上角 **Keys** → **Create Key**<br>3. 复制生成的 Key，格式为 `sk-or-v1-` 开头 |
 
 ---
 
