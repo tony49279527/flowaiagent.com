@@ -341,6 +341,25 @@ def _generate_discovery_report(form_data):
         logger.error(f"Discovery AI Error: {e}")
         return f"ERROR: Failed to generate report. {str(e)}"
 
+def _record_discovery_usage(email):
+    """Increment quota_usage for discovery (选品分析) completion."""
+    if not email:
+        return
+    try:
+        conn = get_db_connection()
+        row = conn.execute('SELECT quota_usage FROM orders WHERE email = ?', (email,)).fetchone()
+        if row:
+            new_usage = row['quota_usage'] + 1
+            conn.execute('UPDATE orders SET quota_usage = ? WHERE email = ?', (new_usage, email))
+        else:
+            conn.execute('INSERT INTO orders (email, quota_usage, status, updated_at) VALUES (?, 1, "PENDING", ?)',
+                        (email, datetime.now().isoformat()))
+        conn.commit()
+        conn.close()
+        logger.info(f"Discovery: Recorded usage for {email}")
+    except Exception as e:
+        logger.error(f"Discovery record_usage error: {e}")
+
 def _send_discovery_email(to_email, user_name, report_content):
     """Send discovery report to user email."""
     if not SMTP_USER or not SMTP_PASSWORD:
@@ -382,6 +401,7 @@ def _discovery_worker(task_id, user_name, user_email, form_data):
                      ('COMPLETED' if email_sent else 'COMPLETED_NO_EMAIL', report, datetime.now().isoformat(), task_id))
         conn.commit()
         conn.close()
+        _record_discovery_usage(user_email)
         logger.info(f"Discovery task {task_id} completed.")
     except Exception as e:
         logger.error(f"Discovery Worker Error for {task_id}: {e}")

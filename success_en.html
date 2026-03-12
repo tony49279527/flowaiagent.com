@@ -162,7 +162,7 @@
     <script>
         // Dynamic quota display
         document.addEventListener('DOMContentLoaded', async function () {
-            const email = localStorage.getItem('user_email') || localStorage.getItem('userEmail') || '';
+            const email = sessionStorage.getItem('discovery_email') || localStorage.getItem('user_email') || localStorage.getItem('userEmail') || '';
             const noticeEl = document.getElementById('quotaNotice');
             const ctaRemainingEl = document.getElementById('ctaRemaining');
             const ctaBox = document.getElementById('ctaBox');
