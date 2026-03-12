@@ -906,9 +906,9 @@
                 progressBar.style.width = '100%';
                 progressStatus.textContent = '初始化完成，跳转至进度页...';
 
+                sessionStorage.setItem('discovery_email', userEmail);
                 setTimeout(function () {
-                    // Redirect to a dedicated processing page that polls for task status
-                    window.location.href = `discovery_processing.html?taskId=${taskId}&email=${encodeURIComponent(userEmail)}&model=${encodeURIComponent(finalPayload.ai_model)}`;
+                    window.location.href = `discovery_processing.html?taskId=${taskId}&model=${encodeURIComponent(finalPayload.ai_model)}`;
                 }, 800);
 
             } catch (error) {

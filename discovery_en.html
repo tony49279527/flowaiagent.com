@@ -903,8 +903,9 @@
                 progressBar.style.width = '100%';
                 progressStatus.textContent = 'Initialization complete, redirecting...';
 
+                sessionStorage.setItem('discovery_email', userEmail);
                 setTimeout(function () {
-                    window.location.href = `discovery_processing.html?taskId=${taskId}&email=${encodeURIComponent(userEmail)}&model=${encodeURIComponent(finalPayload.ai_model)}&lang=en`;
+                    window.location.href = `discovery_processing.html?taskId=${taskId}&model=${encodeURIComponent(finalPayload.ai_model)}&lang=en`;
                 }, 800);
 
             } catch (error) {
