@@ -3,61 +3,61 @@
         "id": "制冰机-g3-0",
         "title": "亚马逊 AI 竞品分析报告：制冰机",
         "date": "2026-02-01",
-        "cover_image": "images/ice-maker-hero.jpg"
+        "cover_image": "/images/ice-maker-hero.jpg"
     },
     {
         "id": "汽车抛光机套件-c4-5",
         "title": "亚马逊 AI 竞品分析报告：汽车抛光机套件",
         "date": "2026-02-01",
-        "cover_image": "images/polisher-hero.jpg"
+        "cover_image": "/images/polisher-hero.jpg"
     },
     {
         "id": "折叠露营车-g-3-0",
         "title": "亚马逊 AI 竞品分析报告：折叠露营车",
         "date": "2026-02-01",
-        "cover_image": "images/pressure-washer-hero.jpg"
+        "cover_image": "/images/pressure-washer-hero.jpg"
     },
     {
         "id": "猫砂盆-c4-5",
         "title": "亚马逊 AI 竞品分析报告：猫砂盆",
         "date": "2026-02-01",
-        "cover_image": "images/cat-litter-box-hero.jpg"
+        "cover_image": "/images/cat-litter-box-hero.jpg"
     },
     {
         "id": "电动高压清洗机-c4-5",
         "title": "亚马逊 AI 竞品分析报告：电动高压清洗机",
         "date": "2026-02-01",
-        "cover_image": "images/pressure-washer-hero.jpg"
+        "cover_image": "/images/pressure-washer-hero.jpg"
     },
     {
         "id": "4-5-inch-flap-discs-百叶轮-抛光片",
         "title": "亚马逊 AI 竞品分析报告：4.5 Inch Flap Discs (百叶轮:抛光片)",
         "date": "2026-02-01",
-        "cover_image": "images/polisher-hero.jpg"
+        "cover_image": "/images/polisher-hero.jpg"
     },
     {
         "id": "扭力扳手-torque-wrench-o5-1",
         "title": "亚马逊 AI 竞品分析报告：扭力扳手 (Torque Wrench)",
         "date": "2026-02-01",
-        "cover_image": "images/torque-wrench-hero.jpg"
+        "cover_image": "/images/torque-wrench-hero.jpg"
     },
     {
         "id": "行车记录仪-g3-0",
         "title": "亚马逊 AI 竞品分析报告：行车记录仪",
         "date": "2026-02-01",
-        "cover_image": "images/power-tools-hero.jpg"
+        "cover_image": "/images/power-tools-hero.jpg"
     },
     {
         "id": "家用手电钻-g3-0",
         "title": "亚马逊 AI 竞品分析报告：家用手电钻",
         "date": "2026-02-01",
-        "cover_image": "images/power-tools-hero.jpg"
+        "cover_image": "/images/power-tools-hero.jpg"
     },
     {
         "id": "激光水平仪-laser-level-o5-1",
         "title": "亚马逊 AI 竞品分析报告：激光水平仪 (Laser Level)",
         "date": "2026-02-01",
-        "cover_image": "images/torque-wrench-hero.jpg"
+        "cover_image": "/images/torque-wrench-hero.jpg"
     },
     {
         "id": "cat-litter-box",
@@ -65,7 +65,7 @@
         "date": "2025-12-05",
         "tag": "宠物用品",
         "summary": "深度挖掘 1,261 条评论，揭秘猫砂盆市场的核心用户痛点与 Listing 优化策略。",
-        "cover_image": "images/cat-litter-box-hero.jpg"
+        "cover_image": "/images/cat-litter-box-hero.jpg"
     },
     {
         "id": "pressure-washer",
@@ -73,7 +73,7 @@
         "date": "2025-12-05",
         "tag": "户外工具",
         "summary": "对比 Paxcess 与核心竞品，提供针对漏水、压力不足等核心痛点的全套解决方案。",
-        "cover_image": "images/pressure-washer-hero.jpg"
+        "cover_image": "/images/pressure-washer-hero.jpg"
     },
     {
         "id": "polisher",
@@ -81,7 +81,7 @@
         "date": "2025-12-05",
         "tag": "汽配保养",
         "summary": "针对入门与专业抛光市场，分析 2025 年热销套件的差异化卖点与运营方向。",
-        "cover_image": "images/polisher-hero.jpg"
+        "cover_image": "/images/polisher-hero.jpg"
     },
     {
         "id": "torque-wrench",
@@ -89,7 +89,7 @@
         "date": "2025-12-05",
         "tag": "五金工具",
         "summary": "聚焦 CRAFTSMAN 等品牌，探讨中高扭矩范围内工具的精度保证与用户信任建立。",
-        "cover_image": "images/torque-wrench-hero.jpg"
+        "cover_image": "/images/torque-wrench-hero.jpg"
     },
     {
         "id": "power-tools",
@@ -97,7 +97,7 @@
         "date": "2025-12-05",
         "tag": "五金工具",
         "summary": "从家具组装到挂画安装，全方位分析 8V-20V 电动工具的细分市场机遇。",
-        "cover_image": "images/power-tools-hero.jpg"
+        "cover_image": "/images/power-tools-hero.jpg"
     },
     {
         "id": "ice-maker",
@@ -105,7 +105,7 @@
         "date": "2025-12-05",
         "tag": "家用电器",
         "summary": "基于 Antarctic Star & Silonn 与多款竞品深度分析，揭秘颗粒冰市场的核心痛点与优化对策。",
-        "cover_image": "images/ice-maker-hero.jpg"
+        "cover_image": "/images/ice-maker-hero.jpg"
     },
     {
         "id": "fabric-shaver-demo",
@@ -113,6 +113,6 @@
         "date": "2025-01-28",
         "tag": "家居生活",
         "summary": "分析 Top 10 热销款，挖掘用户对续航 and 刀网耐用性的真实反馈。",
-        "cover_image": "images/cat-litter-box-hero.jpg"
+        "cover_image": "/images/cat-litter-box-hero.jpg"
     }
 ]

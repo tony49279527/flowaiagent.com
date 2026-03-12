@@ -104,6 +104,7 @@
                         <label for="main-asin">核心产品 ASIN <span class="required">*</span></label>
                         <textarea id="main-asin" name="mainAsin" placeholder="例如: B08N5WRWNW" required></textarea>
                         <div class="helper-text">在亚马逊产品页面的URL或详情页可以找到ASIN</div>
+                        <div id="main-asin-error" class="asin-error" style="display:none;color:#dc2626;font-size:0.85rem;margin-top:6px;"></div>
                     </div>
 
                     <!-- Competitor ASINs -->
@@ -111,6 +112,7 @@
                         <label for="comp-asin">竞争对手 ASIN <span class="required">*</span></label>
                         <textarea id="comp-asin" name="compAsin" placeholder="例如: B08N5KWS8V" required></textarea>
                         <div class="helper-text">每行一个ASIN，建议从"经常一起购买"中选择3-5个</div>
+                        <div id="comp-asin-error" class="asin-error" style="display:none;color:#dc2626;font-size:0.85rem;margin-top:6px;"></div>
                     </div>
                 </div>
 
@@ -305,8 +307,7 @@
                     <h4>联系我们</h4>
                     <ul class="footer-links">
                         <li>📧 support@flowaiagent.com</li>
-                        <li>💬 微信: FlowAI_Agent</li>
-                        <li><img src="wechat_qr.jpg" alt="微信二维码" width="100" height="100" style="margin-top:8px;border-radius:8px;" loading="lazy"></li>
+                        <li>💬 微信: FlowAI_Agent（添加好友请搜索微信号）</li>
                     </ul>
                 </div>
             </div>

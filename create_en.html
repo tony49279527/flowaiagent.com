@@ -83,6 +83,10 @@
 
         <main class="main-content">
             <div class="page-header">
+                <div class="quota-banner"
+                    style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%); border: 1px solid rgba(139, 92, 246, 0.2); color: #4f46e5; padding: 12px 24px; border-radius: 50px; display: inline-block; margin-bottom: 30px; font-weight: 600; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                    🎁 New User Offer: You have 2 free deep analysis credits
+                </div>
                 <h1>
                     <span class="gradient-text">AI Driven Analysis</span>
                     <br>
@@ -99,6 +103,7 @@
                         <textarea id="main-asin" name="mainAsin" placeholder="Enter main product ASIN..."
                             required></textarea>
                         <div class="helper-text">Please enter the core product ASIN you want to analyze</div>
+                        <div id="main-asin-error" class="asin-error" style="display:none;color:#dc2626;font-size:0.85rem;margin-top:6px;"></div>
                     </div>
 
                     <!-- Competitor ASINs -->
@@ -107,6 +112,7 @@
                         <textarea id="comp-asin" name="compAsin" placeholder="Enter competitor ASINs (one per line)..."
                             required></textarea>
                         <div class="helper-text">Please enter competitor ASINs, 3-5 recommended</div>
+                        <div id="comp-asin-error" class="asin-error" style="display:none;color:#dc2626;font-size:0.85rem;margin-top:6px;"></div>
                     </div>
                 </div>
 

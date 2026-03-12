@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (!analysisForm || !leadGenModal || !leadGenForm) return;
+    if (!analysisForm || !leadGenModal || !leadGenForm || !submitBtn) return;
 
     // ASIN format: 10 alphanumeric chars (B0xxxxxxxx is common but not required)
     function validateAsinList(raw, fieldName) {
@@ -141,6 +141,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const invalid = parts.filter(p => p.length !== 10);
         return { valid: parts.filter(p => p.length === 10), invalidCount: invalid.length, invalid };
     }
+
+    // Clear ASIN errors on input
+    const mainAsinEl = document.getElementById('main-asin');
+    const compAsinEl = document.getElementById('comp-asin');
+    if (mainAsinEl) mainAsinEl.addEventListener('input', function () { const e = document.getElementById('main-asin-error'); if (e) e.style.display = 'none'; });
+    if (compAsinEl) compAsinEl.addEventListener('input', function () { const e = document.getElementById('comp-asin-error'); if (e) e.style.display = 'none'; });
 
     // 1. Handle Main Form "Start Analysis" Click
     submitBtn.addEventListener('click', function (e) {
@@ -158,12 +164,21 @@ document.addEventListener('DOMContentLoaded', function () {
         const mainResult = validateAsinList(mainAsin, 'main');
         const compResult = validateAsinList(compAsin, 'comp');
 
+        const mainErr = document.getElementById('main-asin-error');
+        const compErr = document.getElementById('comp-asin-error');
+        if (mainErr) mainErr.style.display = 'none';
+        if (compErr) compErr.style.display = 'none';
+
         if (mainResult.valid.length === 0) {
-            alert(selectedLanguage === 'en' ? 'Please enter a valid Core Product ASIN (10 alphanumeric characters, e.g. B08N5WRWNW).' : '请输入有效的主产品 ASIN（10 位字母数字，如 B08N5WRWNW）。');
+            const msg = selectedLanguage === 'en' ? 'Please enter a valid ASIN (10 alphanumeric chars, e.g. B08N5WRWNW)' : '请输入有效的 ASIN 格式（以 B0 开头的 10 位编码）';
+            if (mainErr) { mainErr.textContent = msg; mainErr.style.display = 'block'; }
+            alert(msg);
             return;
         }
         if (compResult.valid.length === 0) {
-            alert(selectedLanguage === 'en' ? 'Please enter at least one valid Competitor ASIN (10 alphanumeric characters).' : '请至少输入一个有效的竞品 ASIN（10 位字母数字）。');
+            const msg = selectedLanguage === 'en' ? 'Please enter at least one valid Competitor ASIN (10 alphanumeric chars)' : '请至少输入一个有效的竞品 ASIN（10 位字母数字）';
+            if (compErr) { compErr.textContent = msg; compErr.style.display = 'block'; }
+            alert(msg);
             return;
         }
         if (mainResult.invalidCount > 0 || compResult.invalidCount > 0) {
