@@ -36,7 +36,7 @@ ADMIN_API_TOKEN = os.environ.get('ADMIN_API_TOKEN')
 # --- Product Discovery (选品分析) Config ---
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
 OPENAI_BASE_URL = os.environ.get('OPENAI_BASE_URL', 'https://openrouter.ai/api/v1')
-OPENAI_MODEL = os.environ.get('OPENAI_MODEL', 'openai/gpt-4o')
+OPENAI_MODEL = os.environ.get('OPENAI_MODEL', 'anthropic/claude-sonnet-4.5')
 SMTP_SERVER = os.environ.get('SMTP_SERVER', 'smtp.gmail.com')
 SMTP_PORT = int(os.environ.get('SMTP_PORT', 587))
 SMTP_USER = os.environ.get('SMTP_USER', '')

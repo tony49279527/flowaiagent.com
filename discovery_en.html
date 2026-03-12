@@ -736,7 +736,7 @@
                 target_price_max: document.getElementById('price-max').value.trim(),
                 report_language: document.getElementById('analysis-lang').value,
                 custom_prompt: document.getElementById('discovery-prompt').value.trim(),
-                ai_model: 'openai/gpt-4o'
+                ai_model: 'anthropic/claude-sonnet-4.5'
             };
         }
 
@@ -747,7 +747,7 @@
                 'Category: ' + (payload.category_path || payload.category_main),
                 'Keywords: ' + payload.keywords,
                 'Marketplace: ' + payload.marketplace,
-                'AI Model: GPT-4o (OpenRouter)',
+                'AI Model: Claude Sonnet 4.5 (OpenRouter)',
                 'Focus: ' + payload.focus_areas.join(', '),
                 'Reference ASINs: ' + asins,
                 (payload.invalid_asin_count > 0 ? ('Invalid ASIN dropped: ' + payload.invalid_asin_count) : '')

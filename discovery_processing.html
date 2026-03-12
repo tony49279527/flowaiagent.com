@@ -100,8 +100,8 @@
         const urlParams = new URLSearchParams(window.location.search);
         const taskId = urlParams.get('taskId');
         const userEmail = sessionStorage.getItem('discovery_email') || urlParams.get('email') || '';
-        const aiModelParam = urlParams.get('model') || 'openai/gpt-4o';
-        const aiModelDisplay = aiModelParam === 'openai/gpt-4o' ? 'GPT-4o' : aiModelParam;
+        const aiModelParam = urlParams.get('model') || 'anthropic/claude-sonnet-4.5';
+        const aiModelDisplay = aiModelParam === 'anthropic/claude-sonnet-4.5' ? 'Claude Sonnet 4.5' : aiModelParam;
 
         document.getElementById('user-email-display').textContent = userEmail || '您的邮箱';
         document.getElementById('ai-model-display').textContent = aiModelDisplay;

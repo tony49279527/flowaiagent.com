@@ -99,7 +99,7 @@
 | `CORS_ORIGINS` | `https://flowaiagent.com` | 允许的跨域来源，多个用逗号分隔 |
 | `ADMIN_API_TOKEN` | 自定义字符串 | 管理接口令牌（可选） |
 | `OPENAI_BASE_URL` | `https://openrouter.ai/api/v1` | 默认即可 |
-| `OPENAI_MODEL` | `openai/gpt-4o` | 可选其他模型如 `anthropic/claude-3.5-sonnet` |
+| `OPENAI_MODEL` | `anthropic/claude-sonnet-4.5` | 可选其他模型如 `openai/gpt-4o` |
 
 ---
 
