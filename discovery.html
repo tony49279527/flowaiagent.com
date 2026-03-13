@@ -494,9 +494,27 @@
                         </div>
                     </div>
 
+                    <div class="section-block">
+                        <h3 class="section-title">接收报告信息</h3>
+                        <div class="layout-3">
+                            <div class="field">
+                                <label for="userName">姓名 <span class="required">*</span></label>
+                                <input type="text" id="userName" name="userName" required placeholder="请输入您的姓名">
+                            </div>
+                            <div class="field">
+                                <label for="userEmail">接收邮箱 <span class="required">*</span></label>
+                                <input type="email" id="userEmail" name="userEmail" required placeholder="name@example.com">
+                            </div>
+                            <div class="field">
+                                <label for="industry">所属行业 <span class="required">*</span></label>
+                                <input type="text" id="industry" name="industry" required placeholder="例如：家居、户外、3C">
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="submit-row">
                         <button type="submit" class="submit-btn" id="submitBtn">
-                            <span class="btn-text">开始 Product Discovery</span>
+                            <span class="btn-text">确认提交并开始分析</span>
                             <span class="btn-loading" style="display: none;">处理中...</span>
                         </button>
                     </div>
@@ -504,36 +522,6 @@
             </div>
         </main>
 
-        <div class="modal-overlay" id="leadGenModal">
-            <div class="modal-container">
-                <div class="modal-header">
-                    <h3>确认提交信息</h3>
-                    <button class="close-modal" id="closeModal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div class="summary-box" id="submitSummary"></div>
-                    <form id="leadGenForm">
-                        <div class="form-group">
-                            <label for="modal-name">姓名 <span class="required">*</span></label>
-                            <input type="text" id="modal-name" name="userName" required placeholder="请输入您的姓名">
-                        </div>
-                        <div class="form-group">
-                            <label for="modal-email">接收邮箱 <span class="required">*</span></label>
-                            <input type="email" id="modal-email" name="userEmail" required
-                                placeholder="name@example.com">
-                        </div>
-                        <div class="form-group">
-                            <label for="modal-industry">行业类目 <span class="required">*</span></label>
-                            <input type="text" id="modal-industry" name="industry" required placeholder="例如：家居、户外、3C">
-                        </div>
-                        <button type="submit" class="submit-btn modal-submit-btn">
-                            <span class="btn-text">确认并开始分析</span>
-                            <span class="btn-loading" style="display: none;">处理中...</span>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
 
         <div class="progress-overlay" id="progressOverlay">
             <div class="progress-container">
@@ -636,14 +624,11 @@
         ];
 
         const discoveryForm = document.getElementById('discoveryForm');
-        const leadGenModal = document.getElementById('leadGenModal');
-        const leadGenForm = document.getElementById('leadGenForm');
-        const closeModalBtn = document.getElementById('closeModal');
         const focusGrid = document.getElementById('focusGrid');
         const progressOverlay = document.getElementById('progressOverlay');
         const progressBar = document.getElementById('progressBar');
         const progressStatus = document.getElementById('progressStatus');
-        const submitSummary = document.getElementById('submitSummary');
+        const submitBtn = document.getElementById('submitBtn');
         const priceError = document.getElementById('priceError');
 
         const level1 = document.getElementById('cat-level-1');
@@ -812,7 +797,7 @@
         document.getElementById('price-min').addEventListener('input', validatePriceRange);
         document.getElementById('price-max').addEventListener('input', validatePriceRange);
 
-        discoveryForm.addEventListener('submit', function (event) {
+        discoveryForm.addEventListener('submit', async function (event) {
             event.preventDefault();
             if (!validatePriceRange()) return;
 
@@ -826,24 +811,15 @@
                 return;
             }
 
-            renderSummary(payload);
-            leadGenModal.classList.add('active');
-        });
-
-        closeModalBtn.addEventListener('click', function () {
-            leadGenModal.classList.remove('active');
-        });
-
-        leadGenModal.addEventListener('click', function (event) {
-            if (event.target === leadGenModal) {
-                leadGenModal.classList.remove('active');
+            const userNameInput = document.getElementById('userName');
+            const userEmailInput = document.getElementById('userEmail');
+            const industryInput = document.getElementById('industry');
+            
+            if (!userNameInput || !userNameInput.value.trim() || !userEmailInput || !userEmailInput.value.trim() || !industryInput || !industryInput.value.trim()) {
+                alert('请填写所有接收报告的联系信息字段。');
+                return;
             }
-        });
 
-        leadGenForm.addEventListener('submit', async function (event) {
-            event.preventDefault();
-
-            const submitBtn = leadGenForm.querySelector('.modal-submit-btn');
             const btnText = submitBtn.querySelector('.btn-text');
             const btnLoading = submitBtn.querySelector('.btn-loading');
 
@@ -853,13 +829,12 @@
             btnLoading.style.display = 'inline-block';
 
             try {
-                const formPayload = getFormData();
-                const userName = document.getElementById('modal-name').value.trim();
-                const userEmail = document.getElementById('modal-email').value.trim().toLowerCase();
-                const industry = document.getElementById('modal-industry').value.trim();
+                const userName = userNameInput.value.trim();
+                const userEmail = userEmailInput.value.trim().toLowerCase();
+                const industry = industryInput.value.trim();
 
                 const finalPayload = {
-                    ...formPayload,
+                    ...payload,
                     user_name: userName,
                     user_email: userEmail,
                     industry: industry,
@@ -871,7 +846,6 @@
 
                 // Show Progress Overlay (Initial Step)
                 progressOverlay.classList.add('active');
-                leadGenModal.classList.remove('active');
                 progressStatus.textContent = '正在初始化 AI 选品引擎...';
                 progressBar.style.width = '10%';
 

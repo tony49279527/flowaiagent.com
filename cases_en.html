@@ -241,7 +241,8 @@
         document.addEventListener('DOMContentLoaded', async function () {
             const grid = document.getElementById('cases-grid');
             try {
-                const res = await fetch('data/reports/index_en.json');
+                // Add timestamp to prevent caching old index.json with broken image paths
+                const res = await fetch('data/reports/index_en.json?v=' + new Date().getTime());
                 const reports = await res.json();
 
                 grid.innerHTML = ''; // Clear loader

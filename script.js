@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (compAsinEl) compAsinEl.addEventListener('input', function () { const e = document.getElementById('comp-asin-error'); if (e) e.style.display = 'none'; });
 
     // 1. Handle Main Form "Start Analysis" Click
-    submitBtn.addEventListener('click', function (e) {
+    submitBtn.addEventListener('click', async function (e) {
         e.preventDefault(); // Prevent default form submission
 
         const mainAsin = document.getElementById('main-asin').value.trim();
@@ -186,49 +186,30 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!confirm(msg + (selectedLanguage === 'en' ? ' Continue?' : ' 是否继续？'))) return;
         }
 
-        // Show Modal
-        leadGenModal.classList.add('active');
-    });
-
-    // 2. Handle Modal Close
-    closeModalBtn.addEventListener('click', function () {
-        leadGenModal.classList.remove('active');
-    });
-
-    // Close on click outside
-    leadGenModal.addEventListener('click', function (e) {
-        if (e.target === leadGenModal) {
-            leadGenModal.classList.remove('active');
+        const userNameInput = document.getElementById('userName');
+        const userEmailInput = document.getElementById('userEmail');
+        const industryInput = document.getElementById('industry');
+        
+        if (!userNameInput || !userNameInput.value.trim() || !userEmailInput || !userEmailInput.value.trim() || !industryInput || !industryInput.value.trim()) {
+            alert(selectedLanguage === 'en' ? 'Please fill in all contact information fields.' : '请填写所有联系信息字段。');
+            return;
         }
-    });
 
-    // 3. Handle Final Submission (Modal Form)
-    leadGenForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        const modalSubmitBtn = leadGenForm.querySelector('.submit-btn');
-        const btnText = modalSubmitBtn.querySelector('.btn-text');
-        const btnLoading = modalSubmitBtn.querySelector('.btn-loading');
-
-        const emailInput = document.getElementById('modal-email');
-        const userEmail = emailInput ? emailInput.value.trim().toLowerCase() : '';
+        const btnText = submitBtn.querySelector('.btn-text');
+        const btnLoading = submitBtn.querySelector('.btn-loading');
 
         // Show loading state immediately to prevent double clicks
-        modalSubmitBtn.disabled = true;
-        btnText.style.display = 'none';
-        btnLoading.style.display = 'inline-block';
+        submitBtn.disabled = true;
+        if (btnText) btnText.style.display = 'none';
+        if (btnLoading) btnLoading.style.display = 'inline-block';
+
+        const userEmail = userEmailInput.value.trim().toLowerCase();
 
         try {
-            // Gather Data from BOTH forms early so we can create a paid order when quota is exceeded
             const mainFormData = new FormData(analysisForm);
-            const modalFormData = new FormData(leadGenForm);
-
             const rawData = {};
             for (let [key, value] of mainFormData.entries()) {
                 if (value instanceof File) continue;
-                rawData[key] = value;
-            }
-            for (let [key, value] of modalFormData.entries()) {
                 rawData[key] = value;
             }
 
@@ -375,7 +356,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (progressOverlay) {
                 progressOverlay.classList.add('active');
-                leadGenModal.classList.remove('active'); // Close modal immediately
 
                 // Simulate Progress
                 let progress = 0;
@@ -469,9 +449,9 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('There was an error submitting your request. Please try again.');
         } finally {
             // Reset button state
-            modalSubmitBtn.disabled = false;
-            btnText.style.display = 'inline-block';
-            btnLoading.style.display = 'none';
+            submitBtn.disabled = false;
+            if (btnText) btnText.style.display = 'inline-block';
+            if (btnLoading) btnLoading.style.display = 'none';
         }
     });
 

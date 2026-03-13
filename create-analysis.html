@@ -205,6 +205,24 @@
                     </div>
                     <textarea id="custom-prompt" name="customPrompt" placeholder="输入自定义分析要求..."></textarea>
                 </div>
+                <!-- User Contact Section -->
+                <div class="contact-section" style="margin-bottom: 30px;">
+                    <h3 class="section-title">接收报告信息</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="userName">姓名 <span class="required">*</span></label>
+                            <input type="text" id="userName" name="userName" required placeholder="请输入您的姓名" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="userEmail">接收邮箱 <span class="required">*</span></label>
+                            <input type="email" id="userEmail" name="userEmail" required placeholder="name@example.com" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="industry">所属行业 <span class="required">*</span></label>
+                            <input type="text" id="industry" name="industry" required placeholder="如：家居、3C" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Submit Button -->
                 <div class="submit-section">
@@ -225,37 +243,6 @@
             </form>
         </main>
 
-        <!-- Lead Gen Modal -->
-        <div class="modal-overlay" id="leadGenModal">
-            <div class="modal-container">
-                <div class="modal-header">
-                    <h3>获取您的分析报告</h3>
-                    <button class="close-modal" id="closeModal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <p class="modal-desc">请完善以下信息，分析完成后报告将发送至您的邮箱。</p>
-                    <form id="leadGenForm">
-                        <div class="form-group">
-                            <label for="modal-name">姓名 <span class="required">*</span></label>
-                            <input type="text" id="modal-name" name="userName" required placeholder="请输入您的姓名">
-                        </div>
-                        <div class="form-group">
-                            <label for="modal-email">接收邮箱 <span class="required">*</span></label>
-                            <input type="email" id="modal-email" name="userEmail" required
-                                placeholder="name@example.com">
-                        </div>
-                        <div class="form-group">
-                            <label for="modal-industry">行业类目 <span class="required">*</span></label>
-                            <input type="text" id="modal-industry" name="industry" required placeholder="例如:电子产品、家居...">
-                        </div>
-                        <button type="submit" class="submit-btn modal-submit-btn">
-                            <span class="btn-text">确认并开始分析</span>
-                            <span class="btn-loading" style="display: none;">处理中...</span>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
 
         <!-- Progress Overlay -->
         <div class="progress-overlay" id="progressOverlay">
@@ -322,7 +309,7 @@
         </footer>
     </div>
     <script src="mobile-menu.js"></script>
-    <script src="script.js"></script>
+    <script src="script.js?v=2.2"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

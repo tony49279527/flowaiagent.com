@@ -24,7 +24,10 @@ async function loadReport(id) {
 
     try {
         // 1. Fetch metadata to get the title
-        const metadataResponse = await fetch('data/reports/index.json');
+        // Detect English version
+        const isEnglish = window.location.pathname.includes('_en.html') || new URLSearchParams(window.location.search).get('lang') === 'en';
+        const jsonPath = isEnglish ? 'data/reports/index_en.json' : 'data/reports/index.json';
+        const metadataResponse = await fetch(`${jsonPath}?v=` + new Date().getTime());
         const metadataList = await metadataResponse.json();
         const metadata = metadataList.find(r => r.id === id);
 
@@ -87,7 +90,9 @@ async function loadRecommended(currentId) {
     if (!container) return;
 
     try {
-        const response = await fetch('data/reports/index.json');
+        const isEnglish = window.location.pathname.includes('_en.html') || new URLSearchParams(window.location.search).get('lang') === 'en';
+        const jsonPath = isEnglish ? 'data/reports/index_en.json' : 'data/reports/index.json';
+        const response = await fetch(`${jsonPath}?v=` + new Date().getTime());
         const reports = await response.json();
 
         // Filter out current and pick random 2-3
@@ -126,8 +131,11 @@ function setupFeatures(data) {
 
     // PDF Download
     if (downloadBtn) {
-        downloadBtn.addEventListener('click', () => {
-            window.print();
+        // Remove old inline onclick if exists
+        downloadBtn.removeAttribute('onclick');
+        downloadBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('请添加官方微信客服：tony49279527，获取本报告的高清 PDF 版本。\n\nPlease add official WeChat: tony49279527 to get the high-res PDF version of this report.');
         });
     }
 
