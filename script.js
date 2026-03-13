@@ -135,11 +135,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!analysisForm || !leadGenModal || !leadGenForm || !submitBtn) return;
 
-    // ASIN format: 10 alphanumeric chars (B0xxxxxxxx is common but not required)
     function validateAsinList(raw, fieldName) {
         const parts = raw.split(/[\n\r,;]+/).map(s => s.trim().toUpperCase().replace(/[^A-Z0-9]/g, '')).filter(Boolean);
-        const invalid = parts.filter(p => p.length !== 10);
-        return { valid: parts.filter(p => p.length === 10), invalidCount: invalid.length, invalid };
+        const valid = parts.filter(p => p.length === 10 && p.startsWith('B0'));
+        const invalid = parts.filter(p => p.length !== 10 || !p.startsWith('B0'));
+        return { valid: valid, invalidCount: invalid.length, invalid: invalid };
     }
 
     // Clear ASIN errors on input
@@ -170,21 +170,19 @@ document.addEventListener('DOMContentLoaded', function () {
         if (compErr) compErr.style.display = 'none';
 
         if (mainResult.valid.length === 0) {
-            const msg = selectedLanguage === 'en' ? 'Please enter a valid ASIN (10 alphanumeric chars, e.g. B08N5WRWNW)' : '请输入有效的 ASIN 格式（以 B0 开头的 10 位编码）';
+            const msg = selectedLanguage === 'en' ? 'Please enter a valid ASIN (10 alphanumeric chars starting with B0, e.g. B08N5WRWNW)' : '请输入有效的 ASIN（以 B0 开头的 10 位编码）';
             if (mainErr) { mainErr.textContent = msg; mainErr.style.display = 'block'; }
-            alert(msg);
             return;
         }
         if (compResult.valid.length === 0) {
-            const msg = selectedLanguage === 'en' ? 'Please enter at least one valid Competitor ASIN (10 alphanumeric chars)' : '请至少输入一个有效的竞品 ASIN（10 位字母数字）';
+            const msg = selectedLanguage === 'en' ? 'Please enter at least one valid Competitor ASIN (10 alphanumeric chars starting with B0)' : '请至少输入一个有效的竞品 ASIN（以 B0 开头的 10 位编码）';
             if (compErr) { compErr.textContent = msg; compErr.style.display = 'block'; }
-            alert(msg);
             return;
         }
         if (mainResult.invalidCount > 0 || compResult.invalidCount > 0) {
             const msg = selectedLanguage === 'en'
-                ? `${mainResult.invalidCount + compResult.invalidCount} invalid ASIN(s) were ignored. Each ASIN must be 10 alphanumeric characters.`
-                : `已忽略 ${mainResult.invalidCount + compResult.invalidCount} 个无效 ASIN。每个 ASIN 需为 10 位字母数字。`;
+                ? `${mainResult.invalidCount + compResult.invalidCount} invalid ASIN(s) were ignored. Each ASIN must be 10 alphanumeric characters starting with B0.`
+                : `已忽略 ${mainResult.invalidCount + compResult.invalidCount} 个无效 ASIN。每个 ASIN 需为以 B0 开头的 10 位编码。`;
             if (!confirm(msg + (selectedLanguage === 'en' ? ' Continue?' : ' 是否继续？'))) return;
         }
 
