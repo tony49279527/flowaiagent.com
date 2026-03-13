@@ -31,6 +31,13 @@ from email.mime.multipart import MIMEMultipart
 # Serve static files from current directory
 app = Flask(__name__)
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv('.env.discovery')
+    load_dotenv('.env') # Also load main .env if it exists
+except ImportError:
+    pass
+
 ADMIN_API_TOKEN = os.environ.get('ADMIN_API_TOKEN')
 
 # --- Product Discovery (选品分析) Config ---
@@ -531,7 +538,7 @@ def create_order():
     if not isinstance(order_data, dict):
         return jsonify({"error": "order_data must be an object"}), 400
 
-    email = (order_data.get('user_email') or data.get('email') or '').strip().lower()
+    email = str(order_data.get('user_email') or data.get('email') or '').strip().lower()
     if not email:
         return jsonify({"error": "user email is required"}), 400
 
