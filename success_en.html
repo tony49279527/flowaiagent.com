@@ -145,7 +145,7 @@
                     <h4>Contact Us</h4>
                     <ul class="footer-links">
                         <li>📧 contact@amzaiagent.com</li>
-                        <li>💬 WeChat: tony49279527</li>
+                        <li>💬 WeChat: tony49279527 (search by WeChat ID)</li>
                     </ul>
                 </div>
             </div>
@@ -162,35 +162,52 @@
     <script>
         // Dynamic quota display
         document.addEventListener('DOMContentLoaded', async function () {
+            const pageType = (new URLSearchParams(window.location.search).get('type') || 'competitor').toLowerCase();
+            const quotaFeature = pageType === 'discovery' ? 'discovery' : 'competitor';
             const email = sessionStorage.getItem('discovery_email') || localStorage.getItem('user_email') || localStorage.getItem('userEmail') || '';
             const noticeEl = document.getElementById('quotaNotice');
             const ctaRemainingEl = document.getElementById('ctaRemaining');
             const ctaBox = document.getElementById('ctaBox');
+            const ctaTitle = ctaBox ? ctaBox.querySelector('h3') : null;
+            const ctaDesc = ctaBox ? ctaBox.querySelector('p') : null;
+            const ctaPrimary = ctaBox ? ctaBox.querySelector('.cta-btn.primary') : null;
             let remaining = 0;
+
+            if (quotaFeature === 'discovery' && ctaTitle && ctaDesc && ctaPrimary) {
+                ctaTitle.textContent = 'Run another discovery analysis?';
+                ctaDesc.innerHTML = 'You still have <strong id="ctaRemaining">-</strong> free discovery credits left for another product direction.';
+                ctaPrimary.href = 'discovery_en.html';
+                ctaPrimary.textContent = 'Start another discovery analysis ->';
+            }
 
             if (email) {
                 try {
                     const resp = await fetch('/api/check_quota', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email: email })
+                        body: JSON.stringify({ email: email, feature: quotaFeature })
                     });
                     if (resp.ok) {
                         const data = await resp.json();
-                        remaining = Math.max(0, 2 - (data.usage || 0));
+                        remaining = data.remaining || 0;
                     }
                 } catch (e) {
-                    const usageKey = 'flowai_usage_' + email;
+                    const usageKey = 'flowai_usage_' + quotaFeature + '_' + email;
                     const usage = parseInt(localStorage.getItem(usageKey) || '0');
                     remaining = Math.max(0, 2 - usage);
                 }
             }
 
             if (remaining > 0) {
-                noticeEl.textContent = 'You have ' + remaining + ' free analysis credits remaining';
-                ctaRemainingEl.textContent = remaining;
+                noticeEl.textContent = quotaFeature === 'discovery'
+                    ? 'You have ' + remaining + ' free discovery credits remaining'
+                    : 'You have ' + remaining + ' free competitor-analysis credits remaining';
+                const latestRemainingEl = document.getElementById('ctaRemaining');
+                if (latestRemainingEl) latestRemainingEl.textContent = remaining;
             } else {
-                noticeEl.textContent = 'Your 2 free analysis credits are fully used';
+                noticeEl.textContent = quotaFeature === 'discovery'
+                    ? 'Your 2 free discovery credits are fully used'
+                    : 'Your 2 free competitor-analysis credits are fully used';
                 ctaBox.style.display = 'none';
             }
         });

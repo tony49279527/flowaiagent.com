@@ -8,10 +8,17 @@ import time
 import logging
 import os
 import smtplib
+import re
+from io import BytesIO
+from html import escape
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
 from datetime import datetime
 import requests # For OpenAI-style API calls if needed
+from docx import Document
+from docx.oxml.ns import qn
+from docx.shared import Pt
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -245,7 +252,7 @@ def generate_report(form_data):
 
 **重要**: 整份报告必须不少于 8000 汉字。基于品类知识进行合理推断，数据可标注为"基于行业经验推断"或"合理估算"。每个表格和列表都要有实质信息，避免空洞概括。"""
 
-    try:
+    def call_model(messages):
         headers = {
             "Authorization": f"Bearer {OPENAI_API_KEY}",
             "Content-Type": "application/json",
@@ -254,7 +261,7 @@ def generate_report(form_data):
         }
         payload = {
             "model": model_to_use,
-            "messages": [{"role": "user", "content": prompt}],
+            "messages": messages,
             "temperature": 0.6,
             "max_tokens": 16384
         }
@@ -265,9 +272,58 @@ def generate_report(form_data):
             err_body = response.text[:500] if response.text else "(empty)"
             logger.error(f"OpenRouter API Error: status={response.status_code}, body={err_body}")
             return f"ERROR: OpenRouter API failed (HTTP {response.status_code}). Check credits at openrouter.ai/settings/credits. Details: {err_body}"
-        content = response.json()['choices'][0]['message']['content']
-        logger.info(f"Report generated: {len(content)} chars")
-        return content
+        data = response.json()
+        choice = data['choices'][0]
+        content = choice['message']['content']
+        finish_reason = choice.get('finish_reason')
+        return content, finish_reason
+
+    def report_looks_complete(content):
+        normalized = re.sub(r'\s+', '', content)
+        completion_markers = [
+            '30-60-90天执行计划',
+            '第61-90天',
+            '6.4',
+            '##六、进入策略与执行计划',
+            '###6.4',
+            '第31-60天',
+        ]
+        return any(marker in normalized for marker in completion_markers)
+
+    try:
+        messages = [{"role": "user", "content": prompt}]
+        content, finish_reason = call_model(messages)
+        if isinstance(content, str) and content.startswith("ERROR:"):
+            return content
+
+        combined = content
+        logger.info(f"Report generated chunk 1: {len(content)} chars, finish_reason={finish_reason}")
+
+        for attempt in range(2):
+            if finish_reason != 'length' and report_looks_complete(combined):
+                break
+            continuation_prompt = (
+                "Continue the same report from exactly where you stopped. "
+                "Do not repeat previous sections. Resume from the next unfinished heading and finish the remaining sections."
+            )
+            messages = [
+                {"role": "user", "content": prompt},
+                {"role": "assistant", "content": combined},
+                {"role": "user", "content": continuation_prompt}
+            ]
+            next_chunk, finish_reason = call_model(messages)
+            if isinstance(next_chunk, str) and next_chunk.startswith("ERROR:"):
+                break
+            if not next_chunk.strip():
+                break
+            combined += "\n\n" + next_chunk.strip()
+            logger.info(
+                f"Report continuation chunk {attempt + 2}: {len(next_chunk)} chars, "
+                f"total={len(combined)}, finish_reason={finish_reason}"
+            )
+
+        logger.info(f"Report generated: {len(combined)} chars total")
+        return combined
     except requests.exceptions.RequestException as e:
         err_detail = str(e)
         if hasattr(e, 'response') and e.response is not None:
@@ -286,13 +342,236 @@ def send_email(to_email, user_name, report_content):
         logger.warning("SMTP not configured. Skipping email.")
         return False
 
-    msg = MIMEMultipart()
+    def render_inline_markdown(text):
+        escaped = escape(text)
+        escaped = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', escaped)
+        escaped = re.sub(r'`([^`]+)`', r'<code>\1</code>', escaped)
+        return escaped
+
+    def markdown_to_basic_html(markdown_text):
+        parts = []
+        list_open = False
+        table_rows = []
+
+        def flush_list():
+            nonlocal list_open
+            if list_open:
+                parts.append('</ul>')
+                list_open = False
+
+        def flush_table():
+            nonlocal table_rows
+            if not table_rows:
+                return
+
+            def is_separator(row):
+                return all(cell and set(cell) <= set('-: ') for cell in row)
+
+            rows = table_rows[:]
+            table_rows = []
+            if len(rows) >= 2 and is_separator(rows[1]):
+                header = rows[0]
+                body = rows[2:]
+            else:
+                header = rows[0]
+                body = rows[1:]
+
+            parts.append('<table style="width:100%;border-collapse:collapse;margin:16px 0;">')
+            parts.append('<thead><tr>')
+            for cell in header:
+                parts.append(
+                    f'<th style="border:1px solid #dbe3f0;padding:8px 10px;background:#f8fafc;text-align:left;">{render_inline_markdown(cell)}</th>'
+                )
+            parts.append('</tr></thead>')
+            if body:
+                parts.append('<tbody>')
+                for row in body:
+                    parts.append('<tr>')
+                    for cell in row:
+                        parts.append(
+                            f'<td style="border:1px solid #dbe3f0;padding:8px 10px;vertical-align:top;">{render_inline_markdown(cell)}</td>'
+                        )
+                    parts.append('</tr>')
+                parts.append('</tbody>')
+            parts.append('</table>')
+
+        for raw_line in markdown_text.splitlines():
+            line = raw_line.rstrip()
+            stripped = line.strip()
+
+            if stripped.startswith('|') and stripped.endswith('|'):
+                flush_list()
+                cells = [cell.strip() for cell in stripped.strip('|').split('|')]
+                table_rows.append(cells)
+                continue
+            flush_table()
+
+            if not stripped:
+                flush_list()
+                continue
+
+            if stripped.startswith('# '):
+                flush_list()
+                parts.append(f'<h1 style="font-size:24px;margin:28px 0 14px;">{render_inline_markdown(stripped[2:])}</h1>')
+            elif stripped.startswith('## '):
+                flush_list()
+                parts.append(f'<h2 style="font-size:20px;margin:24px 0 12px;">{render_inline_markdown(stripped[3:])}</h2>')
+            elif stripped.startswith('### '):
+                flush_list()
+                parts.append(f'<h3 style="font-size:17px;margin:20px 0 10px;">{render_inline_markdown(stripped[4:])}</h3>')
+            elif stripped.startswith('- ') or stripped.startswith('* '):
+                if not list_open:
+                    parts.append('<ul style="margin:12px 0 12px 22px;padding:0;">')
+                    list_open = True
+                parts.append(f'<li style="margin:6px 0;">{render_inline_markdown(stripped[2:])}</li>')
+            else:
+                flush_list()
+                parts.append(f'<p style="margin:12px 0;line-height:1.75;">{render_inline_markdown(stripped)}</p>')
+
+        flush_list()
+        flush_table()
+        return ''.join(parts)
+
+    def build_preview(text, max_lines=18, max_chars=2200):
+        lines = []
+        total = 0
+        for raw_line in text.splitlines():
+            stripped = raw_line.strip()
+            if not stripped or stripped.startswith('|'):
+                continue
+            if set(stripped) <= set('-:| '):
+                continue
+            cleaned = re.sub(r'^[#*\-\d\.\s]+', '', stripped).strip()
+            if not cleaned:
+                continue
+            lines.append(cleaned)
+            total += len(cleaned)
+            if len(lines) >= max_lines or total >= max_chars:
+                break
+        return '\n'.join(lines)
+
+    def strip_markdown_markers(text):
+        text = re.sub(r'\*\*(.+?)\*\*', r'\1', text)
+        text = re.sub(r'`([^`]+)`', r'\1', text)
+        return text.strip()
+
+    def report_to_docx_bytes(text, title_text):
+        document = Document()
+        normal_style = document.styles['Normal']
+        normal_style.font.name = 'Arial'
+        normal_style._element.rPr.rFonts.set(qn('w:eastAsia'), 'Microsoft YaHei')
+        normal_style.font.size = Pt(10.5)
+
+        table_rows = []
+
+        def flush_table():
+            nonlocal table_rows
+            if not table_rows:
+                return
+
+            def is_separator(row):
+                return all(cell and set(cell) <= set('-: ') for cell in row)
+
+            rows = table_rows[:]
+            table_rows = []
+            if len(rows) >= 2 and is_separator(rows[1]):
+                header = rows[0]
+                body = rows[2:]
+            else:
+                header = rows[0]
+                body = rows[1:]
+
+            table = document.add_table(rows=1 + len(body), cols=len(header))
+            table.style = 'Table Grid'
+            for idx, cell in enumerate(header):
+                table.rows[0].cells[idx].text = strip_markdown_markers(cell)
+            for row_idx, row in enumerate(body, start=1):
+                for col_idx, cell in enumerate(row):
+                    table.rows[row_idx].cells[col_idx].text = strip_markdown_markers(cell)
+            document.add_paragraph('')
+
+        if title_text:
+            document.add_heading(strip_markdown_markers(title_text), level=0)
+
+        for raw_line in text.splitlines():
+            stripped = raw_line.strip()
+            if stripped.startswith('|') and stripped.endswith('|'):
+                cells = [cell.strip() for cell in stripped.strip('|').split('|')]
+                table_rows.append(cells)
+                continue
+            flush_table()
+            if not stripped:
+                continue
+            if stripped.startswith('# '):
+                document.add_heading(strip_markdown_markers(stripped[2:]), level=1)
+            elif stripped.startswith('## '):
+                document.add_heading(strip_markdown_markers(stripped[3:]), level=2)
+            elif stripped.startswith('### '):
+                document.add_heading(strip_markdown_markers(stripped[4:]), level=3)
+            elif stripped.startswith('- ') or stripped.startswith('* '):
+                document.add_paragraph(strip_markdown_markers(stripped[2:]), style='List Bullet')
+            else:
+                document.add_paragraph(strip_markdown_markers(stripped))
+
+        flush_table()
+
+        buffer = BytesIO()
+        document.save(buffer)
+        return buffer.getvalue()
+
+    msg = MIMEMultipart('mixed')
     msg['From'] = SENDER_EMAIL
     msg['To'] = to_email
     msg['Subject'] = f"Your Product Discovery Report for {user_name}"
 
-    body = f"Hello {user_name},\n\nYour Amazon Product Discovery report is ready. Please see below:\n\n---\n\n{report_content}"
-    msg.attach(MIMEText(body, 'plain'))
+    safe_name = re.sub(r'[^A-Za-z0-9_-]+', '_', (user_name or 'user')).strip('_') or 'user'
+    preview_text = build_preview(report_content)
+    report_docx = report_to_docx_bytes(report_content, "Product Discovery Report")
+
+    plain_body = (
+        f"Hello {user_name},\n\n"
+        "Your Amazon Product Discovery report is ready.\n\n"
+        "For better readability and to avoid email clipping, the full report is attached as a DOCX document.\n\n"
+        "Preview:\n"
+        "----------------------------------------\n"
+        f"{preview_text}\n\n"
+        "Attachments:\n"
+        f"- product_discovery_report_{safe_name}.docx\n"
+    )
+
+    html_body = f"""
+    <html>
+      <body style="margin:0;padding:24px;background:#f3f6fb;color:#0f172a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+        <div style="max-width:840px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:32px;">
+          <h1 style="margin:0 0 12px;font-size:28px;">Product Discovery Report</h1>
+          <p style="margin:0 0 12px;line-height:1.7;">Hi {escape(user_name)}, your report is ready.</p>
+          <p style="margin:0 0 18px;line-height:1.7;">
+            To avoid long-email clipping, the <strong>full report is attached</strong> as a DOCX document that opens cleanly in Word / Google Docs.
+            The email body only shows a readable preview.
+          </p>
+          <div style="background:#f8fafc;border:1px solid #dbe3f0;border-radius:12px;padding:18px 20px;margin:20px 0;">
+            {markdown_to_basic_html(preview_text)}
+          </div>
+          <p style="margin:18px 0 0;color:#475569;">Attachments:</p>
+          <ul style="margin:8px 0 0 20px;line-height:1.8;color:#475569;">
+            <li>product_discovery_report_{safe_name}.docx</li>
+          </ul>
+        </div>
+      </body>
+    </html>
+    """
+
+    alternative = MIMEMultipart('alternative')
+    alternative.attach(MIMEText(plain_body, 'plain', 'utf-8'))
+    alternative.attach(MIMEText(html_body, 'html', 'utf-8'))
+    msg.attach(alternative)
+
+    docx_attachment = MIMEApplication(
+        report_docx,
+        _subtype='vnd.openxmlformats-officedocument.wordprocessingml.document'
+    )
+    docx_attachment.add_header('Content-Disposition', 'attachment', filename=f'product_discovery_report_{safe_name}.docx')
+    msg.attach(docx_attachment)
 
     try:
         server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)

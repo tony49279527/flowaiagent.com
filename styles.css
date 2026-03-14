@@ -2579,12 +2579,22 @@ textarea:focus {
 /* Submit Section */
 .submit-section {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
+    gap: 14px;
     padding-top: 32px;
     border-top: 2px solid #e2e8f0;
+    text-align: center;
+}
+
+.submit-section .helper-text {
+    margin: 0;
+    max-width: 560px;
 }
 
 .submit-btn {
+    min-width: 280px;
     padding: 18px 48px;
     background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
     color: white;
@@ -2597,6 +2607,7 @@ textarea:focus {
     box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.39);
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 12px;
 }
 
@@ -2633,6 +2644,7 @@ textarea:focus {
     .submit-btn {
         width: 100%;
         justify-content: center;
+        min-width: 0;
     }
 }
 

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discovery Admin | FlowAI Agent</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css?v=2.0">
+    <style>
+        .admin-wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px 20px 50px;
+        }
+
+        .admin-hero {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(16, 185, 129, 0.07));
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 16px;
+        }
+
+        .admin-hero h1 {
+            margin: 0;
+            font-size: 1.35rem;
+        }
+
+        .admin-hero p {
+            margin: 6px 0 0 0;
+            color: var(--text-secondary);
+        }
+
+        .admin-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 14px;
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .row input,
+        .row select {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            min-width: 220px;
+        }
+
+        .row .btn {
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: none;
+            background: var(--text-main);
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .row .btn.secondary {
+            background: #fff;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .kpi {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .kpi .tile {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 12px;
+        }
+
+        .tile .label {
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+        }
+
+        .tile .value {
+            font-size: 1.35rem;
+            font-weight: 800;
+            margin-top: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 8px;
+            vertical-align: top;
+        }
+
+        th {
+            color: var(--text-secondary);
+            font-weight: 700;
+            background: rgba(37, 99, 235, 0.04);
+        }
+
+        .mono {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-weight: 800;
+            font-size: 0.78rem;
+            border: 1px solid var(--border-color);
+            background: #fff;
+        }
+
+        .status.PENDING { color: #b45309; border-color: #f59e0b55; background: #fffbeb; }
+        .status.ANALYZING { color: #1d4ed8; border-color: #2563eb55; background: #eff6ff; }
+        .status.COMPLETED { color: #047857; border-color: #10b98155; background: #ecfdf5; }
+        .status.COMPLETED_NO_EMAIL { color: #0f766e; border-color: #14b8a655; background: #f0fdfa; }
+        .status.FAILED { color: #b91c1c; border-color: #ef444455; background: #fef2f2; }
+
+        .muted {
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 900px) {
+            .admin-grid { grid-template-columns: 1fr; }
+            .kpi { grid-template-columns: 1fr 1fr; }
+            .row input, .row select { min-width: 0; width: 100%; }
+            .row .btn { width: 100%; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <div class="admin-wrap">
+            <div class="admin-hero">
+                <h1>Discovery Admin</h1>
+                <p>查看选品分析任务的进行状态与新增需求（需要 Admin Token）。</p>
+            </div>
+
+            <div class="admin-card">
+                <div class="admin-grid">
+                    <div class="row">
+                        <input id="token" type="password" placeholder="X-Admin-Token">
+                        <button class="btn" id="saveToken">Save Token</button>
+                        <button class="btn secondary" id="refreshNow">Refresh</button>
+                    </div>
+                    <div class="row">
+                        <select id="statusFilter">
+                            <option value="">All Status</option>
+                            <option value="PENDING">PENDING</option>
+                            <option value="ANALYZING">ANALYZING</option>
+                            <option value="COMPLETED">COMPLETED</option>
+                            <option value="COMPLETED_NO_EMAIL">COMPLETED_NO_EMAIL</option>
+                            <option value="FAILED">FAILED</option>
+                        </select>
+                        <input id="limit" type="number" min="1" max="200" value="30" placeholder="Limit">
+                        <input id="sinceHours" type="number" min="1" max="720" value="24" placeholder="Since hours">
+                    </div>
+                </div>
+                <p class="muted" id="msg" style="margin: 10px 0 0 0;"></p>
+            </div>
+
+            <div class="admin-card">
+                <div class="kpi">
+                    <div class="tile">
+                        <div class="label">Active (PENDING/ANALYZING)</div>
+                        <div class="value" id="kpiActive">-</div>
+                    </div>
+                    <div class="tile">
+                        <div class="label">Completed (since)</div>
+                        <div class="value" id="kpiCompleted">-</div>
+                    </div>
+                    <div class="tile">
+                        <div class="label">Failed (since)</div>
+                        <div class="value" id="kpiFailed">-</div>
+                    </div>
+                    <div class="tile">
+                        <div class="label">Latest</div>
+                        <div class="value mono" id="kpiLatest">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <h3 style="margin: 0 0 10px 0;">Recent Tasks</h3>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Task ID</th>
+                                <th>Status</th>
+                                <th>Email</th>
+                                <th>Industry</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                                <th>Error</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                            <tr><td colspan="7" class="muted">No data yet.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tokenEl = document.getElementById('token');
+        const saveTokenBtn = document.getElementById('saveToken');
+        const refreshBtn = document.getElementById('refreshNow');
+        const statusFilterEl = document.getElementById('statusFilter');
+        const limitEl = document.getElementById('limit');
+        const sinceHoursEl = document.getElementById('sinceHours');
+        const msgEl = document.getElementById('msg');
+
+        const kpiActive = document.getElementById('kpiActive');
+        const kpiCompleted = document.getElementById('kpiCompleted');
+        const kpiFailed = document.getElementById('kpiFailed');
+        const kpiLatest = document.getElementById('kpiLatest');
+        const tbody = document.getElementById('tbody');
+
+        tokenEl.value = localStorage.getItem('flowai_admin_token') || '';
+
+        function setMsg(text) {
+            msgEl.textContent = text || '';
+        }
+
+        function headers() {
+            const t = tokenEl.value.trim();
+            return t ? { 'X-Admin-Token': t } : {};
+        }
+
+        async function loadSummary() {
+            const sinceHours = parseInt(sinceHoursEl.value || '24', 10);
+            const res = await fetch(`/api/discovery/admin/summary?since_hours=${encodeURIComponent(String(sinceHours))}`, {
+                headers: headers()
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'summary_failed');
+
+            kpiActive.textContent = String(data.active_count ?? '-');
+            kpiCompleted.textContent = String((data.by_status || {}).COMPLETED ?? 0);
+            kpiFailed.textContent = String((data.by_status || {}).FAILED ?? 0);
+            kpiLatest.textContent = data.latest ? (data.latest.task_id || '-') : '-';
+        }
+
+        function renderTasks(tasks) {
+            if (!tasks || tasks.length === 0) {
+                tbody.innerHTML = '<tr><td colspan=\"7\" class=\"muted\">No tasks found.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = tasks.map(t => {
+                const s = (t.status || '').toUpperCase();
+                const safe = (x) => (x == null ? '' : String(x));
+                return `
+                    <tr>
+                        <td class=\"mono\">${safe(t.task_id)}</td>
+                        <td><span class=\"status ${s}\">${safe(s)}</span></td>
+                        <td class=\"mono\">${safe(t.user_email)}</td>
+                        <td>${safe(t.industry)}</td>
+                        <td class=\"mono\">${safe(t.created_at)}</td>
+                        <td class=\"mono\">${safe(t.updated_at)}</td>
+                        <td class=\"muted\">${safe(t.error_message)}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function loadRecent() {
+            const limit = Math.max(1, Math.min(200, parseInt(limitEl.value || '30', 10)));
+            const status = statusFilterEl.value.trim();
+            const url = status
+                ? `/api/discovery/admin/recent?limit=${encodeURIComponent(String(limit))}&status=${encodeURIComponent(status)}`
+                : `/api/discovery/admin/recent?limit=${encodeURIComponent(String(limit))}`;
+            const res = await fetch(url, { headers: headers() });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'recent_failed');
+            renderTasks(data.tasks || []);
+        }
+
+        async function refreshAll() {
+            try {
+                setMsg('Refreshing...');
+                await Promise.all([loadSummary(), loadRecent()]);
+                setMsg('OK');
+            } catch (e) {
+                setMsg(`Error: ${e.message || e}`);
+            }
+        }
+
+        saveTokenBtn.addEventListener('click', () => {
+            localStorage.setItem('flowai_admin_token', tokenEl.value.trim());
+            setMsg('Token saved.');
+        });
+        refreshBtn.addEventListener('click', refreshAll);
+        statusFilterEl.addEventListener('change', refreshAll);
+
+        // Auto refresh every 6 seconds.
+        refreshAll();
+        setInterval(refreshAll, 6000);
+    </script>
+</body>
+
+</html>

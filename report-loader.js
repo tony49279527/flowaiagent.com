@@ -33,7 +33,7 @@ async function loadReport(id) {
 
         if (metadata) {
             reportTitle.textContent = metadata.title;
-            reportDate.textContent = '生成时间：' + metadata.date;
+            reportDate.textContent = (isEnglish ? 'Generated on: ' : '生成时间：') + metadata.date;
             document.title = metadata.title + ' | FlowAI Agent';
         }
 
@@ -100,8 +100,9 @@ async function loadRecommended(currentId) {
         const shuffled = others.sort(() => 0.5 - Math.random());
         const selected = shuffled.slice(0, 3); // Show 3
 
+        const reportPage = isEnglish ? 'report_en.html' : 'report.html';
         container.innerHTML = selected.map(report => `
-            <a href="report.html?id=${report.id}" class="recommendation-card">
+            <a href="${reportPage}?id=${report.id}" class="recommendation-card">
                 <div class="rec-card-image">
                     <img src="${report.cover_image || 'images/default-hero.png'}" alt="${report.title}" onerror="this.src='images/cat-litter-box-hero.png'">
                 </div>

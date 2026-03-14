@@ -151,10 +151,24 @@
         }, 35000);
 
         let dots = 0;
+        let pollTimer = null;
+        let progressTimer = null;
+        let hasFailureLog = false;
         const dotInterval = setInterval(() => {
             dots = (dots + 1) % 4;
             mainStatus.textContent = 'AI 选品专家正在分析中' + '.'.repeat(dots);
         }, 500);
+
+        function stopPolling() {
+            if (pollTimer) {
+                clearInterval(pollTimer);
+                pollTimer = null;
+            }
+            if (progressTimer) {
+                clearInterval(progressTimer);
+                progressTimer = null;
+            }
+        }
 
         async function pollStatus() {
             if (!taskId) return;
@@ -171,6 +185,7 @@
                     }
                 } else if (data.status === 'COMPLETED' || data.status === 'COMPLETED_NO_EMAIL') {
                     isCompleted = true;
+                    stopPolling();
                     clearInterval(stageInterval);
                     clearInterval(dotInterval);
                     progressBar.style.width = '100%';
@@ -184,10 +199,16 @@
                     }, 2000);
                 } else if (data.status === 'FAILED') {
                     isCompleted = true;
+                    stopPolling();
                     clearInterval(stageInterval);
                     clearInterval(dotInterval);
                     mainStatus.textContent = '分析遇到问题';
-                    addLog('分析暂时无法完成，请稍后重试或联系客服 contact@amzaiagent.com', 'error');
+                    progressBar.style.width = '100%';
+                    if (!hasFailureLog) {
+                        hasFailureLog = true;
+                        const backendError = data.error_message ? `后端返回：${data.error_message}` : '';
+                        addLog(`分析暂时无法完成，请稍后重试或联系客服 contact@amzaiagent.com ${backendError}`.trim(), 'error');
+                    }
                 }
             } catch (e) {
                 console.warn('Poll error:', e);
@@ -198,8 +219,9 @@
         setTimeout(() => addLog('正在扫描指定类目的市场饱和度...'), 2000);
         setTimeout(() => addLog('探测到潜在蓝海差异化切入点...', 'active'), 5000);
 
-        setInterval(pollStatus, 5000);
-        setInterval(updateProgressWhileAnalyzing, 8000); // 每 8 秒更新一次进度条
+        pollTimer = setInterval(pollStatus, 5000);
+        progressTimer = setInterval(updateProgressWhileAnalyzing, 8000); // 每 8 秒更新一次进度条
+        pollStatus();
     </script>
 </body>
 

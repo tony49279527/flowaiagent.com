@@ -101,9 +101,6 @@ setupMultiFileUpload('persona-upload', 'persona-file-list', 'persona-clear-all')
 // Modal and Form Handling
 document.addEventListener('DOMContentLoaded', function () {
     const analysisForm = document.getElementById('analysisForm');
-    const leadGenModal = document.getElementById('leadGenModal');
-    const leadGenForm = document.getElementById('leadGenForm');
-    const closeModalBtn = document.getElementById('closeModal');
     const submitBtn = document.getElementById('submitBtn'); // The button in the main form
 
     // --- FAQ Accordion Logic (runs on all pages) ---
@@ -133,7 +130,39 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (!analysisForm || !leadGenModal || !leadGenForm || !submitBtn) return;
+    if (!analysisForm || !submitBtn) return;
+
+    async function refreshCompetitorQuotaBanner() {
+        const banner = document.querySelector('.quota-banner[data-feature="competitor"]');
+        if (!banner) return;
+
+        const storedEmail = (localStorage.getItem('user_email') || localStorage.getItem('userEmail') || '').trim().toLowerCase();
+        if (!storedEmail) return;
+
+        const isEnglish = document.documentElement.lang === 'en';
+        try {
+            const resp = await fetch('/api/check_quota', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: storedEmail, feature: 'competitor' })
+            });
+            if (!resp.ok) return;
+            const data = await resp.json();
+            if (data.remaining > 0) {
+                banner.textContent = isEnglish
+                    ? `🎁 Competitor Analysis: ${data.remaining} free credits remaining`
+                    : `🎁 竞品分析额度：当前还剩 ${data.remaining} 次免费机会`;
+            } else {
+                banner.textContent = isEnglish
+                    ? '🎁 Competitor Analysis: your 2 free credits are fully used'
+                    : '🎁 竞品分析额度：您的 2 次免费机会已全部使用';
+            }
+        } catch (e) {
+            console.warn('Quota banner refresh failed:', e);
+        }
+    }
+
+    refreshCompetitorQuotaBanner();
 
     function validateAsinList(raw, fieldName) {
         const parts = raw.split(/[\n\r,;]+/).map(s => s.trim().toUpperCase().replace(/[^A-Z0-9]/g, '')).filter(Boolean);
@@ -148,8 +177,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (mainAsinEl) mainAsinEl.addEventListener('input', function () { const e = document.getElementById('main-asin-error'); if (e) e.style.display = 'none'; });
     if (compAsinEl) compAsinEl.addEventListener('input', function () { const e = document.getElementById('comp-asin-error'); if (e) e.style.display = 'none'; });
 
-    // 1. Handle Main Form "Start Analysis" Click
-    submitBtn.addEventListener('click', async function (e) {
+    // Handle form submission after contact fields were moved inline.
+    analysisForm.addEventListener('submit', async function (e) {
         e.preventDefault(); // Prevent default form submission
 
         const mainAsin = document.getElementById('main-asin').value.trim();
@@ -219,31 +248,69 @@ document.addEventListener('DOMContentLoaded', function () {
                 localStorage.setItem('userEmail', normalizedEmail);
             }
 
-            const buildOrderData = () => ({
-                user_name: rawData.userName || '',
-                user_email: (rawData.userEmail || '').trim().toLowerCase(),
-                industry: rawData.industry || '',
-                main_asins: rawData.mainAsin ? rawData.mainAsin.split('\n').map(s => s.trim()).filter(s => s) : [],
-                competitor_asins: rawData.compAsin ? rawData.compAsin.split('\n').map(s => s.trim()).filter(s => s) : [],
-                language: rawData.language || 'zh',
-                custom_prompt: rawData.customPrompt || '',
-                reference_site_count: parseInt(rawData.siteCount) || 10,
-                reference_youtube_count: parseInt(rawData.youtubeCount) || 10,
-                report_type: 'paid_manual_confirm',
-                submitted_at: new Date().toISOString()
-            });
+            const buildOrderData = () => {
+                const normalizedEmail = (rawData.userEmail || '').trim().toLowerCase();
+                const mainAsins = rawData.mainAsin ? rawData.mainAsin.split('\n').map(s => s.trim()).filter(s => s) : [];
+                const competitorAsins = rawData.compAsin ? rawData.compAsin.split('\n').map(s => s.trim()).filter(s => s) : [];
+                const submittedAt = new Date().toISOString();
+                return {
+                    source: 'create-analysis',
+                    analysis_type: 'competitor_analysis',
+                    report_type: 'paid_manual_confirm',
+                    submitted_at: submittedAt,
+
+                    user_name: rawData.userName || '',
+                    userName: rawData.userName || '',
+                    name: rawData.userName || '',
+
+                    user_email: normalizedEmail,
+                    userEmail: normalizedEmail,
+                    email: normalizedEmail,
+
+                    industry: rawData.industry || '',
+
+                    main_asins: mainAsins,
+                    mainAsins: mainAsins,
+                    competitor_asins: competitorAsins,
+                    competitorAsins: competitorAsins,
+
+                    language: rawData.language || 'zh',
+                    custom_prompt: rawData.customPrompt || '',
+                    customPrompt: rawData.customPrompt || '',
+                    reference_site_count: parseInt(rawData.siteCount) || 10,
+                    referenceSiteCount: parseInt(rawData.siteCount) || 10,
+                    reference_youtube_count: parseInt(rawData.youtubeCount) || 10,
+                    referenceYoutubeCount: parseInt(rawData.youtubeCount) || 10
+                };
+            };
+
+            async function redirectToPayment() {
+                const createOrderRes = await fetch('/api/create_order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: (rawData.userEmail || '').trim().toLowerCase(),
+                        order_data: buildOrderData()
+                    })
+                });
+                if (!createOrderRes.ok) {
+                    throw new Error('Failed to create order before payment');
+                }
+                const createOrderData = await createOrderRes.json();
+                window.location.href = 'payment.html?order_id=' + encodeURIComponent(createOrderData.order_id);
+            }
 
             // --- Server-Side Quota Check with Client-Side Fallback ---
             let useLocalQuotaFallback = false;
             let localUsageKey = '';
             let localUsage = 0;
             if (userEmail) {
-                let quotaData = { allowed: true, usage: 0 };
+                let quotaData = { allowed: true, usage: 0, remaining: 2, feature: 'competitor' };
                 try {
                     const quotaResponse = await fetch('/api/check_quota', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email: userEmail })
+                        body: JSON.stringify({ email: userEmail, feature: 'competitor' })
                     });
                     if (quotaResponse.ok) {
                         quotaData = await quotaResponse.json();
@@ -254,9 +321,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     console.log('Backend unreachable, using client-side demo quota.');
                     // Fallback to localStorage for Demo Mode
                     useLocalQuotaFallback = true;
-                    localUsageKey = 'flowai_usage_' + userEmail;
+                    localUsageKey = 'flowai_usage_competitor_' + userEmail;
                     localUsage = parseInt(localStorage.getItem(localUsageKey) || '0');
-                    quotaData = { allowed: localUsage < 2, usage: localUsage };
+                    quotaData = { allowed: localUsage < 2, usage: localUsage, remaining: Math.max(0, 2 - localUsage), feature: 'competitor' };
                 }
 
                 if (!quotaData.allowed) {
@@ -264,21 +331,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         ? 'Your 2 free deep-analysis credits are used up. Redirecting to payment.'
                         : '您的 2 次免费深度分析额度已用完，正在跳转到支付页面。';
                     alert(quotaExceededMessage);
-
-                    const createOrderRes = await fetch('/api/create_order', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            email: (rawData.userEmail || '').trim().toLowerCase(),
-                            order_data: buildOrderData()
-                        })
-                    });
-                    if (!createOrderRes.ok) {
-                        throw new Error('Failed to create order before payment');
-                    }
-
-                    const createOrderData = await createOrderRes.json();
-                    window.location.href = 'payment.html?order_id=' + encodeURIComponent(createOrderData.order_id);
+                    await redirectToPayment();
                     return; // Stop execution
                 }
 
@@ -313,40 +366,51 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // Construct the final payload with correct keys and types
+            const normalizedEmail = (rawData.userEmail || '').trim().toLowerCase();
+            const mainAsins = rawData.mainAsin ? rawData.mainAsin.split('\n').map(s => s.trim()).filter(s => s) : [];
+            const competitorAsins = rawData.compAsin ? rawData.compAsin.split('\n').map(s => s.trim()).filter(s => s) : [];
+            const submittedAt = new Date().toISOString();
             const payload = {
+                source: 'create-analysis',
+                analysis_type: 'competitor_analysis',
+                report_type: 'competitor_analysis',
+                submitted_at: submittedAt,
+
                 user_name: rawData.userName,
-                user_email: rawData.userEmail,
+                userName: rawData.userName,
+                name: rawData.userName,
+
+                user_email: normalizedEmail,
+                userEmail: normalizedEmail,
+                email: normalizedEmail,
+
                 industry: rawData.industry,
-                main_asins: rawData.mainAsin ? rawData.mainAsin.split('\n').map(s => s.trim()).filter(s => s) : [],
-                competitor_asins: rawData.compAsin ? rawData.compAsin.split('\n').map(s => s.trim()).filter(s => s) : [],
+
+                main_asins: mainAsins,
+                mainAsins: mainAsins,
+                competitor_asins: competitorAsins,
+                competitorAsins: competitorAsins,
+
                 language: rawData.language,
                 custom_prompt: finalPrompt,
+                customPrompt: finalPrompt,
                 reference_site_count: parseInt(rawData.siteCount) || 10,
+                referenceSiteCount: parseInt(rawData.siteCount) || 10,
                 reference_youtube_count: parseInt(rawData.youtubeCount) || 10,
-                review_doc_link: "",
-                csv_file_url: csvContents.length === 1 ? csvContents[0].content : "",
-                csv_files: csvContents,
-                persona_file_url: personaContents.length === 1 ? personaContents[0].content : "",
-                persona_files: personaContents,
-                analysis_id: "",
-                submitted_at: new Date().toISOString()
-            };
+                referenceYoutubeCount: parseInt(rawData.youtubeCount) || 10,
 
-            const recordUsageAfterSuccess = async () => {
-                if (!rawData.userEmail) return;
-                if (useLocalQuotaFallback && localUsageKey) {
-                    localStorage.setItem(localUsageKey, String(localUsage + 1));
-                    return;
-                }
-                try {
-                    await fetch('/api/record_usage', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email: rawData.userEmail })
-                    });
-                } catch (e) {
-                    console.warn('Failed to record usage:', e);
-                }
+                review_doc_link: "",
+                reviewDocLink: "",
+                csv_file_url: csvContents.length === 1 ? csvContents[0].content : "",
+                csvFileUrl: csvContents.length === 1 ? csvContents[0].content : "",
+                csv_files: csvContents,
+                csvFiles: csvContents,
+                persona_file_url: personaContents.length === 1 ? personaContents[0].content : "",
+                personaFileUrl: personaContents.length === 1 ? personaContents[0].content : "",
+                persona_files: personaContents,
+                personaFiles: personaContents,
+                analysis_id: "",
+                analysisId: ""
             };
 
             // Show Progress Overlay
@@ -375,10 +439,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }, 500);
 
-                // Send to n8n Webhook
+                // Send to backend proxy with server-side quota enforcement
                 let response;
                 try {
-                    response = await fetch('https://tony4927.app.n8n.cloud/webhook/1573cd32-8e6a-46ac-9d74-1e6f7c9ea5e7', {
+                    response = await fetch('/api/competitor/submit', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -400,11 +464,27 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 if (!response.ok) {
+                    let errorData = null;
+                    try {
+                        errorData = await response.json();
+                    } catch (e) {
+                        errorData = null;
+                    }
                     clearInterval(interval);
                     progressStatus.textContent = (rawData.language === 'en')
                         ? 'Submission failed. Please retry.'
                         : '提交失败，请重试。';
                     if (progressOverlay) progressOverlay.classList.remove('active');
+
+                    if (response.status === 403) {
+                        const quotaExceededMessage = (rawData.language === 'en')
+                            ? 'Your 2 free deep-analysis credits are used up. Redirecting to payment.'
+                            : '您的 2 次免费深度分析额度已用完，正在跳转到支付页面。';
+                        alert(quotaExceededMessage);
+                        await redirectToPayment();
+                        return;
+                    }
+
                     alert((rawData.language === 'en')
                         ? 'Submission failed. Please retry.'
                         : '提交失败，请重试。');
@@ -415,23 +495,32 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (progressBar) progressBar.style.width = '100%';
                 progressStatus.textContent = (rawData.language === 'en') ? 'Analysis Complete!' : '分析完成！';
 
-                await recordUsageAfterSuccess();
+                if (useLocalQuotaFallback && localUsageKey) {
+                    localStorage.setItem(localUsageKey, String(localUsage + 1));
+                }
 
                 setTimeout(() => {
                     // Redirect to success page
-                    window.location.href = (rawData.language === 'en') ? 'success_en.html' : 'success.html';
+                    window.location.href = (rawData.language === 'en') ? 'success_en.html?type=competitor' : 'success.html?type=competitor';
                 }, 1000);
 
             } else {
-                // Fallback if overlay is missing
                 try {
-                    const fallbackRes = await fetch('https://tony4927.app.n8n.cloud/webhook/1573cd32-8e6a-46ac-9d74-1e6f7c9ea5e7', {
+                    const fallbackRes = await fetch('/api/competitor/submit', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify(payload)
                     });
+                    if (fallbackRes.status === 403) {
+                        const quotaExceededMessage = (rawData.language === 'en')
+                            ? 'Your 2 free deep-analysis credits are used up. Redirecting to payment.'
+                            : '您的 2 次免费深度分析额度已用完，正在跳转到支付页面。';
+                        alert(quotaExceededMessage);
+                        await redirectToPayment();
+                        return;
+                    }
                     if (!fallbackRes.ok) throw new Error('Webhook failed');
                 } catch (e) {
                     console.warn('Fallback webhook error:', e);
@@ -439,9 +528,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     return;
                 }
 
-                await recordUsageAfterSuccess();
+                if (useLocalQuotaFallback && localUsageKey) {
+                    localStorage.setItem(localUsageKey, String(localUsage + 1));
+                }
                 alert((rawData.language === 'en') ? 'Analysis started! Please check your email.' : '分析已开始！请查收您的邮箱。');
-                window.location.href = (rawData.language === 'en') ? 'success_en.html' : 'success.html';
+                window.location.href = (rawData.language === 'en') ? 'success_en.html?type=competitor' : 'success.html?type=competitor';
             }
 
         } catch (error) {

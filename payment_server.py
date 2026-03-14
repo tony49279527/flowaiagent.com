@@ -15,7 +15,7 @@ Usage:
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 import requests
 import threading
@@ -25,8 +25,19 @@ import random
 import time
 import uuid
 import smtplib
+import re
+from io import BytesIO
+from html import escape
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
+from docx import Document
+from docx.oxml.ns import qn
+from docx.shared import Pt
+try:
+    from google.cloud import firestore
+except ImportError:
+    firestore = None
 
 # Serve static files from current directory
 app = Flask(__name__)
@@ -69,8 +80,14 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 DB_FILE = 'orders.db'
+FREE_QUOTA_LIMIT = 2
+VALID_QUOTA_FEATURES = {'competitor', 'discovery'}
+PERSISTENCE_BACKEND = os.environ.get('PERSISTENCE_BACKEND', 'auto').strip().lower()
+FIRESTORE_QUOTA_COLLECTION = os.environ.get('FIRESTORE_QUOTA_COLLECTION', 'user_quota')
+FIRESTORE_DISCOVERY_COLLECTION = os.environ.get('FIRESTORE_DISCOVERY_COLLECTION', 'discovery_tasks')
 
 LOCALHOSTS = {'127.0.0.1', '::1'}
+_firestore_client = None
 
 def is_admin_request():
     if ADMIN_API_TOKEN:
@@ -82,6 +99,47 @@ def get_db_connection():
     conn = sqlite3.connect(DB_FILE)
     conn.row_factory = sqlite3.Row
     return conn
+
+def normalize_email(email):
+    return str(email or '').strip().lower()
+
+def normalize_quota_feature(feature):
+    raw = str(feature or '').strip().lower()
+    if raw in ('discovery', 'product_discovery'):
+        return 'discovery'
+    return 'competitor'
+
+def get_firestore_client():
+    global _firestore_client
+    if PERSISTENCE_BACKEND == 'sqlite' or firestore is None:
+        return None
+    if _firestore_client is None:
+        try:
+            client = firestore.Client()
+            # Probe the configured database once so we can safely fall back
+            # to SQLite if the API is enabled but the default database does
+            # not exist yet or the runtime service account lacks permissions.
+            list(client.collection(FIRESTORE_QUOTA_COLLECTION).limit(1).stream())
+            _firestore_client = client
+        except Exception as e:
+            logger.warning(f"Firestore unavailable, falling back to SQLite: {e}")
+            _firestore_client = False
+    return _firestore_client or None
+
+def using_firestore():
+    return get_firestore_client() is not None
+
+def quota_doc_ref(email):
+    client = get_firestore_client()
+    if client is None:
+        return None
+    return client.collection(FIRESTORE_QUOTA_COLLECTION).document(normalize_email(email))
+
+def discovery_doc_ref(task_id):
+    client = get_firestore_client()
+    if client is None:
+        return None
+    return client.collection(FIRESTORE_DISCOVERY_COLLECTION).document(str(task_id))
 
 def parse_order_id(raw_order_id):
     if raw_order_id is None:
@@ -102,6 +160,14 @@ def init_db():
                 updated_at TEXT,
                 email TEXT,
                 quota_usage INTEGER DEFAULT 0
+            )
+        ''')
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS user_quota (
+                email TEXT PRIMARY KEY,
+                competitor_usage INTEGER NOT NULL DEFAULT 0,
+                discovery_usage INTEGER NOT NULL DEFAULT 0,
+                updated_at TEXT
             )
         ''')
         # Initialize default row if not exists (for single-user demo)
@@ -147,6 +213,463 @@ def init_discovery_db():
         logger.error(f"Discovery DB Init Error: {e}")
 
 init_discovery_db()
+
+def create_discovery_task_record(task_id, user_name, user_email, industry, form_data):
+    now = datetime.now().isoformat()
+    payload = {
+        'task_id': str(task_id),
+        'user_name': user_name,
+        'user_email': normalize_email(user_email),
+        'industry': industry,
+        'form_data': json.dumps(form_data),
+        'status': 'PENDING',
+        'report_content': '',
+        'error_message': '',
+        'created_at': now,
+        'updated_at': now,
+    }
+    if using_firestore():
+        discovery_doc_ref(task_id).set(payload)
+        return payload
+
+    conn = get_discovery_db()
+    conn.execute('''
+        INSERT INTO discovery_tasks (task_id, user_name, user_email, industry, form_data, status, report_content, error_message, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (
+        payload['task_id'],
+        payload['user_name'],
+        payload['user_email'],
+        payload['industry'],
+        payload['form_data'],
+        payload['status'],
+        payload['report_content'],
+        payload['error_message'],
+        payload['created_at'],
+        payload['updated_at'],
+    ))
+    conn.commit()
+    conn.close()
+    return payload
+
+def update_discovery_task_record(task_id, **updates):
+    update_payload = dict(updates)
+    update_payload['updated_at'] = datetime.now().isoformat()
+
+    if using_firestore():
+        discovery_doc_ref(task_id).set(update_payload, merge=True)
+        return
+
+    allowed_columns = {
+        'user_name', 'user_email', 'industry', 'form_data', 'status',
+        'report_content', 'error_message', 'created_at', 'updated_at'
+    }
+    assignments = []
+    values = []
+    for key, value in update_payload.items():
+        if key not in allowed_columns:
+            continue
+        assignments.append(f"{key} = ?")
+        values.append(value)
+    if not assignments:
+        return
+    values.append(str(task_id))
+    conn = get_discovery_db()
+    conn.execute(
+        f"UPDATE discovery_tasks SET {', '.join(assignments)} WHERE task_id = ?",
+        values
+    )
+    conn.commit()
+    conn.close()
+
+def get_discovery_task_record(task_id):
+    if using_firestore():
+        snapshot = discovery_doc_ref(task_id).get()
+        if not snapshot.exists:
+            return None
+        data = snapshot.to_dict() or {}
+        data.setdefault('task_id', str(task_id))
+        return data
+
+    conn = get_discovery_db()
+    row = conn.execute("SELECT * FROM discovery_tasks WHERE task_id = ?", (task_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+def list_recent_discovery_task_records(limit=30, status=None):
+    limit = max(1, int(limit or 30))
+    status = (status or '').strip().upper()
+
+    if using_firestore():
+        client = get_firestore_client()
+        docs = client.collection(FIRESTORE_DISCOVERY_COLLECTION).order_by(
+            'created_at',
+            direction=firestore.Query.DESCENDING
+        ).limit(max(limit * 5, 50)).stream()
+        tasks = []
+        for doc in docs:
+            data = doc.to_dict() or {}
+            if status and data.get('status') != status:
+                continue
+            data.setdefault('task_id', doc.id)
+            tasks.append(data)
+            if len(tasks) >= limit:
+                break
+        return tasks
+
+    conn = get_discovery_db()
+    try:
+        if status:
+            rows = conn.execute(
+                "SELECT task_id, status, user_email, industry, created_at, updated_at, error_message "
+                "FROM discovery_tasks WHERE status = ? ORDER BY created_at DESC LIMIT ?",
+                (status, limit)
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                "SELECT task_id, status, user_email, industry, created_at, updated_at, error_message "
+                "FROM discovery_tasks ORDER BY created_at DESC LIMIT ?",
+                (limit,)
+            ).fetchall()
+    finally:
+        conn.close()
+    return [dict(r) for r in rows]
+
+def summarize_discovery_tasks(since_hours=24):
+    since_hours = max(1, min(int(since_hours or 24), 24 * 30))
+    since_ts = (datetime.now() - timedelta(hours=since_hours)).isoformat()
+
+    if using_firestore():
+        client = get_firestore_client()
+        docs = client.collection(FIRESTORE_DISCOVERY_COLLECTION).order_by(
+            'created_at',
+            direction=firestore.Query.DESCENDING
+        ).limit(1000).stream()
+        by_status = {}
+        active_count = 0
+        latest = None
+        for doc in docs:
+            data = doc.to_dict() or {}
+            created_at = data.get('created_at') or ''
+            if created_at and created_at < since_ts:
+                continue
+            status = data.get('status') or 'UNKNOWN'
+            by_status[status] = by_status.get(status, 0) + 1
+            if status in ('PENDING', 'ANALYZING'):
+                active_count += 1
+            if latest is None:
+                data.setdefault('task_id', doc.id)
+                latest = {
+                    'task_id': data.get('task_id'),
+                    'status': data.get('status'),
+                    'user_email': data.get('user_email'),
+                    'created_at': data.get('created_at'),
+                    'updated_at': data.get('updated_at'),
+                }
+        return {
+            "since_hours": since_hours,
+            "since_ts": since_ts,
+            "active_count": active_count,
+            "by_status": by_status,
+            "latest": latest
+        }
+
+    conn = get_discovery_db()
+    try:
+        rows = conn.execute(
+            "SELECT status, COUNT(*) AS count FROM discovery_tasks WHERE created_at >= ? GROUP BY status",
+            (since_ts,)
+        ).fetchall()
+        active = conn.execute(
+            "SELECT COUNT(*) AS count FROM discovery_tasks WHERE status IN ('PENDING','ANALYZING')"
+        ).fetchone()
+        latest = conn.execute(
+            "SELECT task_id, status, user_email, created_at, updated_at FROM discovery_tasks ORDER BY created_at DESC LIMIT 1"
+        ).fetchone()
+    finally:
+        conn.close()
+
+    return {
+        "since_hours": since_hours,
+        "since_ts": since_ts,
+        "active_count": int(active['count']) if active else 0,
+        "by_status": {row['status']: row['count'] for row in rows},
+        "latest": dict(latest) if latest else None
+    }
+
+def sync_discovery_task_backfill():
+    if not using_firestore():
+        return
+    try:
+        conn = get_discovery_db()
+        rows = conn.execute(
+            "SELECT task_id, user_name, user_email, industry, form_data, status, report_content, error_message, created_at, updated_at "
+            "FROM discovery_tasks ORDER BY created_at DESC LIMIT 500"
+        ).fetchall()
+        conn.close()
+        for row in rows:
+            payload = dict(row)
+            payload['user_email'] = normalize_email(payload.get('user_email'))
+            discovery_doc_ref(payload['task_id']).set(payload, merge=True)
+    except Exception as e:
+        logger.error(f"Discovery task backfill error: {e}")
+
+def sync_user_quota_backfill():
+    try:
+        now = datetime.now().isoformat()
+        conn = get_db_connection()
+        conn.execute(
+            '''
+            CREATE TABLE IF NOT EXISTS user_quota (
+                email TEXT PRIMARY KEY,
+                competitor_usage INTEGER NOT NULL DEFAULT 0,
+                discovery_usage INTEGER NOT NULL DEFAULT 0,
+                updated_at TEXT
+            )
+            '''
+        )
+        order_rows = conn.execute(
+            "SELECT email, MAX(quota_usage) AS usage FROM orders WHERE email IS NOT NULL AND TRIM(email) != '' GROUP BY email"
+        ).fetchall()
+        quota_rows = conn.execute(
+            "SELECT email, competitor_usage, discovery_usage FROM user_quota WHERE email IS NOT NULL AND TRIM(email) != ''"
+        ).fetchall()
+        for row in order_rows:
+            email = normalize_email(row['email'])
+            usage = int(row['usage'] or 0)
+            existing = conn.execute("SELECT competitor_usage FROM user_quota WHERE email = ?", (email,)).fetchone()
+            current = int(existing['competitor_usage']) if existing else 0
+            conn.execute(
+                '''
+                INSERT INTO user_quota (email, competitor_usage, discovery_usage, updated_at)
+                VALUES (?, ?, 0, ?)
+                ON CONFLICT(email) DO UPDATE SET
+                    competitor_usage = excluded.competitor_usage,
+                    updated_at = excluded.updated_at
+                ''',
+                (email, max(current, usage), now)
+            )
+        conn.commit()
+        conn.close()
+
+        dconn = get_discovery_db()
+        discovery_rows = dconn.execute(
+            "SELECT user_email, COUNT(*) AS usage FROM discovery_tasks WHERE status IN ('COMPLETED','COMPLETED_NO_EMAIL') GROUP BY user_email"
+        ).fetchall()
+        dconn.close()
+
+        conn = get_db_connection()
+        merged_rows = {}
+        for row in quota_rows:
+            email = normalize_email(row['email'])
+            if not email:
+                continue
+            merged_rows[email] = {
+                'competitor_usage': int(row['competitor_usage'] or 0),
+                'discovery_usage': int(row['discovery_usage'] or 0),
+            }
+        for row in discovery_rows:
+            email = normalize_email(row['user_email'])
+            usage = int(row['usage'] or 0)
+            existing = conn.execute("SELECT discovery_usage FROM user_quota WHERE email = ?", (email,)).fetchone()
+            current = int(existing['discovery_usage']) if existing else 0
+            merged = max(current, usage)
+            conn.execute(
+                '''
+                INSERT INTO user_quota (email, competitor_usage, discovery_usage, updated_at)
+                VALUES (?, 0, ?, ?)
+                ON CONFLICT(email) DO UPDATE SET
+                    discovery_usage = excluded.discovery_usage,
+                    updated_at = excluded.updated_at
+                ''',
+                (email, merged, now)
+            )
+            current_merged = merged_rows.get(email, {'competitor_usage': 0, 'discovery_usage': 0})
+            current_merged['discovery_usage'] = max(current_merged['discovery_usage'], merged)
+            merged_rows[email] = current_merged
+        conn.commit()
+
+        if using_firestore():
+            for row in order_rows:
+                email = normalize_email(row['email'])
+                if not email:
+                    continue
+                current_merged = merged_rows.get(email, {'competitor_usage': 0, 'discovery_usage': 0})
+                current_merged['competitor_usage'] = max(current_merged['competitor_usage'], int(row['usage'] or 0))
+                merged_rows[email] = current_merged
+
+            for email, usage_row in merged_rows.items():
+                set_quota_usage(
+                    email,
+                    competitor_usage=usage_row['competitor_usage'],
+                    discovery_usage=usage_row['discovery_usage'],
+                )
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        logger.error(f"User quota backfill error: {e}")
+
+def set_quota_usage(email, competitor_usage=None, discovery_usage=None):
+    normalized_email = normalize_email(email)
+    if not normalized_email:
+        return
+
+    now = datetime.now().isoformat()
+    competitor_usage = None if competitor_usage is None else max(0, int(competitor_usage))
+    discovery_usage = None if discovery_usage is None else max(0, int(discovery_usage))
+
+    if using_firestore():
+        doc_ref = quota_doc_ref(normalized_email)
+        snapshot = doc_ref.get()
+        current = snapshot.to_dict() or {}
+        payload = {
+            'email': normalized_email,
+            'updated_at': now,
+            'competitor_usage': int(current.get('competitor_usage', 0)),
+            'discovery_usage': int(current.get('discovery_usage', 0)),
+        }
+        if competitor_usage is not None:
+            payload['competitor_usage'] = max(payload['competitor_usage'], competitor_usage)
+        if discovery_usage is not None:
+            payload['discovery_usage'] = max(payload['discovery_usage'], discovery_usage)
+        doc_ref.set(payload, merge=True)
+        return payload
+
+    conn = get_db_connection()
+    row = conn.execute(
+        "SELECT competitor_usage, discovery_usage FROM user_quota WHERE email = ?",
+        (normalized_email,)
+    ).fetchone()
+    current_competitor = int(row['competitor_usage']) if row else 0
+    current_discovery = int(row['discovery_usage']) if row else 0
+    conn.execute(
+        '''
+        INSERT INTO user_quota (email, competitor_usage, discovery_usage, updated_at)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT(email) DO UPDATE SET
+            competitor_usage = excluded.competitor_usage,
+            discovery_usage = excluded.discovery_usage,
+            updated_at = excluded.updated_at
+        ''',
+        (
+            normalized_email,
+            max(current_competitor, competitor_usage or 0),
+            max(current_discovery, discovery_usage or 0),
+            now,
+        )
+    )
+    conn.commit()
+    conn.close()
+
+def get_quota_status(email, feature):
+    normalized_email = normalize_email(email)
+    normalized_feature = normalize_quota_feature(feature)
+    usage_key = 'discovery_usage' if normalized_feature == 'discovery' else 'competitor_usage'
+
+    if not normalized_email:
+        return {
+            "email": "",
+            "feature": normalized_feature,
+            "usage": 0,
+            "remaining": FREE_QUOTA_LIMIT,
+            "allowed": False
+        }
+
+    if using_firestore():
+        snapshot = quota_doc_ref(normalized_email).get()
+        row = snapshot.to_dict() if snapshot.exists else {}
+        usage = int((row or {}).get(usage_key, 0) or 0)
+    else:
+        conn = get_db_connection()
+        row = conn.execute(
+            "SELECT competitor_usage, discovery_usage FROM user_quota WHERE email = ?",
+            (normalized_email,)
+        ).fetchone()
+        conn.close()
+        usage = int(row[usage_key]) if row else 0
+
+    remaining = max(0, FREE_QUOTA_LIMIT - usage)
+    return {
+        "email": normalized_email,
+        "feature": normalized_feature,
+        "usage": usage,
+        "remaining": remaining,
+        "allowed": usage < FREE_QUOTA_LIMIT
+    }
+
+def increment_quota_usage(email, feature, amount=1):
+    normalized_email = normalize_email(email)
+    normalized_feature = normalize_quota_feature(feature)
+    if not normalized_email:
+        return None
+
+    now = datetime.now().isoformat()
+    amount = int(amount or 0)
+    if using_firestore():
+        doc_ref = quota_doc_ref(normalized_email)
+
+        @firestore.transactional
+        def update_in_transaction(transaction):
+            snapshot = doc_ref.get(transaction=transaction)
+            current = snapshot.to_dict() or {}
+            competitor_usage = int(current.get('competitor_usage', 0) or 0)
+            discovery_usage = int(current.get('discovery_usage', 0) or 0)
+            if normalized_feature == 'discovery':
+                discovery_usage += amount
+            else:
+                competitor_usage += amount
+            payload = {
+                'email': normalized_email,
+                'competitor_usage': max(0, competitor_usage),
+                'discovery_usage': max(0, discovery_usage),
+                'updated_at': now,
+            }
+            transaction.set(doc_ref, payload, merge=True)
+            return payload
+
+        return update_in_transaction(get_firestore_client().transaction())
+
+    usage_column = 'discovery_usage' if normalized_feature == 'discovery' else 'competitor_usage'
+    conn = get_db_connection()
+    row = conn.execute(
+        "SELECT competitor_usage, discovery_usage FROM user_quota WHERE email = ?",
+        (normalized_email,)
+    ).fetchone()
+    competitor_usage = int(row['competitor_usage']) if row else 0
+    discovery_usage = int(row['discovery_usage']) if row else 0
+    if usage_column == 'competitor_usage':
+        competitor_usage += amount
+    else:
+        discovery_usage += amount
+    payload = {
+        'email': normalized_email,
+        'competitor_usage': max(0, competitor_usage),
+        'discovery_usage': max(0, discovery_usage),
+        'updated_at': now,
+    }
+    conn.execute(
+        '''
+        INSERT INTO user_quota (email, competitor_usage, discovery_usage, updated_at)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT(email) DO UPDATE SET
+            competitor_usage = excluded.competitor_usage,
+            discovery_usage = excluded.discovery_usage,
+            updated_at = excluded.updated_at
+        ''',
+        (
+            normalized_email,
+            payload['competitor_usage'],
+            payload['discovery_usage'],
+            payload['updated_at'],
+        )
+    )
+    conn.commit()
+    conn.close()
+    return payload
+
+sync_user_quota_backfill()
+sync_discovery_task_backfill()
+logger.info(f"Persistence backend: {'firestore' if using_firestore() else 'sqlite'}")
 
 def _generate_discovery_report(form_data):
     """Generate AI report for product discovery."""
@@ -316,7 +839,7 @@ def _generate_discovery_report(form_data):
 
 **重要**: 整份报告必须不少于 8000 汉字。基于品类知识进行合理推断，数据可标注为"基于行业经验推断"或"合理估算"。每个表格和列表都要有实质信息，避免空洞概括。"""
 
-    try:
+    def call_model(messages):
         headers = {
             "Authorization": f"Bearer {OPENAI_API_KEY}",
             "Content-Type": "application/json",
@@ -325,7 +848,7 @@ def _generate_discovery_report(form_data):
         }
         payload = {
             "model": model_to_use,
-            "messages": [{"role": "user", "content": prompt}],
+            "messages": messages,
             "temperature": 0.6,
             "max_tokens": 16384
         }
@@ -334,10 +857,82 @@ def _generate_discovery_report(form_data):
         if not response.ok:
             err_body = response.text[:500] if response.text else "(empty)"
             logger.error(f"Discovery OpenRouter API Error: status={response.status_code}, body={err_body}")
-            return f"ERROR: OpenRouter API failed (HTTP {response.status_code}). Check credits at openrouter.ai/settings/credits. Details: {err_body}"
-        content = response.json()['choices'][0]['message']['content']
-        logger.info(f"Discovery: Report generated, {len(content)} chars")
-        return content
+
+            if response.status_code == 401:
+                return (
+                    "ERROR: OpenRouter rejected the API key (HTTP 401). "
+                    "Please verify OPENAI_API_KEY or OPENROUTER_API_KEY in Cloud Run. "
+                    f"Details: {err_body}"
+                )
+            if response.status_code == 402:
+                return (
+                    "ERROR: OpenRouter credits are insufficient (HTTP 402). "
+                    "Please recharge openrouter.ai/settings/credits. "
+                    f"Details: {err_body}"
+                )
+            if response.status_code == 429:
+                return (
+                    "ERROR: OpenRouter rate limit reached (HTTP 429). "
+                    "Please retry shortly or switch to another model. "
+                    f"Details: {err_body}"
+                )
+
+            return (
+                f"ERROR: OpenRouter API failed (HTTP {response.status_code}). "
+                f"Details: {err_body}"
+            )
+        data = response.json()
+        choice = data['choices'][0]
+        content = choice['message']['content']
+        finish_reason = choice.get('finish_reason')
+        return content, finish_reason
+
+    def report_looks_complete(content):
+        normalized = re.sub(r'\s+', '', content)
+        completion_markers = [
+            '30-60-90天执行计划',
+            '第61-90天',
+            '6.4',
+            '##六、进入策略与执行计划',
+            '###6.4',
+            '第31-60天',
+        ]
+        return any(marker in normalized for marker in completion_markers)
+
+    try:
+        messages = [{"role": "user", "content": prompt}]
+        content, finish_reason = call_model(messages)
+        if isinstance(content, str) and content.startswith("ERROR:"):
+            return content
+
+        combined = content
+        logger.info(f"Discovery: Report generated chunk 1, {len(content)} chars, finish_reason={finish_reason}")
+
+        for attempt in range(2):
+            if finish_reason != 'length' and report_looks_complete(combined):
+                break
+            continuation_prompt = (
+                "Continue the same report from exactly where you stopped. "
+                "Do not repeat previous sections. Resume from the next unfinished heading and finish the remaining sections."
+            )
+            messages = [
+                {"role": "user", "content": prompt},
+                {"role": "assistant", "content": combined},
+                {"role": "user", "content": continuation_prompt}
+            ]
+            next_chunk, finish_reason = call_model(messages)
+            if isinstance(next_chunk, str) and next_chunk.startswith("ERROR:"):
+                break
+            if not next_chunk.strip():
+                break
+            combined += "\n\n" + next_chunk.strip()
+            logger.info(
+                f"Discovery: Report continuation chunk {attempt + 2}, {len(next_chunk)} chars, "
+                f"total={len(combined)}, finish_reason={finish_reason}"
+            )
+
+        logger.info(f"Discovery: Report generated, {len(combined)} chars total")
+        return combined
     except requests.exceptions.RequestException as e:
         err_detail = str(e)
         if hasattr(e, 'response') and e.response is not None:
@@ -353,31 +948,247 @@ def _record_discovery_usage(email):
     if not email:
         return
     try:
-        conn = get_db_connection()
-        row = conn.execute('SELECT quota_usage FROM orders WHERE email = ?', (email,)).fetchone()
-        if row:
-            new_usage = row['quota_usage'] + 1
-            conn.execute('UPDATE orders SET quota_usage = ? WHERE email = ?', (new_usage, email))
-        else:
-            conn.execute('INSERT INTO orders (email, quota_usage, status, updated_at) VALUES (?, 1, "PENDING", ?)',
-                        (email, datetime.now().isoformat()))
-        conn.commit()
-        conn.close()
-        logger.info(f"Discovery: Recorded usage for {email}")
+        increment_quota_usage(email, 'discovery', 1)
+        logger.info(f"Discovery: Recorded discovery usage for {normalize_email(email)}")
     except Exception as e:
         logger.error(f"Discovery record_usage error: {e}")
+
+def _render_inline_markdown(text):
+    escaped = escape(text)
+    escaped = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', escaped)
+    escaped = re.sub(r'`([^`]+)`', r'<code>\1</code>', escaped)
+    return escaped
+
+def _markdown_to_basic_html(markdown_text):
+    parts = []
+    list_open = False
+    table_rows = []
+
+    def flush_list():
+        nonlocal list_open
+        if list_open:
+            parts.append('</ul>')
+            list_open = False
+
+    def flush_table():
+        nonlocal table_rows
+        if not table_rows:
+            return
+
+        def is_separator(row):
+            return all(cell and set(cell) <= set('-: ') for cell in row)
+
+        rows = table_rows[:]
+        table_rows = []
+        if len(rows) >= 2 and is_separator(rows[1]):
+            header = rows[0]
+            body = rows[2:]
+        else:
+            header = rows[0]
+            body = rows[1:]
+
+        parts.append('<table style="width:100%;border-collapse:collapse;margin:16px 0;">')
+        parts.append('<thead><tr>')
+        for cell in header:
+            parts.append(
+                f'<th style="border:1px solid #dbe3f0;padding:8px 10px;background:#f8fafc;text-align:left;">{_render_inline_markdown(cell)}</th>'
+            )
+        parts.append('</tr></thead>')
+        if body:
+            parts.append('<tbody>')
+            for row in body:
+                parts.append('<tr>')
+                for cell in row:
+                    parts.append(
+                        f'<td style="border:1px solid #dbe3f0;padding:8px 10px;vertical-align:top;">{_render_inline_markdown(cell)}</td>'
+                    )
+                parts.append('</tr>')
+            parts.append('</tbody>')
+        parts.append('</table>')
+
+    for raw_line in markdown_text.splitlines():
+        line = raw_line.rstrip()
+        stripped = line.strip()
+
+        if stripped.startswith('|') and stripped.endswith('|'):
+            flush_list()
+            cells = [cell.strip() for cell in stripped.strip('|').split('|')]
+            table_rows.append(cells)
+            continue
+        flush_table()
+
+        if not stripped:
+            flush_list()
+            continue
+
+        if stripped.startswith('# '):
+            flush_list()
+            parts.append(f'<h1 style="font-size:24px;margin:28px 0 14px;">{_render_inline_markdown(stripped[2:])}</h1>')
+        elif stripped.startswith('## '):
+            flush_list()
+            parts.append(f'<h2 style="font-size:20px;margin:24px 0 12px;">{_render_inline_markdown(stripped[3:])}</h2>')
+        elif stripped.startswith('### '):
+            flush_list()
+            parts.append(f'<h3 style="font-size:17px;margin:20px 0 10px;">{_render_inline_markdown(stripped[4:])}</h3>')
+        elif stripped.startswith('- ') or stripped.startswith('* '):
+            if not list_open:
+                parts.append('<ul style="margin:12px 0 12px 22px;padding:0;">')
+                list_open = True
+            parts.append(f'<li style="margin:6px 0;">{_render_inline_markdown(stripped[2:])}</li>')
+        else:
+            flush_list()
+            parts.append(f'<p style="margin:12px 0;line-height:1.75;">{_render_inline_markdown(stripped)}</p>')
+
+    flush_list()
+    flush_table()
+    return ''.join(parts)
+
+def _build_discovery_email_preview(report_content, max_lines=18, max_chars=2200):
+    lines = []
+    total = 0
+    for raw_line in report_content.splitlines():
+        stripped = raw_line.strip()
+        if not stripped or stripped.startswith('|'):
+            continue
+        if set(stripped) <= set('-:| '):
+            continue
+        cleaned = re.sub(r'^[#*\-\d\.\s]+', '', stripped).strip()
+        if not cleaned:
+            continue
+        lines.append(cleaned)
+        total += len(cleaned)
+        if len(lines) >= max_lines or total >= max_chars:
+            break
+    return '\n'.join(lines)
+
+def _strip_markdown_markers(text):
+    text = re.sub(r'\*\*(.+?)\*\*', r'\1', text)
+    text = re.sub(r'`([^`]+)`', r'\1', text)
+    return text.strip()
+
+def _report_to_docx_bytes(report_content, title_text):
+    document = Document()
+    normal_style = document.styles['Normal']
+    normal_style.font.name = 'Arial'
+    normal_style._element.rPr.rFonts.set(qn('w:eastAsia'), 'Microsoft YaHei')
+    normal_style.font.size = Pt(10.5)
+
+    table_rows = []
+
+    def flush_table():
+        nonlocal table_rows
+        if not table_rows:
+            return
+
+        def is_separator(row):
+            return all(cell and set(cell) <= set('-: ') for cell in row)
+
+        rows = table_rows[:]
+        table_rows = []
+        if len(rows) >= 2 and is_separator(rows[1]):
+            header = rows[0]
+            body = rows[2:]
+        else:
+            header = rows[0]
+            body = rows[1:]
+
+        table = document.add_table(rows=1 + len(body), cols=len(header))
+        table.style = 'Table Grid'
+        for idx, cell in enumerate(header):
+            table.rows[0].cells[idx].text = _strip_markdown_markers(cell)
+        for row_idx, row in enumerate(body, start=1):
+            for col_idx, cell in enumerate(row):
+                table.rows[row_idx].cells[col_idx].text = _strip_markdown_markers(cell)
+        document.add_paragraph('')
+
+    if title_text:
+        document.add_heading(_strip_markdown_markers(title_text), level=0)
+
+    for raw_line in report_content.splitlines():
+        stripped = raw_line.strip()
+        if stripped.startswith('|') and stripped.endswith('|'):
+            cells = [cell.strip() for cell in stripped.strip('|').split('|')]
+            table_rows.append(cells)
+            continue
+        flush_table()
+        if not stripped:
+            continue
+        if stripped.startswith('# '):
+            document.add_heading(_strip_markdown_markers(stripped[2:]), level=1)
+        elif stripped.startswith('## '):
+            document.add_heading(_strip_markdown_markers(stripped[3:]), level=2)
+        elif stripped.startswith('### '):
+            document.add_heading(_strip_markdown_markers(stripped[4:]), level=3)
+        elif stripped.startswith('- ') or stripped.startswith('* '):
+            document.add_paragraph(_strip_markdown_markers(stripped[2:]), style='List Bullet')
+        else:
+            document.add_paragraph(_strip_markdown_markers(stripped))
+
+    flush_table()
+
+    buffer = BytesIO()
+    document.save(buffer)
+    return buffer.getvalue()
 
 def _send_discovery_email(to_email, user_name, report_content):
     """Send discovery report to user email."""
     if not SMTP_USER or not SMTP_PASSWORD:
         logger.warning("Discovery: SMTP not configured. Skipping email.")
         return False
-    msg = MIMEMultipart()
+    msg = MIMEMultipart('mixed')
     msg['From'] = SENDER_EMAIL
     msg['To'] = to_email
     msg['Subject'] = f"Your Product Discovery Report for {user_name}"
-    body = f"Hello {user_name},\n\nYour Amazon Product Discovery report is ready. Please see below:\n\n---\n\n{report_content}"
-    msg.attach(MIMEText(body, 'plain'))
+
+    safe_name = re.sub(r'[^A-Za-z0-9_-]+', '_', (user_name or 'user')).strip('_') or 'user'
+    preview_text = _build_discovery_email_preview(report_content)
+    report_docx = _report_to_docx_bytes(report_content, "Product Discovery Report")
+
+    plain_body = (
+        f"Hello {user_name},\n\n"
+        "Your Amazon Product Discovery report is ready.\n\n"
+        "For better readability and to avoid email clipping, the full report is attached as a DOCX document.\n\n"
+        "Preview:\n"
+        "----------------------------------------\n"
+        f"{preview_text}\n\n"
+        "Attachments:\n"
+        f"- product_discovery_report_{safe_name}.docx\n"
+    )
+
+    html_body = f"""
+    <html>
+      <body style="margin:0;padding:24px;background:#f3f6fb;color:#0f172a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+        <div style="max-width:840px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:32px;">
+          <h1 style="margin:0 0 12px;font-size:28px;">Product Discovery Report</h1>
+          <p style="margin:0 0 12px;line-height:1.7;">Hi {escape(user_name)}, your report is ready.</p>
+          <p style="margin:0 0 18px;line-height:1.7;">
+            To avoid long-email clipping, the <strong>full report is attached</strong> as a DOCX document that opens cleanly in Word / Google Docs.
+            The email body only shows a readable preview.
+          </p>
+          <div style="background:#f8fafc;border:1px solid #dbe3f0;border-radius:12px;padding:18px 20px;margin:20px 0;">
+            {_markdown_to_basic_html(preview_text)}
+          </div>
+          <p style="margin:18px 0 0;color:#475569;">Attachments:</p>
+          <ul style="margin:8px 0 0 20px;line-height:1.8;color:#475569;">
+            <li>product_discovery_report_{safe_name}.docx</li>
+          </ul>
+        </div>
+      </body>
+    </html>
+    """
+
+    alternative = MIMEMultipart('alternative')
+    alternative.attach(MIMEText(plain_body, 'plain', 'utf-8'))
+    alternative.attach(MIMEText(html_body, 'html', 'utf-8'))
+    msg.attach(alternative)
+
+    docx_attachment = MIMEApplication(
+        report_docx,
+        _subtype='vnd.openxmlformats-officedocument.wordprocessingml.document'
+    )
+    docx_attachment.add_header('Content-Disposition', 'attachment', filename=f'product_discovery_report_{safe_name}.docx')
+    msg.attach(docx_attachment)
+
     try:
         server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
         server.starttls()
@@ -393,10 +1204,7 @@ def _send_discovery_email(to_email, user_name, report_content):
 def _discovery_worker(task_id, user_name, user_email, form_data):
     """Background worker for discovery report generation."""
     try:
-        conn = get_discovery_db()
-        conn.execute("UPDATE discovery_tasks SET status = ?, updated_at = ? WHERE task_id = ?",
-                     ('ANALYZING', datetime.now().isoformat(), task_id))
-        conn.commit()
+        update_discovery_task_record(task_id, status='ANALYZING')
 
         report = _generate_discovery_report(form_data)
         if report.startswith("ERROR:"):
@@ -404,19 +1212,17 @@ def _discovery_worker(task_id, user_name, user_email, form_data):
 
         email_sent = _send_discovery_email(user_email, user_name, report)
 
-        conn.execute("UPDATE discovery_tasks SET status = ?, report_content = ?, updated_at = ? WHERE task_id = ?",
-                     ('COMPLETED' if email_sent else 'COMPLETED_NO_EMAIL', report, datetime.now().isoformat(), task_id))
-        conn.commit()
-        conn.close()
+        update_discovery_task_record(
+            task_id,
+            status='COMPLETED' if email_sent else 'COMPLETED_NO_EMAIL',
+            report_content=report,
+            error_message=''
+        )
         _record_discovery_usage(user_email)
         logger.info(f"Discovery task {task_id} completed.")
     except Exception as e:
         logger.error(f"Discovery Worker Error for {task_id}: {e}")
-        conn = get_discovery_db()
-        conn.execute("UPDATE discovery_tasks SET status = ?, error_message = ?, updated_at = ? WHERE task_id = ?",
-                     ('FAILED', str(e), datetime.now().isoformat(), task_id))
-        conn.commit()
-        conn.close()
+        update_discovery_task_record(task_id, status='FAILED', error_message=str(e))
 
 @app.route('/api/discovery/submit', methods=['POST'])
 def discovery_submit():
@@ -427,20 +1233,20 @@ def discovery_submit():
 
     task_id = str(uuid.uuid4())
     user_name = data.get('user_name', 'User')
-    user_email = data.get('user_email', '')
+    user_email = normalize_email(data.get('user_email', ''))
     industry = data.get('industry', '')
 
     if not user_email:
         return jsonify({"error": "Email is required"}), 400
 
-    conn = get_discovery_db()
-    conn.execute('''
-        INSERT INTO discovery_tasks (task_id, user_name, user_email, industry, form_data, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    ''', (task_id, user_name, user_email, industry, json.dumps(data),
-          datetime.now().isoformat(), datetime.now().isoformat()))
-    conn.commit()
-    conn.close()
+    quota = get_quota_status(user_email, 'discovery')
+    if not quota['allowed']:
+        return jsonify({
+            "error": "Discovery free quota exceeded",
+            **quota
+        }), 403
+
+    create_discovery_task_record(task_id, user_name, user_email, industry, data)
 
     thread = threading.Thread(target=_discovery_worker, args=(task_id, user_name, user_email, data))
     thread.start()
@@ -455,16 +1261,53 @@ def discovery_status():
     if not task_id:
         return jsonify({"error": "task_id required"}), 400
 
-    conn = get_discovery_db()
-    row = conn.execute(
-        "SELECT status, error_message, updated_at FROM discovery_tasks WHERE task_id = ?", (task_id,)
-    ).fetchone()
-    conn.close()
-
+    row = get_discovery_task_record(task_id)
     if not row:
         return jsonify({"error": "Task not found"}), 404
 
-    return jsonify(dict(row))
+    return jsonify({
+        "status": row.get('status'),
+        "error_message": row.get('error_message'),
+        "updated_at": row.get('updated_at')
+    })
+
+@app.route('/api/discovery/admin/summary', methods=['GET'])
+def discovery_admin_summary():
+    """Admin: summarize recent discovery task statuses."""
+    if not is_admin_request():
+        return jsonify({"error": "Unauthorized"}), 403
+
+    try:
+        since_hours = int(request.args.get('since_hours', 24))
+    except (TypeError, ValueError):
+        since_hours = 24
+    since_hours = max(1, min(since_hours, 24 * 30))
+
+    return jsonify(summarize_discovery_tasks(since_hours))
+
+
+@app.route('/api/discovery/admin/recent', methods=['GET'])
+def discovery_admin_recent():
+    """Admin: list recent discovery tasks (optionally filter by status)."""
+    if not is_admin_request():
+        return jsonify({"error": "Unauthorized"}), 403
+
+    try:
+        limit = int(request.args.get('limit', 30))
+    except (TypeError, ValueError):
+        limit = 30
+    limit = max(1, min(limit, 200))
+
+    status = (request.args.get('status') or '').strip().upper()
+    allowed_status = {'PENDING', 'ANALYZING', 'COMPLETED', 'COMPLETED_NO_EMAIL', 'FAILED'}
+    if status and status not in allowed_status:
+        return jsonify({"error": "Invalid status filter"}), 400
+
+    return jsonify({
+        "limit": limit,
+        "status": status or None,
+        "tasks": list_recent_discovery_task_records(limit=limit, status=status or None)
+    })
 
 @app.route('/')
 def home():
@@ -478,31 +1321,16 @@ def serve_static(path):
 
 @app.route('/api/check_quota', methods=['POST'])
 def check_quota():
-    """Check user quota (2 free uses)"""
-    data = request.json
-    email = data.get('email')
+    """Check user quota for competitor/discovery (2 free uses each)."""
+    data = request.json or {}
+    email = normalize_email(data.get('email'))
+    feature = normalize_quota_feature(data.get('feature'))
     
     if not email:
         return jsonify({"allowed": False, "error": "Email required"}), 400
 
     try:
-        conn = get_db_connection()
-        # Check usage for this email
-        row = conn.execute('SELECT quota_usage FROM orders WHERE email = ?', (email,)).fetchone()
-        
-        usage = 0
-        if row:
-            usage = row['quota_usage']
-        else:
-            # If no record, they have 0 usage. We might create a record or just return 0.
-            # For simplicity, we just return the usage.
-            pass
-            
-        conn.close()
-        
-        # Logic: Free quota is 2
-        allowed = usage < 2
-        return jsonify({"allowed": allowed, "usage": usage})
+        return jsonify(get_quota_status(email, feature))
     except Exception as e:
         logger.error(f"Quota Check Error: {e}")
         return jsonify({"error": str(e)}), 500
@@ -573,51 +1401,152 @@ def create_order():
 # n8n Webhook URL for report generation
 N8N_WEBHOOK_URL = 'https://tony4927.app.n8n.cloud/webhook/1573cd32-8e6a-46ac-9d74-1e6f7c9ea5e7'
 
+def _normalize_n8n_payload(order_data):
+    normalized = dict(order_data or {})
+    user_name = normalized.get('user_name') or normalized.get('userName') or normalized.get('name') or ''
+    user_email = normalize_email(
+        normalized.get('user_email')
+        or normalized.get('userEmail')
+        or normalized.get('email')
+        or ''
+    )
+    main_asins = normalized.get('main_asins') or normalized.get('mainAsins') or []
+    competitor_asins = normalized.get('competitor_asins') or normalized.get('competitorAsins') or []
+    custom_prompt = normalized.get('custom_prompt') or normalized.get('customPrompt') or ''
+    site_count = normalized.get('reference_site_count') or normalized.get('referenceSiteCount') or 10
+    youtube_count = normalized.get('reference_youtube_count') or normalized.get('referenceYoutubeCount') or 10
+
+    normalized.update({
+        'source': normalized.get('source') or 'payment-success',
+        'analysis_type': normalized.get('analysis_type') or 'competitor_analysis',
+        'user_name': user_name,
+        'userName': user_name,
+        'name': user_name,
+        'user_email': user_email,
+        'userEmail': user_email,
+        'email': user_email,
+        'main_asins': main_asins,
+        'mainAsins': main_asins,
+        'competitor_asins': competitor_asins,
+        'competitorAsins': competitor_asins,
+        'custom_prompt': custom_prompt,
+        'customPrompt': custom_prompt,
+        'reference_site_count': site_count,
+        'referenceSiteCount': site_count,
+        'reference_youtube_count': youtube_count,
+        'referenceYoutubeCount': youtube_count,
+    })
+    return normalized
+
+def _post_n8n_webhook(order_data):
+    normalized = _normalize_n8n_payload(order_data)
+    logger.info(f"Triggering n8n webhook with data: {normalized}")
+    response = requests.post(
+        N8N_WEBHOOK_URL,
+        json=normalized,
+        headers={'Content-Type': 'application/json'},
+        timeout=30
+    )
+    logger.info(f"n8n webhook response: {response.status_code} - {response.text[:200]}")
+    return normalized, response
+
 def trigger_n8n_webhook(order_data):
     """Trigger n8n webhook to generate report"""
     try:
-        logger.info(f"Triggering n8n webhook with data: {order_data}")
-        response = requests.post(
-            N8N_WEBHOOK_URL,
-            json=order_data,
-            headers={'Content-Type': 'application/json'},
-            timeout=30
-        )
-        logger.info(f"n8n webhook response: {response.status_code} - {response.text[:200]}")
+        _, response = _post_n8n_webhook(order_data)
         return response.status_code == 200
     except Exception as e:
         logger.error(f"Error triggering n8n webhook: {e}")
         return False
 
+@app.route('/api/competitor/submit', methods=['POST'])
+def competitor_submit():
+    """Server-side submission proxy for competitor analysis with quota enforcement."""
+    data = request.get_json(silent=True) or {}
+    email = normalize_email(
+        data.get('user_email') or data.get('userEmail') or data.get('email')
+    )
+    if not email:
+        return jsonify({"error": "Email required"}), 400
+
+    quota = get_quota_status(email, 'competitor')
+    if not quota['allowed']:
+        return jsonify({
+            "error": "Competitor free quota exceeded",
+            **quota
+        }), 403
+
+    try:
+        normalized, response = _post_n8n_webhook(data)
+        if response.status_code != 200:
+            return jsonify({
+                "error": "Webhook failed",
+                "status_code": response.status_code,
+                "body": response.text[:300]
+            }), 502
+
+        increment_quota_usage(email, 'competitor', 1)
+        quota_after = get_quota_status(email, 'competitor')
+        return jsonify({
+            "success": True,
+            "feature": "competitor",
+            "usage": quota_after['usage'],
+            "remaining": quota_after['remaining'],
+            "source": normalized.get('source') or 'create-analysis'
+        })
+    except Exception as e:
+        logger.error(f"Competitor submit error: {e}")
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/api/record_usage', methods=['POST'])
 def record_usage():
-    """Increment user usage count"""
-    data = request.json
-    email = data.get('email')
+    """Increment user usage count for a specific feature."""
+    data = request.json or {}
+    email = normalize_email(data.get('email'))
+    feature = normalize_quota_feature(data.get('feature'))
     
     if not email:
         return jsonify({"error": "Email required"}), 400
 
     try:
-        conn = get_db_connection()
-        # Check if user exists
-        row = conn.execute('SELECT id, quota_usage FROM orders WHERE email = ?', (email,)).fetchone()
-        
-        if row:
-            # Increment
-            new_usage = row['quota_usage'] + 1
-            conn.execute('UPDATE orders SET quota_usage = ? WHERE email = ?', (new_usage, email))
-        else:
-            # Create new user record
-            conn.execute('INSERT INTO orders (email, quota_usage, status, updated_at) VALUES (?, 1, "PENDING", ?)', 
-                         (email, datetime.now().isoformat()))
-        
-        conn.commit()
-        conn.close()
-        return jsonify({"success": True})
+        increment_quota_usage(email, feature, 1)
+        quota = get_quota_status(email, feature)
+        return jsonify({"success": True, **quota})
     except Exception as e:
         logger.error(f"Record Usage Error: {e}")
         return jsonify({"error": str(e)}), 500
+
+@app.route('/api/admin/quota', methods=['GET', 'POST'])
+def admin_quota():
+    """Admin: inspect or set quota usage for a specific email."""
+    if not is_admin_request():
+        return jsonify({"error": "Unauthorized"}), 403
+
+    if request.method == 'GET':
+        email = normalize_email(request.args.get('email'))
+        feature = normalize_quota_feature(request.args.get('feature'))
+        if not email:
+            return jsonify({"error": "email is required"}), 400
+        return jsonify(get_quota_status(email, feature))
+
+    data = request.get_json(silent=True) or {}
+    email = normalize_email(data.get('email'))
+    feature = normalize_quota_feature(data.get('feature'))
+    usage = data.get('usage')
+    if not email:
+        return jsonify({"error": "email is required"}), 400
+    if usage is None:
+        return jsonify({"error": "usage is required"}), 400
+
+    try:
+        usage = max(0, int(usage))
+    except (TypeError, ValueError):
+        return jsonify({"error": "usage must be an integer"}), 400
+    if feature == 'discovery':
+        set_quota_usage(email, discovery_usage=usage)
+    else:
+        set_quota_usage(email, competitor_usage=usage)
+    return jsonify(get_quota_status(email, feature))
 
 @app.route('/api/update_status', methods=['POST'])
 def update_status():
