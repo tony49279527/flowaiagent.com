@@ -12,7 +12,7 @@ Usage:
 2. Expose: ngrok http 8080
 """
 
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, redirect
 from flask_cors import CORS
 import logging
 from datetime import datetime, timedelta
@@ -1313,6 +1313,16 @@ def discovery_admin_recent():
 def home():
     """Serve the Main Website Homepage"""
     return send_from_directory('.', 'index.html')
+
+@app.route('/index.html')
+def redirect_index_to_root():
+    """SEO: unify homepage URL to /"""
+    return redirect('/', code=301)
+
+@app.route('/create.html')
+def redirect_create_to_create_analysis():
+    """SEO: old create URL moved to create-analysis"""
+    return redirect('/create-analysis.html', code=301)
 
 @app.route('/<path:path>')
 def serve_static(path):
