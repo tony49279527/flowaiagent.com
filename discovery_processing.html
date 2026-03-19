@@ -73,7 +73,7 @@
                     </svg>
                 </div>
                 <h1 id="main-status">AI 选品专家正在分析中...</h1>
-                <p id="sub-status">正在调取全球亚马逊实时数据，这通常需要 2-5 分钟。</p>
+                <p id="sub-status">正在调取全球亚马逊实时数据，这通常需要 5-15 分钟，复杂品类可能更长。</p>
 
                 <div class="progress-bar-bg" style="margin-top: 30px;">
                     <div class="progress-bar-fill" id="main-progress" style="width: 10%;"></div>
@@ -123,7 +123,18 @@
         let analyzingLogAdded = false;
         let isCompleted = false;
         const startTime = Date.now();
-        const PROGRESS_DURATION_MS = 4 * 60 * 1000; // 假设典型耗时约 4 分钟
+        // 让进度条更符合真实体验：不在某个百分比长期卡住
+        // 目标：典型 8-12 分钟到 92%，之后由完成事件拉到 100%
+        const PROGRESS_DURATION_MS = 10 * 60 * 1000;
+        let lastLogAt = Date.now();
+        const COMFORT_MESSAGES = [
+            'AI 正在深度撰写分析内容，请耐心等待...',
+            '正在交叉验证多个信号源，确保结论更可靠...',
+            '正在生成可执行的差异化方案与落地动作...',
+            '复杂品类耗时会更久一些，报告质量不会打折...',
+            '正在对比竞品价格带与卖点结构，形成策略建议...'
+        ];
+        let comfortIndex = 0;
 
         function addLog(text, type = '') {
             const time = new Date().toLocaleTimeString();
@@ -132,14 +143,32 @@
             div.innerHTML = `<span class="log-time">${time}</span> ${text}`;
             logContainer.appendChild(div);
             logContainer.scrollTop = logContainer.scrollHeight;
+            lastLogAt = Date.now();
         }
 
         function updateProgressWhileAnalyzing() {
             if (isCompleted) return;
             const elapsed = Date.now() - startTime;
-            const pct = Math.min(92, 10 + (elapsed / PROGRESS_DURATION_MS) * 82);
+            // 主线：10% -> 92%
+            let pct = Math.min(92, 10 + (elapsed / PROGRESS_DURATION_MS) * 82);
+            // 防停滞：如果长时间没有新日志，缓慢匀速推进（每 30 秒 +1%），最多推进到 96%
+            const idleMs = Date.now() - lastLogAt;
+            if (idleMs > 60 * 1000) {
+                const extra = Math.floor((idleMs - 60 * 1000) / (30 * 1000)) * 1;
+                pct = Math.min(96, pct + extra);
+            }
             progressBar.style.width = pct + '%';
         }
+
+        // 安慰性日志：超过 60 秒无新日志时自动插入（60-90 秒轮换）
+        const comfortInterval = setInterval(() => {
+            if (isCompleted) { clearInterval(comfortInterval); return; }
+            const idleMs = Date.now() - lastLogAt;
+            if (idleMs >= 60 * 1000) {
+                addLog(COMFORT_MESSAGES[comfortIndex % COMFORT_MESSAGES.length], 'active');
+                comfortIndex += 1;
+            }
+        }, 75 * 1000);
 
         // 每 35 秒添加一条阶段性日志（避免单调重复）
         const stageInterval = setInterval(() => {
@@ -188,6 +217,7 @@
                     stopPolling();
                     clearInterval(stageInterval);
                     clearInterval(dotInterval);
+                    clearInterval(comfortInterval);
                     progressBar.style.width = '100%';
                     mainStatus.textContent = '分析完成！';
                     addLog('报告生成成功！', 'success');
@@ -202,6 +232,7 @@
                     stopPolling();
                     clearInterval(stageInterval);
                     clearInterval(dotInterval);
+                    clearInterval(comfortInterval);
                     mainStatus.textContent = '分析遇到问题';
                     progressBar.style.width = '100%';
                     if (!hasFailureLog) {

@@ -1345,6 +1345,30 @@ def check_quota():
         logger.error(f"Quota Check Error: {e}")
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/quota', methods=['GET'])
+def quota_summary():
+    """Lightweight quota summary for both features.
+
+    Returns: { competitor_remaining: 1, discovery_remaining: 2, competitor_usage: 1, discovery_usage: 0, limit: 2 }
+    """
+    email = normalize_email(request.args.get('email'))
+    if not email:
+        return jsonify({"error": "email is required"}), 400
+    try:
+        competitor = get_quota_status(email, 'competitor')
+        discovery = get_quota_status(email, 'discovery')
+        return jsonify({
+            "email": email,
+            "limit": FREE_QUOTA_LIMIT,
+            "competitor_usage": competitor.get("usage", 0),
+            "discovery_usage": discovery.get("usage", 0),
+            "competitor_remaining": competitor.get("remaining", 0),
+            "discovery_remaining": discovery.get("remaining", 0),
+        })
+    except Exception as e:
+        logger.error(f"Quota Summary Error: {e}")
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/api/check_status', methods=['GET'])
 def check_status():
     """Frontend Endpoint to Poll Status"""

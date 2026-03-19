@@ -195,6 +195,12 @@
             </div>
         </header>
 
+        <div class="quota-banner"
+            style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%); border: 1px solid rgba(139, 92, 246, 0.2); color: #4f46e5; padding: 10px 20px; border-radius: 999px; display: inline-block; margin: 18px auto 0; font-weight: 600; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); cursor: pointer;"
+            onclick="window.location.href='create-analysis.html'">
+            🎁 内测限免：每位用户可免费获取 2 份竞品分析 + 2 份选品开发报告（点击开始）
+        </div>
+
         <!-- Mobile Menu Overlay -->
         <div class="mobile-menu-overlay" id="mobileMenuOverlay">
             <nav class="mobile-nav">
@@ -211,16 +217,16 @@
             <section class="hero-section">
                 <div class="hero-content">
                     <h1 class="hero-title">
-                        <span class="gradient-text">2 份报告免费</span> <br>AI 帮你找出竞品被投诉最多的5个痛点
+                        <span class="gradient-text">2 份报告免费</span> <br>AI 帮你找出竞品被投诉最多的 5 个痛点
                     </h1>
                     <p class="hero-subtitle">
-                        无需绑定信用卡，无需店铺授权。AI帮你读完3000+条评论，自动总结竞品弱点。<br>平均帮卖家发现3-5个竞品遗漏的高频痛点，转化率提升15-30%。
+                        无需绑定信用卡，无需店铺授权。AI 帮你读完 3000+ 条评论，自动总结竞品弱点。<br>平均帮卖家发现 3-5 个竞品遗漏的高频痛点，转化率提升 15-30%。
                     </p>
                     <p style="margin-top: 10px; font-size: 0.85rem; color: #6b7280;">
                         注：转化率数据来自内测用户样本与典型案例复盘，实际结果会因类目、Listing 基础和执行质量而不同。
                     </p>
                     <div class="hero-actions">
-                        <a href="create-analysis.html" class="submit-btn">立即生成我的2份免费报告</a>
+                        <a href="create-analysis.html" class="submit-btn">立即生成我的 2 份免费报告</a>
                         <a href="cases.html" class="upload-label"
                             style="text-decoration: none; padding: 16px 32px; font-size: 1.1rem; font-weight: 600;">查看真实案例</a>
                     </div>
@@ -477,7 +483,15 @@
                     <h4>联系我们</h4>
                     <ul class="footer-links">
                         <li>📧 contact@flowaiagent.com</li>
-                        <li>💬 微信: tony49279527（添加好友请搜索微信号）</li>
+                        <li class="wechat-contact">
+                            💬 微信: tony49279527（添加好友请搜索微信号）
+                            <button type="button" class="wechat-qr-trigger" aria-label="显示微信二维码">扫码添加</button>
+                            <span class="wechat-qr-pop" aria-hidden="true">
+                                <img src="wechat_qr.jpg" alt="微信二维码"
+                                    onerror="this.src='https://via.placeholder.com/160x160/667eea/fff?text=WeChat+QR'">
+                                <div class="wechat-qr-caption">微信扫码添加好友</div>
+                            </span>
+                        </li>
                     </ul>
                 </div>
             </div>

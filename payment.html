@@ -700,7 +700,15 @@
                     <h4>联系我们</h4>
                     <ul class="footer-links">
                         <li>📧 contact@flowaiagent.com</li>
-                        <li>💬 微信: tony49279527（添加好友请搜索微信号）</li>
+                        <li class="wechat-contact">
+                            💬 微信: tony49279527（添加好友请搜索微信号）
+                            <button type="button" class="wechat-qr-trigger" aria-label="显示微信二维码">扫码添加</button>
+                            <span class="wechat-qr-pop" aria-hidden="true">
+                                <img src="wechat_qr.jpg" alt="微信二维码"
+                                    onerror="this.src='https://via.placeholder.com/160x160/667eea/fff?text=WeChat+QR'">
+                                <div class="wechat-qr-caption">微信扫码添加好友</div>
+                            </span>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -724,12 +732,16 @@
         const confirmBtn = document.querySelector('.confirm-btn');
         const orderIdFromUrl = params.get('order_id');
         const activeOrderId = /^\d+$/.test(orderIdFromUrl || '') ? orderIdFromUrl : '';
+        const orderType = (params.get('type') || 'competitor').toLowerCase();
+        const normalizedOrderType = orderType === 'discovery' ? 'discovery' : 'competitor';
 
         if (!activeOrderId) {
             orderIdElement.textContent = 'INVALID';
             if (confirmBtn) confirmBtn.disabled = true;
             showMsg(
-                t('订单创建失败，请返回竞品分析页面重新提交。', 'Order creation failed. Please go back and submit again.'),
+                normalizedOrderType === 'discovery'
+                    ? t('订单创建失败，请返回选品开发页面重新提交。', 'Order creation failed. Please go back and submit again.')
+                    : t('订单创建失败，请返回竞品分析页面重新提交。', 'Order creation failed. Please go back and submit again.'),
                 'warn'
             );
         } else {
@@ -763,9 +775,9 @@
                     .then(res => res.json())
                     .then(data => {
                         if (data.status === 'SUCCESS') {
-                            window.location.href = 'payment_success.html?order=' + activeOrderId;
+                            window.location.href = 'payment_success.html?order=' + activeOrderId + '&type=' + encodeURIComponent(normalizedOrderType);
                         } else if (data.status === 'FAILED') {
-                            window.location.href = 'payment_failed.html';
+                            window.location.href = 'payment_failed.html?type=' + encodeURIComponent(normalizedOrderType);
                         } else {
                             showMsg(t('尚未收到付款通知，请稍后重试。', 'Payment not confirmed yet. Please try again shortly.'), 'warn');
                         }
@@ -793,10 +805,10 @@
                         clearInterval(checkInterval);
                         showMsg(t('已收到付款通知！正在跳转...', 'Payment confirmed. Redirecting...'), 'success');
                         setTimeout(() => {
-                            window.location.href = 'payment_success.html?order=' + activeOrderId;
+                            window.location.href = 'payment_success.html?order=' + activeOrderId + '&type=' + encodeURIComponent(normalizedOrderType);
                         }, 1000);
                     } else if (data.status === 'FAILED') {
-                        window.location.href = 'payment_failed.html';
+                        window.location.href = 'payment_failed.html?type=' + encodeURIComponent(normalizedOrderType);
                     }
                 })
                 .catch(err => console.log('Polling server...'));

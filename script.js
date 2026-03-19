@@ -132,40 +132,84 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!analysisForm || !submitBtn) return;
 
-    async function refreshCompetitorQuotaBanner() {
-        const banner = document.querySelector('.quota-banner[data-feature="competitor"]');
-        if (!banner) return;
-
-        const storedEmail = (localStorage.getItem('user_email') || localStorage.getItem('userEmail') || '').trim().toLowerCase();
-        if (!storedEmail) return;
-
-        const isEnglish = document.documentElement.lang === 'en';
+    async function fetchQuotaSummary(email) {
+        const normalizedEmail = (email || '').trim().toLowerCase();
+        if (!normalizedEmail) return null;
         try {
-            const resp = await fetch('/api/check_quota', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: storedEmail, feature: 'competitor' })
-            });
-            if (!resp.ok) return;
-            const data = await resp.json();
-            if (data.remaining > 0) {
-                banner.textContent = isEnglish
-                    ? `🎁 Competitor Analysis: ${data.remaining} free credits remaining`
-                    : `🎁 竞品分析额度：当前还剩 ${data.remaining} 次免费机会`;
-            } else {
-                banner.textContent = isEnglish
-                    ? '🎁 Competitor Analysis: your 2 free credits are fully used'
-                    : '🎁 竞品分析额度：您的 2 次免费机会已全部使用';
-            }
+            const resp = await fetch('/api/quota?email=' + encodeURIComponent(normalizedEmail));
+            if (!resp.ok) return null;
+            return await resp.json();
         } catch (e) {
-            console.warn('Quota banner refresh failed:', e);
+            console.warn('Quota summary fetch failed:', e);
+            return null;
         }
     }
 
-    refreshCompetitorQuotaBanner();
+    function setSubmitButtonPricing(remaining) {
+        const btnTextSpan = submitBtn ? submitBtn.querySelector('.btn-text') : null;
+        if (!btnTextSpan) return;
+        if (typeof remaining === 'number' && remaining > 0) {
+            btnTextSpan.innerHTML = btnTextSpan.innerHTML.replace(/\(¥299\)/g, '(本次免费)');
+            if (!/\(本次免费\)/.test(btnTextSpan.textContent)) {
+                // Keep existing SVG and only replace trailing text when possible
+                btnTextSpan.innerHTML = btnTextSpan.innerHTML.replace(/立即生成\s*\(.+?\)/g, '立即生成 (本次免费)');
+            }
+        } else if (typeof remaining === 'number' && remaining <= 0) {
+            btnTextSpan.innerHTML = btnTextSpan.innerHTML.replace(/\(本次免费\)/g, '(¥299)');
+            if (!/\(¥299\)/.test(btnTextSpan.textContent)) {
+                btnTextSpan.innerHTML = btnTextSpan.innerHTML.replace(/立即生成\s*\(.+?\)/g, '立即生成 (¥299)');
+            }
+        }
+    }
+
+    function setQuotaBannerText(remaining, isEnglish) {
+        const banner = document.querySelector('.quota-banner[data-feature="competitor"]');
+        if (!banner) return;
+        if (typeof remaining !== 'number') return;
+        if (remaining > 0) {
+            banner.textContent = isEnglish
+                ? `🎁 Competitor Analysis: ${remaining} free credits remaining`
+                : `🎁 竞品分析额度：当前还剩 ${remaining} 次免费机会`;
+        } else {
+            banner.textContent = isEnglish
+                ? '🎁 Competitor Analysis: your 2 free credits are fully used'
+                : '🎁 竞品分析额度：您的 2 次免费机会已全部使用';
+        }
+    }
+
+    async function refreshQuotaUIByEmail(email) {
+        const isEnglish = document.documentElement.lang === 'en';
+        const quota = await fetchQuotaSummary(email);
+        if (!quota) return;
+        const remaining = typeof quota.competitor_remaining === 'number' ? quota.competitor_remaining : null;
+        if (remaining === null) return;
+        setQuotaBannerText(remaining, isEnglish);
+        setSubmitButtonPricing(remaining);
+    }
+
+    const userEmailInput = document.getElementById('userEmail');
+    const storedEmail = (localStorage.getItem('user_email') || localStorage.getItem('userEmail') || '').trim().toLowerCase();
+    if (storedEmail) {
+        refreshQuotaUIByEmail(storedEmail);
+    }
+    if (userEmailInput) {
+        const handler = async function () {
+            const email = (userEmailInput.value || '').trim().toLowerCase();
+            if (!email) return;
+            localStorage.setItem('user_email', email);
+            localStorage.setItem('userEmail', email);
+            await refreshQuotaUIByEmail(email);
+        };
+        userEmailInput.addEventListener('blur', handler);
+        userEmailInput.addEventListener('change', handler);
+    }
 
     function validateAsinList(raw, fieldName) {
-        const parts = raw.split(/[\n\r,;]+/).map(s => s.trim().toUpperCase().replace(/[^A-Z0-9]/g, '')).filter(Boolean);
+        // Support newline, comma, semicolon, spaces, tabs etc.
+        const parts = raw
+            .split(/[\s,;]+/)
+            .map(s => s.trim().toUpperCase().replace(/[^A-Z0-9]/g, ''))
+            .filter(Boolean);
         const valid = parts.filter(p => p.length === 10 && p.startsWith('B0'));
         const invalid = parts.filter(p => p.length !== 10 || !p.startsWith('B0'));
         return { valid: valid, invalidCount: invalid.length, invalid: invalid };

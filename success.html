@@ -141,7 +141,15 @@
                     <h4>联系我们</h4>
                     <ul class="footer-links">
                         <li>contact@flowaiagent.com</li>
-                        <li>微信: tony49279527（添加好友请搜索微信号）</li>
+                        <li class="wechat-contact">
+                            微信: tony49279527（添加好友请搜索微信号）
+                            <button type="button" class="wechat-qr-trigger" aria-label="显示微信二维码">扫码添加</button>
+                            <span class="wechat-qr-pop" aria-hidden="true">
+                                <img src="wechat_qr.jpg" alt="微信二维码"
+                                    onerror="this.src='https://via.placeholder.com/160x160/667eea/fff?text=WeChat+QR'">
+                                <div class="wechat-qr-caption">微信扫码添加好友</div>
+                            </span>
+                        </li>
                     </ul>
                 </div>
             </div>

@@ -247,11 +247,11 @@
                 </div>
 
                 <div class="action-buttons">
-                    <a href="create-analysis.html" class="primary-btn">
+                    <a href="create-analysis.html" class="primary-btn" id="continueBtn">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M12 5v14M5 12h14" />
                         </svg>
-                        继续分析下一个产品
+                        <span id="continueBtnText">继续分析下一个产品</span>
                     </a>
                     <a href="cases.html" class="secondary-btn">
                         查看更多案例
@@ -295,7 +295,15 @@
                     <h4>联系我们</h4>
                     <ul class="footer-links">
                         <li>contact@flowaiagent.com</li>
-                        <li>微信: tony49279527（添加好友请搜索微信号）</li>
+                        <li class="wechat-contact">
+                            微信: tony49279527（添加好友请搜索微信号）
+                            <button type="button" class="wechat-qr-trigger" aria-label="显示微信二维码">扫码添加</button>
+                            <span class="wechat-qr-pop" aria-hidden="true">
+                                <img src="wechat_qr.jpg" alt="微信二维码"
+                                    onerror="this.src='https://via.placeholder.com/160x160/667eea/fff?text=WeChat+QR'">
+                                <div class="wechat-qr-caption">微信扫码添加好友</div>
+                            </span>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -318,6 +326,7 @@
             // Order info from URL
             const urlParams = new URLSearchParams(window.location.search);
             const orderNo = urlParams.get('order');
+            const orderType = (urlParams.get('type') || 'competitor').toLowerCase();
             if (orderNo) {
                 document.getElementById('orderNo').textContent = orderNo;
             }
@@ -329,6 +338,15 @@
             const email = localStorage.getItem('user_email') || localStorage.getItem('userEmail') || '';
             if (email) {
                 document.getElementById('userEmail').textContent = email;
+            }
+
+            const continueBtn = document.getElementById('continueBtn');
+            const continueBtnText = document.getElementById('continueBtnText');
+            const subtitleEl = document.querySelector('.success-subtitle');
+            if (orderType === 'discovery') {
+                if (continueBtn) continueBtn.href = 'discovery.html';
+                if (continueBtnText) continueBtnText.textContent = '继续做下一个选品分析';
+                if (subtitleEl) subtitleEl.textContent = '您的完整选品开发报告已解锁，将在 10 分钟内发送至您的邮箱。';
             }
 
             createConfetti();

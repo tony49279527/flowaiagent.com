@@ -346,6 +346,10 @@
 
         <main class="main-content">
             <div class="page-header">
+                <div class="quota-banner" data-feature="discovery"
+                    style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%); border: 1px solid rgba(139, 92, 246, 0.2); color: #4f46e5; padding: 12px 24px; border-radius: 50px; display: inline-block; margin-bottom: 18px; font-weight: 600; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                    🎁 新用户福利：您当前拥有 2 次免费选品开发权益
+                </div>
                 <h1><span class="gradient-text">AI 选品开发分析</span><br>从关键词到产品方向，一次走通</h1>
                 <p class="page-subtitle">面向 Amazon US/GB/DE/JP 等站点，输出市场进入、差异化和定价建议。</p>
             </div>
@@ -575,7 +579,15 @@
                     <h4>联系我们</h4>
                     <ul class="footer-links">
                         <li>contact@flowaiagent.com</li>
-                        <li>微信: tony49279527（添加好友请搜索微信号）</li>
+                        <li class="wechat-contact">
+                            微信: tony49279527（添加好友请搜索微信号）
+                            <button type="button" class="wechat-qr-trigger" aria-label="显示微信二维码">扫码添加</button>
+                            <span class="wechat-qr-pop" aria-hidden="true">
+                                <img src="wechat_qr.jpg" alt="微信二维码"
+                                    onerror="this.src='https://via.placeholder.com/160x160/667eea/fff?text=WeChat+QR'">
+                                <div class="wechat-qr-caption">微信扫码添加好友</div>
+                            </span>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -634,6 +646,47 @@
         const progressStatus = document.getElementById('progressStatus');
         const submitBtn = document.getElementById('submitBtn');
         const priceError = document.getElementById('priceError');
+        const userEmailInputForQuota = document.getElementById('userEmail');
+        let cachedDiscoveryRemaining = null;
+
+        async function refreshDiscoveryQuotaUIByEmail(email) {
+            const normalizedEmail = (email || '').trim().toLowerCase();
+            if (!normalizedEmail) return;
+            try {
+                const resp = await fetch('/api/quota?email=' + encodeURIComponent(normalizedEmail));
+                if (!resp.ok) return;
+                const data = await resp.json();
+                cachedDiscoveryRemaining = (typeof data.discovery_remaining === 'number') ? data.discovery_remaining : cachedDiscoveryRemaining;
+                const banner = document.querySelector('.quota-banner[data-feature="discovery"]');
+                if (banner && typeof data.discovery_remaining === 'number') {
+                    if (data.discovery_remaining > 0) {
+                        banner.textContent = `🎁 选品开发额度：当前还剩 ${data.discovery_remaining} 次免费机会`;
+                        const btnText = submitBtn ? submitBtn.querySelector('.btn-text') : null;
+                        if (btnText) btnText.textContent = '确认提交并开始分析（本次免费）';
+                    } else {
+                        banner.textContent = '🎁 选品开发额度：您的 2 次免费机会已全部使用';
+                        const btnText = submitBtn ? submitBtn.querySelector('.btn-text') : null;
+                        if (btnText) btnText.textContent = '确认提交并开始分析（¥299）';
+                    }
+                }
+            } catch (e) {
+                console.warn('Discovery quota refresh failed:', e);
+            }
+        }
+
+        const storedEmail = (localStorage.getItem('user_email') || localStorage.getItem('userEmail') || '').trim().toLowerCase();
+        if (storedEmail) refreshDiscoveryQuotaUIByEmail(storedEmail);
+        if (userEmailInputForQuota) {
+            const handler = function () {
+                const email = (userEmailInputForQuota.value || '').trim().toLowerCase();
+                if (!email) return;
+                localStorage.setItem('user_email', email);
+                localStorage.setItem('userEmail', email);
+                refreshDiscoveryQuotaUIByEmail(email);
+            };
+            userEmailInputForQuota.addEventListener('blur', handler);
+            userEmailInputForQuota.addEventListener('change', handler);
+        }
 
         const level1 = document.getElementById('cat-level-1');
         const level2 = document.getElementById('cat-level-2');
@@ -837,6 +890,17 @@
                 const userEmail = userEmailInput.value.trim().toLowerCase();
                 const industry = industryInput.value.trim();
 
+                localStorage.setItem('user_email', userEmail);
+                localStorage.setItem('userEmail', userEmail);
+                await refreshDiscoveryQuotaUIByEmail(userEmail);
+                if (cachedDiscoveryRemaining !== null && cachedDiscoveryRemaining <= 0) {
+                    const ok = confirm('您的免费额度已用完，继续将进入付费流程（¥299）。是否继续？');
+                    if (!ok) {
+                        progressOverlay.classList.remove('active');
+                        return;
+                    }
+                }
+
                 const finalPayload = {
                     ...payload,
                     user_name: userName,
@@ -869,8 +933,46 @@
                     }
                     if (response.status === 403) {
                         progressOverlay.classList.remove('active');
-                        alert('您的 2 次选品开发免费额度已全部使用。');
-                        return;
+                        alert('您的 2 次选品开发免费额度已全部使用，即将进入付费流程。');
+                        try {
+                            // 额度用完后：创建付费订单并跳转 payment.html
+                            const createOrderRes = await fetch('/api/create_order', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    email: userEmail,
+                                    order_data: {
+                                        ...finalPayload,
+                                        source: 'discovery',
+                                        analysis_type: 'product_discovery',
+                                        report_type: 'paid_manual_confirm',
+                                        // 兼容后端/工作流字段命名
+                                        user_name: userName,
+                                        userName: userName,
+                                        name: userName,
+                                        user_email: userEmail,
+                                        userEmail: userEmail,
+                                        email: userEmail,
+                                        industry: industry,
+                                        customPrompt: finalPayload.custom_prompt || '',
+                                        custom_prompt: finalPayload.custom_prompt || ''
+                                    }
+                                })
+                            });
+
+                            if (!createOrderRes.ok) {
+                                throw new Error('Failed to create paid order');
+                            }
+
+                            const createOrderData = await createOrderRes.json();
+                            window.location.href = 'payment.html?order_id=' + encodeURIComponent(createOrderData.order_id) + '&type=discovery';
+                            return;
+                        } catch (e) {
+                            console.error('Create paid discovery order error:', e);
+                            // 兜底：至少让用户进入支付页
+                            window.location.href = 'payment.html?type=discovery';
+                            return;
+                        }
                     }
                     throw new Error((errorData && errorData.error) || 'Backend submission failed');
                 }
