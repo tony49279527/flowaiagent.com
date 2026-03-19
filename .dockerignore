@@ -1,0 +1,22 @@
+# Git / 编辑器
+.git
+.gitignore
+.cursor
+**/__pycache__
+*.py[cod]
+*.pyo
+
+# 密钥与本地环境（勿打进镜像）
+.env
+.env.*
+!.env.example
+
+# 本地 SQLite（应由 Firestore/外置库承载生产数据）
+*.db
+orders.db
+discovery_tasks.db
+
+# 杂项
+terminals
+agent-transcripts
+*.log

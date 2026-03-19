@@ -1,3 +1,9 @@
+"""
+Legacy / standalone Discovery server (port DISCOVERY_PORT, default 8081).
+
+生产环境请只使用 payment_server.py：已包含相同的 /api/discovery/* 与配额逻辑，
+且 Cloud Run 仅对外暴露一个 PORT。本文件仅保留作本地对照或实验，勿与 payment_server 同时对外提供流量。
+"""
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import sqlite3

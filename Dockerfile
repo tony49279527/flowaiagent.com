@@ -11,8 +11,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the current directory contents into the container at /app
 COPY . /app
 
-# Make port 8080 available to the world outside this container
+# Cloud Run injects PORT (default 8080)
 EXPOSE 8080
 
-# Run start.sh when the container launches to start both servers
-CMD ["./start.sh"]
+# 与 .github/workflows/deploy.yml 一致：单进程 payment_server（含 Discovery）
+CMD ["python3", "payment_server.py"]

@@ -34,5 +34,6 @@ jobs:
             --platform managed \
             --allow-unauthenticated \
             --project ${{ env.PROJECT_ID }} \
+            --no-cpu-throttling \
             --command="python" \
             --args="payment_server.py"
