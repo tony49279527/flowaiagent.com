@@ -79,15 +79,16 @@ body {
     transform: translateY(-6px);
     transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
     z-index: 50;
-    width: 180px;
+    width: 200px;
 }
 
 .wechat-qr-pop img {
-    width: 160px;
-    height: 160px;
-    object-fit: cover;
+    width: 180px;
+    height: 240px;
+    object-fit: contain;
     border-radius: 10px;
     display: block;
+    background: #fff;
 }
 
 .wechat-qr-pop .wechat-qr-caption {
