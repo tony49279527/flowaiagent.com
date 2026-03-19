@@ -149,6 +149,33 @@ def parse_order_id(raw_order_id):
     except (TypeError, ValueError):
         return None
 
+
+def normalize_amazon_asin_list(raw):
+    """Normalize ASINs from list or string; dedupe; 10-char alphanumeric starting with B0 (aligned with frontend)."""
+    items = []
+    if raw is None:
+        return items
+    if isinstance(raw, str):
+        chunks = re.split(r'[\s,;]+', raw.strip())
+        items = [c.strip().upper() for c in chunks if c and c.strip()]
+    elif isinstance(raw, (list, tuple)):
+        for x in raw:
+            if x is None:
+                continue
+            s = str(x).strip()
+            if not s:
+                continue
+            chunks = re.split(r'[\s,;]+', s)
+            items.extend(c.strip().upper() for c in chunks if c.strip())
+    seen = set()
+    out = []
+    for p in items:
+        clean = re.sub(r'[^A-Z0-9]', '', p)
+        if len(clean) == 10 and clean.startswith('B0') and clean not in seen:
+            seen.add(clean)
+            out.append(clean)
+    return out
+
 def init_db():
     try:
         conn = get_db_connection()
@@ -1324,11 +1351,6 @@ def redirect_create_to_create_analysis():
     """SEO: old create URL moved to create-analysis"""
     return redirect('/create-analysis.html', code=301)
 
-@app.route('/<path:path>')
-def serve_static(path):
-    """Explicitly serve static files"""
-    return send_from_directory('.', path)
-
 @app.route('/api/check_quota', methods=['POST'])
 def check_quota():
     """Check user quota for competitor/discovery (2 free uses each)."""
@@ -1432,8 +1454,11 @@ def create_order():
     finally:
         conn.close()
 
-# n8n Webhook URL for report generation
-N8N_WEBHOOK_URL = 'https://tony4927.app.n8n.cloud/webhook/1573cd32-8e6a-46ac-9d74-1e6f7c9ea5e7'
+# n8n Webhook URL for report generation (override in env for production)
+N8N_WEBHOOK_URL = os.environ.get(
+    'N8N_WEBHOOK_URL',
+    'https://tony4927.app.n8n.cloud/webhook/1573cd32-8e6a-46ac-9d74-1e6f7c9ea5e7',
+)
 
 def _normalize_n8n_payload(order_data):
     normalized = dict(order_data or {})
@@ -1444,8 +1469,12 @@ def _normalize_n8n_payload(order_data):
         or normalized.get('email')
         or ''
     )
-    main_asins = normalized.get('main_asins') or normalized.get('mainAsins') or []
-    competitor_asins = normalized.get('competitor_asins') or normalized.get('competitorAsins') or []
+    main_asins = normalize_amazon_asin_list(
+        normalized.get('main_asins') or normalized.get('mainAsins') or []
+    )
+    competitor_asins = normalize_amazon_asin_list(
+        normalized.get('competitor_asins') or normalized.get('competitorAsins') or []
+    )
     custom_prompt = normalized.get('custom_prompt') or normalized.get('customPrompt') or ''
     site_count = normalized.get('reference_site_count') or normalized.get('referenceSiteCount') or 10
     youtube_count = normalized.get('reference_youtube_count') or normalized.get('referenceYoutubeCount') or 10
@@ -1474,6 +1503,9 @@ def _normalize_n8n_payload(order_data):
 
 def _post_n8n_webhook(order_data):
     normalized = _normalize_n8n_payload(order_data)
+    if not N8N_WEBHOOK_URL:
+        logger.error("N8N_WEBHOOK_URL is not configured")
+        raise ValueError("N8N_WEBHOOK_URL is not configured")
     logger.info(f"Triggering n8n webhook with data: {normalized}")
     response = requests.post(
         N8N_WEBHOOK_URL,
@@ -1534,7 +1566,9 @@ def competitor_submit():
 
 @app.route('/api/record_usage', methods=['POST'])
 def record_usage():
-    """Increment user usage count for a specific feature."""
+    """Increment user usage count for a specific feature (admin-only; was public and abusable)."""
+    if not is_admin_request():
+        return jsonify({"error": "Unauthorized"}), 403
     data = request.json or {}
     email = normalize_email(data.get('email'))
     feature = normalize_quota_feature(data.get('feature'))
@@ -1657,6 +1691,13 @@ def update_status():
     except Exception as e:
         logger.error(f"DB Update Error: {e}")
         return jsonify({"error": str(e)}), 500
+
+
+@app.route('/<path:path>')
+def serve_static(path):
+    """Serve static files; registered last so /api/* routes take precedence (clarity for maintainers)."""
+    return send_from_directory('.', path)
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))

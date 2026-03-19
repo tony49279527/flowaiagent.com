@@ -12,6 +12,19 @@ function fillPrompt(text) {
     }
 }
 
+function escapeHtmlAttr(s) {
+    return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;');
+}
+
+function escapeHtmlText(s) {
+    const d = document.createElement('div');
+    d.textContent = s == null ? '' : String(s);
+    return d.innerHTML;
+}
+
 // Helper to read file as text
 function readFileAsText(file) {
     return new Promise((resolve, reject) => {
@@ -54,7 +67,7 @@ function setupMultiFileUpload(inputId, listId, clearBtnId) {
             const item = document.createElement('div');
             item.className = 'file-list-item';
             item.innerHTML =
-                '<span class="file-item-name" title="' + file.name + '">' + file.name + '</span>' +
+                '<span class="file-item-name" title="' + escapeHtmlAttr(file.name) + '">' + escapeHtmlText(file.name) + '</span>' +
                 '<span class="file-item-size">' + formatFileSize(file.size) + '</span>' +
                 '<button type="button" class="remove-file-btn" title="删除此文件">&times;</button>';
 
@@ -259,6 +272,10 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!confirm(msg + (selectedLanguage === 'en' ? ' Continue?' : ' 是否继续？'))) return;
         }
 
+        // Must match validateAsinList (not raw textarea split by newline only)
+        const mainAsinsForSubmit = mainResult.valid.slice();
+        const competitorAsinsForSubmit = compResult.valid.slice();
+
         const userNameInput = document.getElementById('userName');
         const userEmailInput = document.getElementById('userEmail');
         const industryInput = document.getElementById('industry');
@@ -294,8 +311,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const buildOrderData = () => {
                 const normalizedEmail = (rawData.userEmail || '').trim().toLowerCase();
-                const mainAsins = rawData.mainAsin ? rawData.mainAsin.split('\n').map(s => s.trim()).filter(s => s) : [];
-                const competitorAsins = rawData.compAsin ? rawData.compAsin.split('\n').map(s => s.trim()).filter(s => s) : [];
+                const mainAsins = mainAsinsForSubmit.slice();
+                const competitorAsins = competitorAsinsForSubmit.slice();
                 const submittedAt = new Date().toISOString();
                 return {
                     source: 'create-analysis',
@@ -344,7 +361,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 window.location.href = 'payment.html?order_id=' + encodeURIComponent(createOrderData.order_id);
             }
 
-            // --- Server-Side Quota Check with Client-Side Fallback ---
+            // --- Server-Side Quota Check (localStorage fallback only on localhost — not bypassable in prod) ---
+            const allowLocalQuotaFallback = (function () {
+                const h = (window.location && window.location.hostname) || '';
+                return h === 'localhost' || h === '127.0.0.1';
+            })();
             let useLocalQuotaFallback = false;
             let localUsageKey = '';
             let localUsage = 0;
@@ -362,12 +383,18 @@ document.addEventListener('DOMContentLoaded', function () {
                         throw new Error('Backend not reachable');
                     }
                 } catch (e) {
-                    console.log('Backend unreachable, using client-side demo quota.');
-                    // Fallback to localStorage for Demo Mode
-                    useLocalQuotaFallback = true;
-                    localUsageKey = 'flowai_usage_competitor_' + userEmail;
-                    localUsage = parseInt(localStorage.getItem(localUsageKey) || '0');
-                    quotaData = { allowed: localUsage < 2, usage: localUsage, remaining: Math.max(0, 2 - localUsage), feature: 'competitor' };
+                    if (allowLocalQuotaFallback) {
+                        console.warn('Backend unreachable, using client-side demo quota (localhost only).');
+                        useLocalQuotaFallback = true;
+                        localUsageKey = 'flowai_usage_competitor_' + userEmail;
+                        localUsage = parseInt(localStorage.getItem(localUsageKey) || '0');
+                        quotaData = { allowed: localUsage < 2, usage: localUsage, remaining: Math.max(0, 2 - localUsage), feature: 'competitor' };
+                    } else {
+                        alert((rawData.language === 'en')
+                            ? 'Cannot reach the server to verify quota. Please check your connection and try again.'
+                            : '无法连接服务器校验额度，请检查网络后重试。');
+                        return;
+                    }
                 }
 
                 if (!quotaData.allowed) {
@@ -411,8 +438,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Construct the final payload with correct keys and types
             const normalizedEmail = (rawData.userEmail || '').trim().toLowerCase();
-            const mainAsins = rawData.mainAsin ? rawData.mainAsin.split('\n').map(s => s.trim()).filter(s => s) : [];
-            const competitorAsins = rawData.compAsin ? rawData.compAsin.split('\n').map(s => s.trim()).filter(s => s) : [];
+            const mainAsins = mainAsinsForSubmit.slice();
+            const competitorAsins = competitorAsinsForSubmit.slice();
             const submittedAt = new Date().toISOString();
             const payload = {
                 source: 'create-analysis',

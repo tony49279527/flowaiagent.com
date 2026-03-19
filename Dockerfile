@@ -4,8 +4,9 @@ FROM python:3.9-slim
 # Set working directory
 WORKDIR /app
 
-# Install dependencies directly
-RUN pip install flask flask-cors requests python-docx google-cloud-firestore
+# Install dependencies (single source of truth with requirements.txt)
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the current directory contents into the container at /app
 COPY . /app

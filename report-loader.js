@@ -3,6 +3,26 @@
  * Loads Markdown content dynamically and handles TOC/UI.
  */
 
+function escapeHtmlText(s) {
+    const d = document.createElement('div');
+    d.textContent = s == null ? '' : String(s);
+    return d.innerHTML;
+}
+
+function escapeHtmlAttr(s) {
+    return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;');
+}
+
+function slugFromHeading(text) {
+    return String(text || '')
+        .toLowerCase()
+        .replace(/[^\w\u4e00-\u9fa5]+/g, '-')
+        .replace(/^-+|-+$/g, '') || 'section';
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     const reportId = urlParams.get('id');
@@ -38,18 +58,20 @@ async function loadReport(id) {
         }
 
         // 2. Fetch Markdown content
-        const contentResponse = await fetch(`data/reports/${id}.md`);
+        const contentResponse = await fetch(`data/reports/${encodeURIComponent(id)}.md`);
         if (!contentResponse.ok) throw new Error('Report content not found');
         const markdown = await contentResponse.text();
 
         // 3. Render Markdown
         if (typeof marked === 'undefined') {
             console.error('marked.js not loaded');
-            reportBody.innerHTML = '<p>Error: Markdown renderer not available.</p>';
+            reportBody.textContent = '';
+            const p = document.createElement('p');
+            p.textContent = 'Error: Markdown renderer not available.';
+            reportBody.appendChild(p);
             return;
         }
 
-        // Configure marked to handle IDs for TOC (Universal compatibility)
         const renderer = new marked.Renderer();
         renderer.heading = function (arg1, arg2) {
             let text = '', level = 1;
@@ -60,13 +82,22 @@ async function loadReport(id) {
                 text = arg1 || '';
                 level = arg2 || 1;
             }
-            // Ensure text is a string
             const safeText = String(text || '');
-            const escapedText = safeText.toLowerCase().replace(/[^\w\u4e00-\u9fa5]+/g, '-');
-            return `<h${level} id="${escapedText}" style="scroll-margin-top: 100px;">${safeText}</h${level}>`;
+            const idSlug = escapeHtmlAttr(slugFromHeading(safeText));
+            return `<h${level} id="${idSlug}" style="scroll-margin-top: 100px;">${escapeHtmlText(safeText)}</h${level}>`;
         };
 
-        reportBody.innerHTML = marked.parse(markdown, { renderer: renderer });
+        const rawHtml = marked.parse(markdown, { renderer: renderer });
+        if (typeof DOMPurify !== 'undefined') {
+            reportBody.innerHTML = DOMPurify.sanitize(rawHtml, { USE_PROFILES: { html: true } });
+        } else {
+            console.warn('DOMPurify not loaded; rendering escaped plain preview only');
+            reportBody.textContent = '';
+            const pre = document.createElement('pre');
+            pre.style.whiteSpace = 'pre-wrap';
+            pre.textContent = markdown;
+            reportBody.appendChild(pre);
+        }
 
         // 4. Generate TOC
         generateTOC(reportBody, tocContainer);
@@ -76,7 +107,22 @@ async function loadReport(id) {
 
     } catch (error) {
         console.error('Failed to load report:', error);
-        reportBody.innerHTML = `<p style="color:red; pading:20px;">抱歉，报告加载失败: ${error.message}<br><small>${error.stack}</small></p>`;
+        reportBody.textContent = '';
+        const wrap = document.createElement('div');
+        wrap.style.color = 'red';
+        wrap.style.padding = '20px';
+        const p = document.createElement('p');
+        p.textContent = '抱歉，报告加载失败: ' + (error && error.message ? error.message : String(error));
+        wrap.appendChild(p);
+        if (error && error.stack) {
+            const small = document.createElement('small');
+            small.style.display = 'block';
+            small.style.marginTop = '8px';
+            small.style.whiteSpace = 'pre-wrap';
+            small.textContent = error.stack;
+            wrap.appendChild(small);
+        }
+        reportBody.appendChild(wrap);
     }
 
     // 6. Load Recommended Reports
@@ -95,26 +141,52 @@ async function loadRecommended(currentId) {
         const response = await fetch(`${jsonPath}?v=` + new Date().getTime());
         const reports = await response.json();
 
-        // Filter out current and pick random 2-3
         const others = reports.filter(r => r.id !== currentId);
         const shuffled = others.sort(() => 0.5 - Math.random());
-        const selected = shuffled.slice(0, 3); // Show 3
+        const selected = shuffled.slice(0, 3);
 
         const reportPage = isEnglish ? 'report_en.html' : 'report.html';
-        container.innerHTML = selected.map(report => `
-            <a href="${reportPage}?id=${report.id}" class="recommendation-card">
-                <div class="rec-card-image">
-                    <img src="${report.cover_image || 'images/default-hero.png'}" alt="${report.title}" onerror="this.src='images/cat-litter-box-hero.png'">
-                </div>
-                <div class="rec-card-content">
-                    <h4 class="rec-card-title">${report.title}</h4>
-                    <div class="rec-card-date">${report.date}</div>
-                </div>
-            </a>
-        `).join('');
+        container.textContent = '';
+
+        selected.forEach(report => {
+            const rid = report.id != null ? String(report.id) : '';
+            const title = report.title != null ? String(report.title) : '';
+            const dateStr = report.date != null ? String(report.date) : '';
+            const cover = report.cover_image && /^[\w./-]+$/i.test(String(report.cover_image))
+                ? String(report.cover_image)
+                : 'images/default-hero.png';
+
+            const a = document.createElement('a');
+            a.href = `${reportPage}?id=${encodeURIComponent(rid)}`;
+            a.className = 'recommendation-card';
+
+            const imgWrap = document.createElement('div');
+            imgWrap.className = 'rec-card-image';
+            const img = document.createElement('img');
+            img.src = cover;
+            img.alt = title;
+            img.onerror = function () { this.src = 'images/cat-litter-box-hero.png'; };
+            imgWrap.appendChild(img);
+
+            const content = document.createElement('div');
+            content.className = 'rec-card-content';
+            const h4 = document.createElement('h4');
+            h4.className = 'rec-card-title';
+            h4.textContent = title;
+            const dateEl = document.createElement('div');
+            dateEl.className = 'rec-card-date';
+            dateEl.textContent = dateStr;
+            content.appendChild(h4);
+            content.appendChild(dateEl);
+
+            a.appendChild(imgWrap);
+            a.appendChild(content);
+            container.appendChild(a);
+        });
 
         if (selected.length === 0) {
-            document.getElementById('recommended-section').style.display = 'none';
+            const section = document.getElementById('recommended-section');
+            if (section) section.style.display = 'none';
         }
 
     } catch (e) {
