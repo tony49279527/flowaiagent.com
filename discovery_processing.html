@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>分析进行中 - Product Discovery | FlowAI Agent</title>
+    <title>选品开发分析进行中 | FlowAI Agent</title>
     <link rel="stylesheet" href="styles.css?v=2.0">
     <style>
         .processing-container {
@@ -83,10 +83,6 @@
                     <div class="log-entry"><span class="log-time"></span> [系统] 选品引擎初始化成功...</div>
                 </div>
 
-                <div style="margin-top: 20px; font-size: 0.85em; color: #94a3b8;">
-                    正在使用模型: <span id="ai-model-display" style="color: #60a5fa; font-weight: 500;">...</span>
-                </div>
-
                 <div style="margin-top: 40px; padding: 20px; border-top: 1px solid #f1f5f9;">
                     <p style="color: #64748b; font-size: 0.9em;">完成后报告将发送至：<strong id="user-email-display">...</strong>
                     </p>
@@ -100,24 +96,39 @@
         const urlParams = new URLSearchParams(window.location.search);
         const taskId = urlParams.get('taskId');
         const userEmail = sessionStorage.getItem('discovery_email') || urlParams.get('email') || '';
-        const aiModelParam = urlParams.get('model') || 'anthropic/claude-sonnet-4.5';
-        const aiModelDisplay = aiModelParam === 'anthropic/claude-sonnet-4.5' ? 'Claude Sonnet 4.5' : aiModelParam;
+        const isEnglish = urlParams.get('lang') === 'en';
+        const t = (zhText, enText) => isEnglish ? enText : zhText;
 
-        document.getElementById('user-email-display').textContent = userEmail || '您的邮箱';
-        document.getElementById('ai-model-display').textContent = aiModelDisplay;
+        document.documentElement.lang = isEnglish ? 'en' : 'zh-CN';
+        document.title = t('选品开发分析进行中 | FlowAI Agent', 'Product Discovery In Progress | FlowAI Agent');
+        document.getElementById('main-status').textContent = t('AI 选品专家正在分析中...', 'Your AI product strategist is analyzing...');
+        document.getElementById('sub-status').textContent = t(
+            '正在调取全球亚马逊实时数据，这通常需要 5-15 分钟，复杂品类可能更长。',
+            'We are gathering live Amazon signals across marketplaces. This usually takes 5-15 minutes, and complex niches may take longer.'
+        );
+        document.getElementById('user-email-display').textContent = userEmail || t('您的邮箱', 'your email');
+        document.querySelector('#log-container .log-entry').innerHTML = `<span class="log-time"></span> ${t('[系统] 选品引擎初始化成功...', '[System] Product discovery engine initialized...')}`;
+        const infoParagraphs = document.querySelectorAll('.processing-container > div:last-child p');
+        if (infoParagraphs[0]) {
+            infoParagraphs[0].innerHTML = `${t('完成后报告将发送至：', 'The finished report will be sent to:')}<strong id="user-email-display">${userEmail || t('您的邮箱', 'your email')}</strong>`;
+        }
+        if (infoParagraphs[1]) {
+            infoParagraphs[1].textContent = t('您可以关闭此页面，分析不受影响。', 'You can close this page. The analysis will continue in the background.');
+        }
 
         const logContainer = document.getElementById('log-container');
         const mainStatus = document.getElementById('main-status');
+        const subStatus = document.getElementById('sub-status');
         const progressBar = document.getElementById('main-progress');
 
         const STAGE_LOGS = [
-            '多维数据矩阵构建完成，开始 AI 深度建模...',
-            '正在分析竞品评论与用户痛点...',
-            '正在生成定价策略与价格带建议...',
-            '正在挖掘蓝海机会与差异化方向...',
-            '正在整合市场格局与进入策略...',
-            '正在撰写执行计划与风险雷达...',
-            '报告结构已成型，正在润色与补充细节...'
+            t('多维数据矩阵构建完成，开始 AI 深度建模...', 'Data matrix assembled. Starting deep AI modeling...'),
+            t('正在分析竞品评论与用户痛点...', 'Analyzing competitor reviews and customer pain points...'),
+            t('正在生成定价策略与价格带建议...', 'Building pricing strategy and price-band recommendations...'),
+            t('正在挖掘蓝海机会与差异化方向...', 'Searching for whitespace opportunities and differentiation angles...'),
+            t('正在整合市场格局与进入策略...', 'Synthesizing market landscape and entry strategy...'),
+            t('正在撰写执行计划与风险雷达...', 'Drafting the execution roadmap and risk radar...'),
+            t('报告结构已成型，正在润色与补充细节...', 'The report structure is ready. Polishing details now...')
         ];
         let stageLogIndex = 0;
         let analyzingLogAdded = false;
@@ -128,11 +139,11 @@
         const PROGRESS_DURATION_MS = 10 * 60 * 1000;
         let lastLogAt = Date.now();
         const COMFORT_MESSAGES = [
-            'AI 正在深度撰写分析内容，请耐心等待...',
-            '正在交叉验证多个信号源，确保结论更可靠...',
-            '正在生成可执行的差异化方案与落地动作...',
-            '复杂品类耗时会更久一些，报告质量不会打折...',
-            '正在对比竞品价格带与卖点结构，形成策略建议...'
+            t('AI 正在深度撰写分析内容，请耐心等待...', 'The AI is writing the deeper analysis. Thanks for your patience...'),
+            t('正在交叉验证多个信号源，确保结论更可靠...', 'Cross-checking multiple signals to improve confidence...'),
+            t('正在生成可执行的差异化方案与落地动作...', 'Turning findings into concrete differentiation actions...'),
+            t('复杂品类耗时会更久一些，报告质量不会打折...', 'Complex categories take longer, but the report quality stays high...'),
+            t('正在对比竞品价格带与卖点结构，形成策略建议...', 'Comparing price ladders and selling points to shape the strategy...')
         ];
         let comfortIndex = 0;
 
@@ -185,7 +196,7 @@
         let hasFailureLog = false;
         const dotInterval = setInterval(() => {
             dots = (dots + 1) % 4;
-            mainStatus.textContent = 'AI 选品专家正在分析中' + '.'.repeat(dots);
+            mainStatus.textContent = t('AI 选品专家正在分析中', 'Your AI product strategist is analyzing') + '.'.repeat(dots);
         }, 500);
 
         function stopPolling() {
@@ -220,25 +231,36 @@
                     clearInterval(comfortInterval);
                     progressBar.style.width = '100%';
                     mainStatus.textContent = '分析完成！';
-                    addLog('报告生成成功！', 'success');
-                    if (data.status === 'COMPLETED') {
-                        addLog('邮件已成功发送。', 'success');
-                    }
-                    setTimeout(() => {
-                        window.location.href = `success.html?type=discovery&task=${taskId}`;
-                    }, 2000);
-                } else if (data.status === 'FAILED') {
+                        addLog(t('报告生成成功！', 'Report generated successfully!'), 'success');
+                        if (data.status === 'COMPLETED') {
+                            addLog(t('邮件已成功发送。', 'The email was sent successfully.'), 'success');
+                        }
+                        setTimeout(() => {
+                            window.location.href = isEnglish
+                                ? `success_en.html?type=discovery&task=${taskId}`
+                                : `success.html?type=discovery&task=${taskId}`;
+                        }, 2000);
+                    } else if (data.status === 'FAILED') {
                     isCompleted = true;
                     stopPolling();
                     clearInterval(stageInterval);
                     clearInterval(dotInterval);
                     clearInterval(comfortInterval);
-                    mainStatus.textContent = '分析遇到问题';
+                    mainStatus.textContent = t('分析遇到问题', 'We hit a problem during analysis');
+                    subStatus.textContent = t(
+                        '本次任务未能完成，请稍后重试；如果连续失败，请联系人工支持。',
+                        'This run could not be completed. Please try again later. If it keeps failing, contact support.'
+                    );
                     progressBar.style.width = '100%';
                     if (!hasFailureLog) {
                         hasFailureLog = true;
-                        const backendError = data.error_message ? `后端返回：${data.error_message}` : '';
-                        addLog(`分析暂时无法完成，请稍后重试或联系客服 contact@amzaiagent.com ${backendError}`.trim(), 'error');
+                        addLog(
+                            t(
+                                '分析暂时无法完成，请稍后重试或联系客服 contact@amzaiagent.com。',
+                                'The analysis could not be completed. Please try again later or contact contact@amzaiagent.com.'
+                            ),
+                            'error'
+                        );
                     }
                 }
             } catch (e) {
@@ -247,8 +269,8 @@
         }
 
         // 初始日志
-        setTimeout(() => addLog('正在扫描指定类目的市场饱和度...'), 2000);
-        setTimeout(() => addLog('探测到潜在蓝海差异化切入点...', 'active'), 5000);
+        setTimeout(() => addLog(t('正在扫描指定类目的市场饱和度...', 'Scanning category saturation and demand levels...')), 2000);
+        setTimeout(() => addLog(t('探测到潜在蓝海差异化切入点...', 'Detecting promising whitespace opportunities...'), 'active'), 5000);
 
         pollTimer = setInterval(pollStatus, 5000);
         progressTimer = setInterval(updateProgressWhileAnalyzing, 8000); // 每 8 秒更新一次进度条

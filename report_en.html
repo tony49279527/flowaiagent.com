@@ -4,58 +4,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wireless Earbuds Competitor Analysis Report | FlowAI Agent</title>
-    <meta name="description" content="Preview an AI-generated Amazon competitor analysis report with market insights, sentiment analysis, and strategy recommendations.">
+    <title>Competitor Analysis Report | FlowAI Agent</title>
+
     <link rel="canonical" href="https://flowaiagent.com/report_en.html">
     <!-- hreflang -->
     <link rel="alternate" hreflang="zh" href="https://flowaiagent.com/report.html">
     <link rel="alternate" hreflang="en" href="https://flowaiagent.com/report_en.html">
-    <link rel="alternate" hreflang="x-default" href="https://flowaiagent.com/report.html">
+    <link rel="alternate" hreflang="x-default" href="https://flowaiagent.com/report_en.html">
     <meta property="og:title" content="Competitor Analysis Report | FlowAI Agent">
-    <meta property="og:description" content="Preview an AI-generated Amazon competitor analysis report with market insights, sentiment analysis, and strategy recommendations.">
+    <meta property="og:description" content="Review AI-generated market insights, sentiment analysis, and competitor strategy recommendations.">
     <meta property="og:url" content="https://flowaiagent.com/report_en.html">
-    <meta property="og:type" content="article">
+    <meta property="og:type" content="website">
     <meta property="og:image" content="https://flowaiagent.com/demo_screenshot.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Competitor Analysis Report | FlowAI Agent">
-    <meta name="twitter:description" content="Preview an AI-generated Amazon competitor analysis report with market insights, sentiment analysis, and strategy recommendations.">
+    <meta name="twitter:description" content="Review AI-generated market insights, sentiment analysis, and competitor strategy recommendations.">
     <meta name="twitter:image" content="https://flowaiagent.com/demo_screenshot.png">
+    <meta name="description" content="Review AI-generated market insights, sentiment analysis, and competitor strategy recommendations.">
     <link rel="icon" href="favicon.png" type="image/png">
-    <link rel="stylesheet" href="styles.css?v=2.0">
+    <link rel="stylesheet" href="styles.css?v=3.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
     <style>
-        /* Report Specific Styles */
-        .report-container {
-            max-width: 1000px;
-            margin: 40px auto;
-            padding: 0 20px;
+        :root {
+            /* Backgrounds */
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-sidebar: transparent;
+
+            /* Text Colors (Slate) */
+            --text-primary: #1e293b;
+            /* Slate 800 */
+            --text-secondary: #475569;
+            /* Slate 600 */
+            --text-tertiary: #94a3b8;
+            /* Slate 400 */
+
+            /* Accents */
+            --primary-color: #2563eb;
+            /* Blue 600 */
+            --primary-hover: #1d4ed8;
+            /* Blue 700 */
+            --accent-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            /* Kept for buttons only */
+
+            /* Borders & Shadows */
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-full: 9999px;
+
+            /* Typography */
+            --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
+            /* Unify fonts as per reference */
         }
 
-        .report-header-section {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            margin-bottom: 32px;
+        body {
+            background-color: var(--bg-body) !important;
+            font-family: var(--font-main);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Reading Progress Bar */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: transparent;
+            z-index: 2001;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary-color);
+            width: 0%;
+            transition: width 0.1s;
+        }
+
+        .app-container {
+            min-height: 100vh;
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            gap: 20px;
+            flex-direction: column;
+        }
+
+        .report-layout {
+            display: grid;
+            grid-template-columns: 280px minmax(0, 800px);
+            gap: 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 24px 100px;
+            align-items: start;
+        }
+
+        /* Sidebar - Clean & Simple */
+        .report-toc-sidebar {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+            background: var(--bg-sidebar) !important;
+            padding: 0;
+            border: none;
+            box-shadow: none;
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+        }
+
+        .toc-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toc-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            border-left: 1px solid var(--border-color);
+        }
+
+        .toc-item {
+            margin: 0;
+        }
+
+        .toc-item a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            display: block;
+            padding: 8px 0 8px 20px;
+            border-left: 2px solid transparent;
+            margin-left: -1px;
+            /* Overlap border */
+            transition: all 0.2s;
+            line-height: 1.4;
+        }
+
+        .toc-item a:hover {
+            color: var(--text-primary);
+            border-left-color: var(--text-tertiary);
+        }
+
+        .toc-item a.active {
+            color: var(--primary-color);
+            font-weight: 500;
+            border-left-color: var(--primary-color);
+            background: transparent;
+            /* No background for active item in clean design */
+        }
+
+        .toc-level-1 {
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .toc-level-2 {
+            padding-left: 0;
+        }
+
+        .toc-level-3 {
+            padding-left: 32px;
+            font-size: 0.85rem;
+        }
+
+        /* Main Content - Card Style */
+        .report-header-section {
+            background: transparent;
+            /* Clean header, no box */
+            padding: 0 0 40px 0;
+            border: none;
+            box-shadow: none;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
         }
 
         .report-title h1 {
-            font-size: 2rem;
-            margin-bottom: 12px;
+            font-size: 2.25rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            margin-bottom: 16px;
             color: var(--text-primary);
+            background: none;
+            -webkit-text-fill-color: initial;
+            line-height: 1.2;
         }
 
         .report-meta-info {
+            display: flex;
+            gap: 24px;
             color: var(--text-secondary);
             font-size: 0.95rem;
-            display: flex;
-            gap: 20px;
         }
 
         .report-actions {
@@ -64,318 +218,482 @@
         }
 
         .action-btn {
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 600;
+            height: 40px;
+            padding: 0 20px;
+            border-radius: var(--radius-full) !important;
+            /* Pill shape */
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 0.9rem;
+            box-shadow: none;
         }
 
         .action-btn.primary {
             background: var(--primary-color);
             color: white;
-            border: none;
+            border: 1px solid transparent;
+        }
+
+        .action-btn.primary:hover {
+            background: var(--primary-hover);
+            transform: none;
+            box-shadow: var(--shadow-sm);
         }
 
         .action-btn.secondary {
             background: white;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .action-btn.secondary:hover {
+            background: #f1f5f9;
             color: var(--text-primary);
-            border: 1px solid var(--border-color);
+            border-color: #cbd5e1;
         }
 
-        .report-section {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            margin-bottom: 32px;
+        /* Markdown Content - Simplified for clean look */
+        #report-body {
+            background: transparent !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            line-height: 1.75;
+            font-size: 1.05rem;
+            color: #334155;
+            margin-bottom: 60px;
         }
 
-        .section-title {
-            font-size: 1.5rem;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border-color);
+        #report-body h1,
+        #report-body h2,
+        #report-body h3 {
+            color: var(--text-primary);
+            font-weight: 700;
+            scroll-margin-top: 100px;
+        }
+
+        #report-body h2 {
+            font-size: 1.75rem;
+            margin: 48px 0 24px;
+            padding-bottom: 0;
+            /* Remove underline */
+            border-bottom: none;
+            letter-spacing: -0.025em;
+        }
+
+        #report-body h2::after {
+            display: none;
+        }
+
+        /* Remove gradient line */
+
+        #report-body h3 {
+            font-size: 1.25rem;
+            margin: 32px 0 16px;
             color: var(--text-primary);
         }
 
-        /* Table Styles */
-        .data-table-container {
-            overflow-x: auto;
-            margin-top: 20px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
+        #report-body p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
         }
 
-        .data-table {
+        #report-body blockquote {
+            border-left: 4px solid var(--primary-color);
+            background: #eff6ff;
+            padding: 20px 24px;
+            margin: 32px 0;
+            border-radius: var(--radius-md);
+            font-style: normal;
+            color: #1e3a8a;
+            font-size: 1rem;
+        }
+
+        /* Clean Table Design */
+        #report-body table {
             width: 100%;
             border-collapse: collapse;
+            margin: 32px 0;
             font-size: 0.95rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            /* For radius */
         }
 
-        .data-table th,
-        .data-table td {
-            padding: 16px;
+        #report-body th {
+            background: #f8fafc;
+            color: var(--text-primary);
+            font-weight: 600;
             text-align: left;
+            padding: 12px 16px;
             border-bottom: 1px solid var(--border-color);
         }
 
-        .data-table th {
-            background: #f8fafc;
-            font-weight: 600;
+        #report-body td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
             color: var(--text-secondary);
         }
 
-        .data-table tr:last-child td {
+        #report-body tr:last-child td {
             border-bottom: none;
         }
 
-        .data-table tr:hover {
+        #report-body tr:hover td {
             background: #f8fafc;
         }
 
-        /* Sentiment Grid */
-        .sentiment-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 32px;
-            margin-top: 24px;
-        }
-
-        .sentiment-card {
-            padding: 24px;
-            border-radius: 16px;
-        }
-
-        .sentiment-card.positive {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-        }
-
-        .sentiment-card.negative {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-        }
-
-        .sentiment-card h3 {
-            font-size: 1.1rem;
-            margin-bottom: 16px;
-            font-weight: 600;
-        }
-
-        .sentiment-card.positive h3 {
-            color: #166534;
-        }
-
-        .sentiment-card.negative h3 {
-            color: #991b1b;
-        }
-
-        .sentiment-card ul {
-            padding-left: 20px;
-            margin: 0;
-        }
-
-        .sentiment-card li {
-            margin-bottom: 8px;
-            color: var(--text-secondary);
-        }
-
-        /* Suggestion Box */
-        .suggestion-box {
-            background: #f8fafc;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 20px;
-        }
-
-        .suggestion-box h3 {
-            font-size: 1.1rem;
-            margin-bottom: 12px;
-            color: var(--text-primary);
-            display: flex;
+        /* Share Modal - Clean */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
             align-items: center;
+            z-index: 3000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .share-modal {
+            background: white;
+            width: 100%;
+            max-width: 360px;
+            padding: 32px;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            text-align: center;
+        }
+
+        #qrcode {
+            margin: 24px auto;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            width: fit-content;
+        }
+
+        .copy-link-box {
+            display: flex;
+            margin-top: 24px;
             gap: 8px;
         }
 
-        .suggestion-box p {
+        .copy-link-input {
+            flex: 1;
+            padding: 10px 12px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
             color: var(--text-secondary);
-            margin: 0;
-            line-height: 1.6;
+            font-size: 0.875rem;
+            background: #f8fafc;
+        }
+
+        @media (max-width: 1024px) {
+            .report-layout {
+                grid-template-columns: 1fr;
+                gap: 32px;
+                padding: 24px;
+            }
+
+            .report-toc-sidebar {
+                display: none;
+            }
+
+            #report-body {
+                padding: 24px;
+            }
+        }
+
+        @media print {
+
+            .main-header,
+            .main-footer,
+            .report-toc-sidebar,
+            .report-actions,
+            .mobile-menu-overlay {
+                display: none !important;
+            }
+
+            .report-layout {
+                display: block;
+                margin: 0;
+                padding: 0;
+            }
+
+            #report-body {
+                border: none;
+                box-shadow: none;
+                padding: 0;
+            }
+
+        }
+
+        /* Recommended Reading Grid - Strict 3 Columns */
+        .recommended-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .recommendation-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-color: #cbd5e1;
+        }
+
+        .rec-card-image {
+            height: 150px;
+            background: #f1f5f9;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rec-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .recommendation-card:hover .rec-card-image img {
+            transform: scale(1.05);
+        }
+
+        .rec-card-content {
+            padding: 16px;
+        }
+
+        .rec-card-title {
+            margin: 0 0 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            line-height: 1.4;
+            color: var(--text-primary);
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .rec-card-date {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
         }
 
         @media (max-width: 768px) {
-            .sentiment-grid {
+            .recommended-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .report-header-section {
-                flex-direction: column;
+                gap: 16px;
             }
         }
     </style>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#667eea">
-    <link rel="apple-touch-icon" href="icon-192.png">
 </head>
 
 <body>
-    <div class="app-container">
-        <header class="main-header">
-            <div class="header-inner">
-                <a href="index_en.html" class="logo-link">
-                    <div class="logo-section">
-                        <div class="logo-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="lucide lucide-bot">
-                                <path d="M12 8V4H8" />
-                                <rect width="16" height="12" x="4" y="8" rx="2" />
-                                <path d="M2 14h2" />
-                                <path d="M20 14h2" />
-                                <path d="M15 13v2" />
-                                <path d="M9 13v2" />
-                            </svg>
-                        </div>
-                        <span class="logo-text">FlowAI Agent <span class="logo-sub">Amazon Analysis
-                                Platform</span></span>
+    <div class="progress-container">
+        <div class="progress-bar" id="reading-progress"></div>
+    </div>
+    <header class="main-header">
+        <div class="header-inner">
+            <a href="index_en.html" class="logo-link">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-bot">
+                            <path d="M12 8V4H8" />
+                            <rect width="16" height="12" x="4" y="8" rx="2" />
+                            <path d="M2 14h2" />
+                            <path d="M20 14h2" />
+                            <path d="M15 13v2" />
+                            <path d="M9 13v2" />
+                        </svg>
                     </div>
-                </a>
-                <nav class="main-nav" id="mainNav" aria-label="Main navigation">
-                    <a href="index_en.html" class="nav-link">Home</a>
-                    <a href="create_en.html" class="nav-link">Create Analysis</a>
-                    <a href="discovery_en.html" class="nav-link">Product Discovery</a>
-                    <a href="cases_en.html" class="nav-link">Case Studies</a>
-                    <a href="blog_en.html" class="nav-link">Blog</a>
-                </nav>
-                <div class="header-right">
-                    <div class="lang-switch">
-                        <a href="report.html" class="lang-btn">CN</a>
-                        <span class="lang-separator">/</span>
-                        <span class="lang-btn active">EN</span>
-                    </div>
-                    <button class="hamburger-btn" id="hamburgerBtn" aria-label="Menu" aria-expanded="false">
-                        <span class="hamburger-line"></span>
-                        <span class="hamburger-line"></span>
-                        <span class="hamburger-line"></span>
-                    </button>
+                    <span class="logo-text">FlowAI Agent <span class="logo-sub">Amazon Analysis Platform</span></span>
                 </div>
+            </a>
+            <nav class="main-nav" id="mainNav">
+                <a href="index_en.html" class="nav-link">Home</a>
+                <a href="create_en.html" class="nav-link">Competitor Analysis</a>
+                <a href="discovery_en.html" class="nav-link">Product Discovery</a>
+                <a href="cases_en.html" class="nav-link">Case Studies</a>
+                <a href="blog_en.html" class="nav-link">Blog</a>
+            </nav>
+            <div class="header-right">
+                <div class="lang-switch">
+                    <a href="report.html" class="lang-btn">CN</a>
+                    <span class="lang-separator">/</span>
+                    <span class="lang-btn active">EN</span>
+                </div>
+                <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
             </div>
-        </header>
+        </div>
+    </header>
+
+    <div class="app-container">
 
         <!-- Mobile Menu Overlay -->
         <div class="mobile-menu-overlay" id="mobileMenuOverlay">
             <nav class="mobile-nav">
                 <a href="index_en.html" class="mobile-nav-link">Home</a>
-                <a href="create_en.html" class="mobile-nav-link">Create Analysis</a>
+                <a href="create_en.html" class="mobile-nav-link">Competitor Analysis</a>
                 <a href="discovery_en.html" class="mobile-nav-link">Product Discovery</a>
                 <a href="cases_en.html" class="mobile-nav-link">Case Studies</a>
                 <a href="blog_en.html" class="mobile-nav-link">Blog</a>
-                <a href="report.html" class="mobile-nav-link">🇨🇳 Chinese</a>
+                <a href="report.html" class="mobile-nav-link">CN</a>
             </nav>
         </div>
 
         <main class="main-content">
-            <div class="report-container">
-                <!-- Report Header -->
-                <div class="report-header-section">
-                    <div class="report-title">
-                        <h1>Wireless Earbuds Competitor Analysis Report</h1>
-                        <div class="report-meta-info">
-                            <span>Generated: 2025-01-10 14:30</span>
-                            <span>Target: Wireless Earbuds Category</span>
+            <div class="report-layout">
+                <!-- Premium Sidebar -->
+                <aside class="report-toc-sidebar">
+                    <div class="toc-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 6H3" />
+                            <path d="M21 12H9" />
+                            <path d="M21 18H7" />
+                        </svg>
+                        Report Outline
+                    </div>
+                    <div id="toc-container">
+                        <!-- Dynamic TOC populated by JS -->
+                    </div>
+                </aside>
+
+                <!-- Premium Main Column -->
+                <div class="report-main-column">
+                    <!-- Breadcrumbs -->
+                    <nav class="report-breadcrumbs" style="margin-bottom: 24px;">
+                        <a href="cases_en.html"
+                            style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem; display: flex; align-items: center; gap: 4px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="m15 18-6-6 6-6" />
+                            </svg>
+                            Back to case studies
+                        </a>
+                    </nav>
+
+                    <div class="report-header-section">
+                        <div class="report-title">
+                            <h1 id="dynamic-title">Loading...</h1>
+                            <div class="report-meta-info">
+                                <span id="dynamic-date">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+                                        <line x1="16" x2="16" y1="2" y2="6" />
+                                        <line x1="8" x2="8" y1="2" y2="6" />
+                                        <line x1="3" x2="21" y1="10" y2="10" />
+                                    </svg>
+                                    --
+                                </span>
+                                <span id="dynamic-category">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                                        <polyline points="9 22 9 12 15 12 15 22" />
+                                    </svg>
+                                    Competitor Report
+                                </span>
+                            </div>
+                        </div>
+                        <div class="report-actions">
+                            <button class="action-btn primary" id="download-pdf">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="7 10 12 15 17 10" />
+                                    <line x1="12" x2="12" y1="15" y2="3" />
+                                </svg>
+                                Request Full PDF
+                            </button>
+                            <button class="action-btn secondary" id="share-report">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                                    <polyline points="16 6 12 2 8 6" />
+                                    <line x1="12" x2="12" y1="2" y2="15" />
+                                </svg>
+                                Share Report
+                            </button>
                         </div>
                     </div>
-                    <div class="report-actions">
-                        <button class="action-btn primary">Download PDF</button>
-                        <button class="action-btn secondary">Share Report</button>
-                    </div>
-                </div>
 
-                <!-- 1. Market Overview -->
-                <div class="report-section">
-                    <h2 class="section-title">1. Market Overview</h2>
-                    <p style="margin-bottom: 20px; color: var(--text-secondary); line-height: 1.6;">
-                        The wireless earbuds market is highly competitive, concentrated in the $50-$100 range.
-                        Consumer interest in ANC and battery life is rising. According to recent Amazon data,
-                        the category grew by 15% last quarter. Major competitors hold 60% market share.
-                    </p>
-                    <div class="data-table-container">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Product Name</th>
-                                    <th>Price</th>
-                                    <th>Rating</th>
-                                    <th>Reviews</th>
-                                    <th>Est. Monthly Sales</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Anker Soundcore P20i</td>
-                                    <td>$24.99</td>
-                                    <td>4.5</td>
-                                    <td>12,450</td>
-                                    <td>15,000+</td>
-                                </tr>
-                                <tr>
-                                    <td>Sony LinkBuds S</td>
-                                    <td>$148.00</td>
-                                    <td>4.3</td>
-                                    <td>5,200</td>
-                                    <td>3,000+</td>
-                                </tr>
-                                <tr>
-                                    <td>JBL Vibe Beam</td>
-                                    <td>$49.95</td>
-                                    <td>4.4</td>
-                                    <td>8,900</td>
-                                    <td>8,500+</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- 2. User Sentiment Analysis -->
-                <div class="report-section">
-                    <h2 class="section-title">2. User Sentiment Analysis</h2>
-                    <div class="sentiment-grid">
-                        <div class="sentiment-card positive">
-                            <h3>Positive Feedback (Pros)</h3>
-                            <ul>
-                                <li>Sound quality exceeds expectations, especially bass performance.</li>
-                                <li>Long battery life, charging case is very convenient.</li>
-                                <li>Comfortable to wear, no pain even after long use.</li>
-                            </ul>
+                    <article id="report-body">
+                        <div style="padding: 24px 0; color: var(--text-secondary);">
+                            <p style="margin-bottom: 12px;">Loading the full report...</p>
+                            <div style="height: 14px; background: #e2e8f0; border-radius: 999px; margin-bottom: 12px; width: 92%;"></div>
+                            <div style="height: 14px; background: #e2e8f0; border-radius: 999px; margin-bottom: 12px; width: 85%;"></div>
+                            <div style="height: 14px; background: #e2e8f0; border-radius: 999px; margin-bottom: 12px; width: 88%;"></div>
+                            <div style="height: 14px; background: #e2e8f0; border-radius: 999px; width: 73%;"></div>
                         </div>
-                        <div class="sentiment-card negative">
-                            <h3>Negative Feedback (Cons)</h3>
-                            <ul>
-                                <li>Bluetooth connection is sometimes unstable, disconnects occasionally.</li>
-                                <li>Call quality is average, noisy in outdoor environments.</li>
-                                <li>Touch controls are too sensitive, prone to accidental touches.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                    </article>
 
-                <!-- 3. Marketing Suggestions -->
-                <div class="report-section">
-                    <h2 class="section-title">3. Marketing Suggestions</h2>
-                    <div class="suggestion-box">
-                        <h3>🎯 Differentiation Strategy</h3>
-                        <p>Considering competitors' weaknesses in "call quality", it is recommended to highlight "AI
-                            Noise Cancellation for Calls" in marketing materials. Emphasize clear call experience in
-                            main images and A+ content.</p>
+                    <!-- CTA Section -->
+                    <div class="cta-banner"
+                        style="margin-top: 60px; padding: 40px; background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%); border: 1px solid #bfdbfe; border-radius: 16px; text-align: center;">
+                        <h3 style="margin-bottom: 12px; color: #1e3a8a; font-size: 1.5rem; font-weight: 700;">
+                            Ready to optimize your product?</h3>
+                        <p style="margin-bottom: 24px; color: #475569; font-size: 1rem;">Generate your own in-depth competitor report and uncover the next growth opportunity.
+                        </p>
+                        <a href="create_en.html" class="action-btn primary"
+                            style="text-decoration: none; height: 48px; border-radius: 9999px;">
+                            Generate Free Analysis
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" style="margin-left: 6px;">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </a>
                     </div>
-                    <div class="suggestion-box">
-                        <h3>📹 Video Marketing</h3>
-                        <p>Collaborate with tech YouTubers to produce "Call Quality Test in Noisy Environments" videos
-                            to visually demonstrate product advantages and build user trust.</p>
+
+                    <!-- Recommended Reading -->
+                    <div id="recommended-section" style="margin-top: 60px;">
+                        <h3
+                            style="font-size: 1.25rem; font-weight: 700; color: #1e293b; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
+                            Recommended Reading</h3>
+                        <div id="recommended-grid" class="recommended-grid">
+                            <!-- Populated by JS -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -384,10 +702,11 @@
         <!-- Footer -->
         <footer class="main-footer enhanced-footer">
             <div class="footer-content">
+                <!-- Brand Section -->
                 <div class="footer-section footer-brand">
                     <div class="footer-logo">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
+                            class="lucide lucide-bot" stroke="currentColor" stroke-width="2">
                             <path d="M12 8V4H8" />
                             <rect width="16" height="12" x="4" y="8" rx="2" />
                             <path d="M2 14h2" />
@@ -397,22 +716,32 @@
                         </svg>
                         <span>FlowAI Agent</span>
                     </div>
-                    <p class="footer-tagline">AI Driven Amazon Competitor Analysis Platform</p>
+                    <p class="footer-tagline">AI-Driven Amazon Competitor Analysis Platform</p>
                 </div>
                 <div class="footer-section">
                     <h4>Quick Links</h4>
                     <ul class="footer-links">
                         <li><a href="index_en.html">Home</a></li>
-                        <li><a href="create_en.html">Create Analysis</a></li>
+                        <li><a href="create_en.html">Competitor Analysis</a></li>
+                        <li><a href="discovery_en.html">Product Discovery</a></li>
                         <li><a href="cases_en.html">Case Studies</a></li>
                         <li><a href="blog_en.html">Blog</a></li>
                     </ul>
                 </div>
+                <!-- Contact Section -->
                 <div class="footer-section">
                     <h4>Contact Us</h4>
                     <ul class="footer-links">
                         <li>📧 contact@amzaiagent.com</li>
-                        <li>💬 WeChat: tony49279527 (search by WeChat ID)</li>
+                        <li class="wechat-contact">
+                            💬 WeChat: tony49279527 (search by WeChat ID)
+                            <button type="button" class="wechat-qr-trigger" aria-label="Show WeChat QR">Scan to add</button>
+                            <span class="wechat-qr-pop" aria-hidden="true">
+                                <img src="images/wechat_qr_flowai.png" alt="WeChat QR"
+                                    onerror="this.src='https://via.placeholder.com/160x160/667eea/fff?text=WeChat+QR'">
+                                <div class="wechat-qr-caption">Scan to add on WeChat</div>
+                            </span>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -420,45 +749,34 @@
                 <p>© 2025-2026 FlowAI Agent - Data Driven Decisions <span
                         style="opacity: 0.5; font-size: 0.8em; margin-left: 10px;">v2.9</span></p>
                 <div class="footer-legal">
-                    <a href="privacy.html">Privacy Policy</a>
-                    <a href="terms.html">Terms of Service</a>
+                    <a href="privacy_en.html">Privacy Policy</a>
+                    <a href="terms_en.html">Terms of Service</a>
                 </div>
             </div>
         </footer>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Hamburger Menu
-            const hamburgerBtn = document.getElementById('hamburgerBtn');
-            const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
 
-            if (hamburgerBtn && mobileMenuOverlay) {
-                hamburgerBtn.addEventListener('click', function () {
-                    hamburgerBtn.classList.toggle('active');
-                    mobileMenuOverlay.classList.toggle('active');
-                    document.body.style.overflow = mobileMenuOverlay.classList.contains('active') ? 'hidden' : '';
-                    hamburgerBtn.setAttribute('aria-expanded', mobileMenuOverlay.classList.contains('active'));
-                });
+    <!-- Share Modal -->
+    <div class="modal-overlay" id="share-modal-overlay">
+        <div class="share-modal">
+            <h2 style="font-family: var(--font-heading); margin-bottom: 25px;">Share Report</h2>
+            <div id="qrcode"></div>
+            <p style="color: var(--text-secondary); margin-top: 15px; font-size: 0.9rem;">Scan to view on mobile or share the link</p>
+            <div class="copy-link-box">
+                <input type="text" class="copy-link-input" id="share-url" readonly>
+                <button class="action-btn primary" id="copy-btn" style="height: 44px; padding: 0 15px;">Copy</button>
+            </div>
+            <button class="action-btn secondary" id="close-share"
+                style="margin-top:20px; width: 100%; justify-content: center;">Close</button>
+        </div>
+    </div>
 
-                mobileMenuOverlay.querySelectorAll('.mobile-nav-link').forEach(link => {
-                    link.addEventListener('click', function () {
-                        hamburgerBtn.classList.remove('active');
-                        mobileMenuOverlay.classList.remove('active');
-                        document.body.style.overflow = '';
-                    });
-                });
-            }
-        });
-    </script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('SW registered'))
-                    .catch(err => console.log('SW failed', err));
-            });
-        }
-    </script>
+    <!-- External Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="report-loader.js?v=5"></script>
+    <script src="mobile-menu.js?v=4"></script>
 </body>
 
 </html>

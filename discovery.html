@@ -4,16 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>选品开发分析 - Product Discovery | FlowAI Agent</title>
+    <title>选品开发分析 | FlowAI Agent</title>
     <meta name="description" content="面向亚马逊美国/英国/德国等站点的选品与产品开发分析。输入类目与关键词，AI输出市场进入、差异化与定价建议。">
     <meta name="keywords" content="亚马逊选品,产品开发分析,Amazon Product Discovery,市场进入分析,差异化策略,FlowAI Agent">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="选品开发分析 - Product Discovery | FlowAI Agent">
+    <meta property="og:title" content="选品开发分析 | FlowAI Agent">
     <meta property="og:description" content="输入类目、关键词与站点，快速获得产品开发与市场进入建议。">
     <meta property="og:url" content="https://flowaiagent.com/discovery.html">
     <meta property="og:image" content="https://flowaiagent.com/demo_screenshot.png">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="选品开发分析 - Product Discovery | FlowAI Agent">
+    <meta name="twitter:title" content="选品开发分析 | FlowAI Agent">
     <meta name="twitter:description" content="面向 Amazon US/UK/DE/JP 等站点的 AI 选品分析。">
     <meta name="twitter:image" content="https://flowaiagent.com/demo_screenshot.png">
     <link rel="canonical" href="https://flowaiagent.com/discovery.html">
@@ -308,7 +308,7 @@
                                 <path d="M9 13v2" />
                             </svg>
                         </div>
-                        <span class="logo-text">FlowAI 竞品分析 <span class="logo-sub">Amazon Analysis Platform</span></span>
+                        <span class="logo-text">FlowAI Agent <span class="logo-sub">Amazon Analysis Platform</span></span>
                     </div>
                 </a>
                 <nav class="main-nav" id="mainNav" aria-label="Main navigation">
@@ -386,6 +386,7 @@
                                 <select id="cat-level-1" required>
                                     <option value="">选择主类目</option>
                                 </select>
+                                <div class="field-hint">类目名称保留 Amazon 官方英文，便于准确匹配美国、英国、德国等站点。</div>
                             </div>
                             <div class="field">
                                 <label for="cat-level-2">子类目</label>
@@ -428,7 +429,7 @@
                                 <label for="analysis-lang">报告生成语言</label>
                                 <select id="analysis-lang">
                                     <option value="zh" selected>中文 (核心叙述)</option>
-                                    <option value="en">English (Full)</option>
+                                    <option value="en">英文（全文）</option>
                                 </select>
                                 <div class="field-hint" style="font-size: 0.8em; color: var(--primary-color);">*
                                     选定中文时，系统将以中文为主叙述，原始关键词与原话保留站点语言。</div>
@@ -438,10 +439,10 @@
                         <div class="field" style="margin-top: 16px;">
                             <label>目标价格区间 (可选)</label>
                             <div style="display: flex; align-items: center; gap: 12px; max-width: 320px;">
-                                <input id="price-min" type="number" min="0" step="0.01" placeholder="Min"
+                                <input id="price-min" type="number" min="0" step="0.01" placeholder="最低价"
                                     style="flex: 1;">
                                 <span style="color: var(--text-secondary); font-weight: bold;">-</span>
-                                <input id="price-max" type="number" min="0" step="0.01" placeholder="Max"
+                                <input id="price-max" type="number" min="0" step="0.01" placeholder="最高价"
                                     style="flex: 1;">
                             </div>
                             <div class="error-text" id="priceError" style="min-height: 0; margin-top: 4px;"></div>
@@ -457,16 +458,16 @@
                                 <circle cx="12" cy="12" r="10" />
                                 <path d="m9 12 2 2 4-4" />
                             </svg>
-                            2. 分析重点 (Analysis Focus)
+                            2. 分析重点
                         </h3>
                         <p class="section-note">请选择您最关注的分析维度（可多选）。</p>
                         <div class="focus-grid" id="focusGrid">
                             <button type="button" class="focus-btn active" data-value="market-entry">
-                                <strong>市场进入评估 (Market Entry)</strong>
+                                <strong>市场进入评估</strong>
                                 <span>评估进入价值与竞争门槛</span>
                             </button>
                             <button type="button" class="focus-btn" data-value="differentiation">
-                                <strong>产品差异化 (Differentiation)</strong>
+                                <strong>产品差异化</strong>
                                 <span>识别功能和卖点差异化机会</span>
                             </button>
                             <button type="button" class="focus-btn" data-value="pricing">
@@ -485,7 +486,7 @@
                                 <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
                                 <polyline points="14 2 14 8 20 8" />
                             </svg>
-                            3. 补充参考信息 (Supplementary)
+                            3. 补充参考信息
                         </h3>
 
                         <div class="field" style="margin-bottom: 24px;">
@@ -540,7 +541,7 @@
                         <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                     </svg>
                 </div>
-                <h3 class="progress-title">正在进行 Product Discovery...</h3>
+                <h3 class="progress-title">正在进行选品开发分析...</h3>
                 <p class="progress-status" id="progressStatus">正在构建市场分析任务...</p>
                 <div class="progress-bar-bg">
                     <div class="progress-bar-fill" id="progressBar"></div>
@@ -691,6 +692,184 @@
         const level1 = document.getElementById('cat-level-1');
         const level2 = document.getElementById('cat-level-2');
         const level3 = document.getElementById('cat-level-3');
+        const categoryMainTranslations = {
+            'Appliances': '家电',
+            'Arts, Crafts & Sewing': '艺术/手工/缝纫',
+            'Automotive': '汽车用品',
+            'Baby': '母婴',
+            'Beauty & Personal Care': '美妆个护',
+            'Books': '图书',
+            'Camera & Photo': '相机摄影',
+            'Cell Phones & Accessories': '手机及配件',
+            'Clothing, Shoes & Jewelry': '服饰鞋包与珠宝',
+            'Computers & Accessories': '电脑及配件',
+            'Electronics': '消费电子',
+            'Grocery & Gourmet Food': '食品杂货',
+            'Health & Household': '健康与家居',
+            'Home & Kitchen': '家居厨房',
+            'Industrial & Scientific': '工业与科研',
+            'Kitchen & Dining': '厨房餐饮',
+            'Office Products': '办公用品',
+            'Patio, Lawn & Garden': '庭院花园',
+            'Pet Supplies': '宠物用品',
+            'Sports & Outdoors': '运动户外',
+            'Tools & Home Improvement': '工具与家装',
+            'Toys & Games': '玩具游戏'
+        };
+        const categoryPhraseTranslations = {
+            'Refrigerators': '冰箱',
+            'Laundry Appliances': '洗衣设备',
+            'Dishwashers': '洗碗机',
+            'Ovens & Cooktops': '烤箱与灶台',
+            'Ice Makers': '制冰机',
+            'Countertop Ice Makers': '台式制冰机',
+            'Built-In Ice Makers': '嵌入式制冰机',
+            'Kitchen & Dining': '厨房餐饮',
+            'Cookware': '炊具',
+            'Bakeware': '烘焙器具',
+            'Small Appliances': '小家电',
+            'Storage & Organization': '收纳整理',
+            'Coffee, Tea & Espresso': '咖啡茶饮设备',
+            'Bathroom Accessories': '浴室配件',
+            'Bath Towels': '浴巾',
+            'Vacuums & Floor Care': '吸尘与地面清洁',
+            'Cleaning Tools': '清洁工具',
+            'Car Care': '汽车养护',
+            'Interior Accessories': '内饰配件',
+            'Exterior Accessories': '外饰配件',
+            'Replacement Parts': '替换零件',
+            'Power Tools': '电动工具',
+            'Hand Tools': '手动工具',
+            'Safety & Security': '安全安防',
+            'Measuring & Layout Tools': '测量放线工具',
+            'Fasteners': '紧固件',
+            'Pet Supplies': '宠物用品',
+            'Cat Supplies': '猫用品',
+            'Dog Supplies': '狗用品',
+            'Beds & Furniture': '床具与家具',
+            'Sports & Outdoors': '运动户外',
+            'Patio, Lawn & Garden': '庭院花园',
+            'Home Audio': '家庭音频',
+            'Headphones': '耳机',
+            'Computer Accessories': '电脑配件',
+            'Networking Products': '网络设备',
+            'Cell Phones': '手机',
+            'Cases, Holsters & Sleeves': '保护壳与保护套'
+        };
+        const categoryWordTranslations = {
+            'accessories': '配件',
+            'appliances': '家电',
+            'audio': '音频',
+            'automotive': '汽车',
+            'baby': '婴童',
+            'bags': '包袋',
+            'bath': '卫浴',
+            'batteries': '电池',
+            'beauty': '美妆',
+            'beds': '床具',
+            'books': '图书',
+            'built': '嵌入式',
+            'camera': '相机',
+            'care': '护理',
+            'cat': '猫',
+            'cleaning': '清洁',
+            'compact': '紧凑型',
+            'computer': '电脑',
+            'cooktops': '灶台',
+            'countertop': '台式',
+            'covers': '罩套',
+            'dining': '餐饮',
+            'dishwashers': '洗碗机',
+            'dog': '狗',
+            'door': '门式',
+            'dryers': '烘干机',
+            'electronics': '电子',
+            'equipment': '设备',
+            'exterior': '外部',
+            'filters': '滤芯',
+            'floor': '地面',
+            'furniture': '家具',
+            'garden': '花园',
+            'gps': '导航',
+            'hand': '手动',
+            'headphones': '耳机',
+            'health': '健康',
+            'home': '家居',
+            'household': '家居',
+            'ice': '制冰',
+            'improvement': '家装',
+            'indoor': '室内',
+            'interior': '内部',
+            'jewelry': '珠宝',
+            'kitchen': '厨房',
+            'kits': '套装',
+            'lawn': '草坪',
+            'lighting': '照明',
+            'makers': '机',
+            'mats': '垫',
+            'measuring': '测量',
+            'networking': '网络',
+            'office': '办公',
+            'organization': '整理',
+            'outdoor': '户外',
+            'ovens': '烤箱',
+            'parts': '零件',
+            'patio': '庭院',
+            'pet': '宠物',
+            'photo': '摄影',
+            'portable': '便携式',
+            'power': '电动',
+            'products': '产品',
+            'ranges': '炉灶',
+            'refrigerators': '冰箱',
+            'security': '安防',
+            'sewing': '缝纫',
+            'shields': '护罩',
+            'side': '对开门',
+            'small': '小型',
+            'sports': '运动',
+            'storage': '收纳',
+            'supplies': '用品',
+            'surveillance': '监控',
+            'tables': '桌',
+            'tea': '茶饮',
+            'tools': '工具',
+            'top': '上置',
+            'vacuums': '吸尘器',
+            'video': '视频',
+            'washers': '清洗机',
+            'wheels': '车轮'
+        };
+
+        function formatMainCategoryLabel(mainCat) {
+            const zhLabel = categoryMainTranslations[mainCat];
+            return zhLabel ? `${mainCat}（${zhLabel}）` : mainCat;
+        }
+
+        function formatCategoryOptionLabel(label) {
+            if (!label) return label;
+            if (categoryMainTranslations[label]) {
+                return `${label}（${categoryMainTranslations[label]}）`;
+            }
+            if (categoryPhraseTranslations[label]) {
+                return `${label}（${categoryPhraseTranslations[label]}）`;
+            }
+
+            let replacedCount = 0;
+            const translated = label.replace(/[A-Za-z]+(?:'[A-Za-z]+)?/g, function (word) {
+                const mapped = categoryWordTranslations[word.toLowerCase()];
+                if (mapped) {
+                    replacedCount += 1;
+                    return mapped;
+                }
+                return word;
+            }).replace(/\s*&\s*/g, ' 与 ').replace(/\s{2,}/g, ' ').trim();
+
+            if (replacedCount === 0 || translated === label) {
+                return label;
+            }
+            return `${label}（${translated}）`;
+        }
 
         function populateLevel1() {
             const categories = Object.keys(discoveryCategories).sort(function (a, b) {
@@ -699,7 +878,7 @@
             categories.forEach(function (mainCat) {
                 const option = document.createElement('option');
                 option.value = mainCat;
-                option.textContent = mainCat;
+                option.textContent = formatMainCategoryLabel(mainCat);
                 level1.appendChild(option);
             });
         }
@@ -787,13 +966,17 @@
 
         function renderSummary(payload) {
             const asins = payload.reference_asins.length > 0 ? payload.reference_asins.join(', ') : '自动发现';
+            const focusLabels = {
+                'market-entry': '市场进入评估',
+                'differentiation': '产品差异化',
+                'pricing': '定价策略'
+            };
             submitSummary.textContent = [
                 '提交摘要',
                 'Category: ' + (payload.category_path || payload.category_main),
                 'Keywords: ' + payload.keywords,
                 'Marketplace: ' + payload.marketplace,
-                'AI Model: Claude Sonnet 4.5 (OpenRouter)',
-                'Focus: ' + payload.focus_areas.join(', '),
+                'Focus: ' + payload.focus_areas.map(function (item) { return focusLabels[item] || item; }).join(', '),
                 '参考 ASIN：' + asins,
                 (payload.invalid_asin_count > 0 ? ('Invalid ASIN dropped: ' + payload.invalid_asin_count) : '')
             ].join('\n');
@@ -820,7 +1003,7 @@
             Object.keys(discoveryCategories[main]).forEach(function (sub) {
                 const option = document.createElement('option');
                 option.value = sub;
-                option.textContent = sub;
+                option.textContent = formatCategoryOptionLabel(sub);
                 level2.appendChild(option);
             });
             level2.disabled = false;
@@ -835,7 +1018,7 @@
             discoveryCategories[main][sub].forEach(function (prod) {
                 const option = document.createElement('option');
                 option.value = prod;
-                option.textContent = prod;
+                option.textContent = formatCategoryOptionLabel(prod);
                 level3.appendChild(option);
             });
             level3.disabled = false;
@@ -999,7 +1182,7 @@
 
                 sessionStorage.setItem('discovery_email', userEmail);
                 setTimeout(function () {
-                    window.location.href = `discovery_processing.html?taskId=${taskId}&model=${encodeURIComponent(finalPayload.ai_model)}`;
+                    window.location.href = `discovery_processing.html?taskId=${taskId}`;
                 }, 800);
 
             } catch (error) {

@@ -701,7 +701,7 @@ logger.info(f"Persistence backend: {'firestore' if using_firestore() else 'sqlit
 def _generate_discovery_report(form_data):
     """Generate AI report for product discovery."""
     if not OPENAI_API_KEY:
-        return "ERROR: API Key not configured. Add OPENAI_API_KEY or OPENROUTER_API_KEY in Cloud Run environment variables."
+        return "ERROR: API Key not configured. Add OPENAI_API_KEY or OPENROUTER_API_KEY in the server environment variables."
 
     model_to_use = form_data.get('ai_model', OPENAI_MODEL)
     report_lang = form_data.get('report_language', 'zh')
@@ -888,25 +888,29 @@ def _generate_discovery_report(form_data):
             if response.status_code == 401:
                 return (
                     "ERROR: OpenRouter rejected the API key (HTTP 401). "
-                    "Please verify OPENAI_API_KEY or OPENROUTER_API_KEY in Cloud Run. "
-                    f"Details: {err_body}"
+                    "Please verify OPENAI_API_KEY or OPENROUTER_API_KEY in the server environment. "
+                    f"Details: {err_body}",
+                    None
                 )
             if response.status_code == 402:
                 return (
                     "ERROR: OpenRouter credits are insufficient (HTTP 402). "
                     "Please recharge openrouter.ai/settings/credits. "
-                    f"Details: {err_body}"
+                    f"Details: {err_body}",
+                    None
                 )
             if response.status_code == 429:
                 return (
                     "ERROR: OpenRouter rate limit reached (HTTP 429). "
                     "Please retry shortly or switch to another model. "
-                    f"Details: {err_body}"
+                    f"Details: {err_body}",
+                    None
                 )
 
             return (
                 f"ERROR: OpenRouter API failed (HTTP {response.status_code}). "
-                f"Details: {err_body}"
+                f"Details: {err_body}",
+                None
             )
         data = response.json()
         choice = data['choices'][0]
@@ -1294,7 +1298,11 @@ def discovery_status():
 
     return jsonify({
         "status": row.get('status'),
-        "error_message": row.get('error_message'),
+        "error_message": (
+            "当前分析任务未能完成，请稍后重试或联系客服。"
+            if row.get('status') == 'FAILED' and row.get('error_message')
+            else row.get('error_message')
+        ),
         "updated_at": row.get('updated_at')
     })
 

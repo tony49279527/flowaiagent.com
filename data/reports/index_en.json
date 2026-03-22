@@ -2,81 +2,91 @@
     {
         "id": "ice-maker",
         "title": "Amazon Deep Competitor Analysis: Ice Maker (G3.0)",
-        "date": "2026-02-01",
+        "date": "2026-03-18",
         "tag": "Home Appliances",
         "summary": "Based on Antarctic Star and Silonn reviews to reveal core pain points, pricing gaps, and listing opportunities.",
-        "cover_image": "images/ice-maker-hero.jpg"
+        "cover_image": "images/ice-maker-hero.jpg",
+        "reading_time": "11 min read"
     },
     {
         "id": "polisher",
         "title": "Amazon Deep Competitor Analysis: Polisher Kit (C4.5)",
-        "date": "2026-02-01",
+        "date": "2026-03-12",
         "tag": "Automotive",
         "summary": "Differentiation insights for entry-level and pro markets with stronger content and conversion strategy angles.",
-        "cover_image": "images/polisher-hero.jpg"
+        "cover_image": "images/polisher-hero.jpg",
+        "reading_time": "9 min read"
     },
     {
         "id": "folding-wagon",
         "title": "Amazon Deep Competitor Analysis: Folding Wagon (G3.0)",
-        "date": "2026-02-01",
+        "date": "2026-03-05",
         "tag": "Outdoor",
         "summary": "Breaks down weight capacity, wheel experience, storage pain points, and the best market-entry positioning.",
-        "cover_image": "images/pressure-washer-hero.jpg"
+        "cover_image": "images/pressure-washer-hero.jpg",
+        "reading_time": "8 min read"
     },
     {
         "id": "cat-litter-box",
         "title": "Amazon Deep Competitor Analysis: Litter Box (C4.5)",
-        "date": "2026-02-01",
+        "date": "2026-02-26",
         "tag": "Pet Supplies",
         "summary": "Deep-dive into user complaints around odor control, cleanup convenience, and size expectations.",
-        "cover_image": "images/cat-litter-box-hero.jpg"
+        "cover_image": "images/cat-litter-box-hero.jpg",
+        "reading_time": "12 min read"
     },
     {
         "id": "pressure-washer",
         "title": "Amazon Deep Competitor Analysis: Pressure Washer (C4.5)",
-        "date": "2026-02-01",
+        "date": "2026-02-21",
         "tag": "Outdoor Tools",
         "summary": "Comparative analysis of leakage, pressure issues, accessories, and the most effective improvement tactics.",
-        "cover_image": "images/pressure-washer-hero.jpg"
+        "cover_image": "images/pressure-washer-hero.jpg",
+        "reading_time": "13 min read"
     },
     {
         "id": "flap-discs",
         "title": "Amazon Deep Competitor Analysis: Flap Discs (C4.5)",
-        "date": "2026-02-01",
+        "date": "2026-02-16",
         "tag": "Industrial Supplies",
         "summary": "Covers durability, grinding efficiency, packaging quality, and review-driven differentiation opportunities.",
-        "cover_image": "images/polisher-hero.jpg"
+        "cover_image": "images/polisher-hero.jpg",
+        "reading_time": "7 min read"
     },
     {
         "id": "torque-wrench",
         "title": "Amazon Deep Competitor Analysis: Torque Wrench (O5.1)",
-        "date": "2026-02-01",
+        "date": "2026-02-09",
         "tag": "Hardware Tools",
         "summary": "Focus on accuracy, calibration trust, and how to position mid-to-high torque tools more convincingly.",
-        "cover_image": "images/torque-wrench-hero.jpg"
+        "cover_image": "images/torque-wrench-hero.jpg",
+        "reading_time": "9 min read"
     },
     {
         "id": "dash-cam",
         "title": "Amazon Deep Competitor Analysis: Dash Cam (G3.0)",
-        "date": "2026-02-01",
+        "date": "2026-01-30",
         "tag": "Car Electronics",
         "summary": "Highlights night vision, installation friction, app usability, and review-led conversion barriers.",
-        "cover_image": "images/power-tools-hero.jpg"
+        "cover_image": "images/power-tools-hero.jpg",
+        "reading_time": "8 min read"
     },
     {
         "id": "power-tools",
         "title": "Amazon Deep Competitor Analysis: Home Power Tools (G3.0)",
-        "date": "2026-02-01",
+        "date": "2026-01-24",
         "tag": "Hardware Tools",
         "summary": "From DIY assembly to home installation, uncover the strongest segment growth opportunities.",
-        "cover_image": "images/power-tools-hero.jpg"
+        "cover_image": "images/power-tools-hero.jpg",
+        "reading_time": "6 min read"
     },
     {
         "id": "laser-level",
         "title": "Amazon Deep Competitor Analysis: Laser Level (O5.1)",
-        "date": "2026-02-01",
+        "date": "2026-01-18",
         "tag": "Hardware Tools",
         "summary": "Examines visibility, precision expectations, and how prosumers judge reliability in this category.",
-        "cover_image": "images/torque-wrench-hero.jpg"
+        "cover_image": "images/torque-wrench-hero.jpg",
+        "reading_time": "11 min read"
     }
 ]

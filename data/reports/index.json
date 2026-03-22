@@ -2,81 +2,91 @@
     {
         "id": "ice-maker",
         "title": "亚马逊深度竞品分析报告：制冰机（G3.0）",
-        "date": "2026-02-01",
+        "date": "2026-03-18",
         "tag": "家用电器",
         "summary": "基于 Antarctic Star、Silonn 与多款竞品评论，拆解颗粒冰市场的核心痛点、价格带与 Listing 优化机会。",
-        "cover_image": "images/ice-maker-hero.jpg"
+        "cover_image": "images/ice-maker-hero.jpg",
+        "reading_time": "11 分钟阅读"
     },
     {
         "id": "polisher",
         "title": "亚马逊深度竞品分析报告：汽车抛光机套件（C4.5）",
-        "date": "2026-02-01",
+        "date": "2026-03-12",
         "tag": "汽配保养",
         "summary": "针对入门与专业抛光市场，分析热销套件差异化卖点、内容策略与高转化素材方向。",
-        "cover_image": "images/polisher-hero.jpg"
+        "cover_image": "images/polisher-hero.jpg",
+        "reading_time": "9 分钟阅读"
     },
     {
         "id": "folding-wagon",
         "title": "亚马逊深度竞品分析报告：折叠露营车（G3.0）",
-        "date": "2026-02-01",
+        "date": "2026-03-05",
         "tag": "户外装备",
         "summary": "聚焦承重、收纳、轮组与场景化卖点，梳理露营车市场的用户痛点与新品切入策略。",
-        "cover_image": "images/pressure-washer-hero.jpg"
+        "cover_image": "images/pressure-washer-hero.jpg",
+        "reading_time": "8 分钟阅读"
     },
     {
         "id": "cat-litter-box",
         "title": "亚马逊深度竞品分析报告：猫砂盆（C4.5）",
-        "date": "2026-02-01",
+        "date": "2026-02-26",
         "tag": "宠物用品",
         "summary": "深度挖掘 1,261 条评论，梳理除臭、清洁便利性和尺寸体验的核心痛点与 Listing 优化策略。",
-        "cover_image": "images/cat-litter-box-hero.jpg"
+        "cover_image": "images/cat-litter-box-hero.jpg",
+        "reading_time": "12 分钟阅读"
     },
     {
         "id": "pressure-washer",
         "title": "亚马逊深度竞品分析报告：电动高压清洗机（C4.5）",
-        "date": "2026-02-01",
+        "date": "2026-02-21",
         "tag": "户外工具",
         "summary": "对比 Paxcess 与核心竞品，提供针对漏水、压力不足、配件体验的全套优化建议。",
-        "cover_image": "images/pressure-washer-hero.jpg"
+        "cover_image": "images/pressure-washer-hero.jpg",
+        "reading_time": "13 分钟阅读"
     },
     {
         "id": "flap-discs",
         "title": "亚马逊深度竞品分析报告：百叶轮 / 抛光片（C4.5）",
-        "date": "2026-02-01",
+        "date": "2026-02-16",
         "tag": "工业耗材",
         "summary": "围绕耐用度、切削效率和包装体验，拆解五金打磨耗材的差评来源与差异化机会。",
-        "cover_image": "images/polisher-hero.jpg"
+        "cover_image": "images/polisher-hero.jpg",
+        "reading_time": "7 分钟阅读"
     },
     {
         "id": "torque-wrench",
         "title": "亚马逊深度竞品分析报告：扭力扳手（O5.1）",
-        "date": "2026-02-01",
+        "date": "2026-02-09",
         "tag": "五金工具",
         "summary": "聚焦精度、校准信任与中高扭矩应用场景，分析工具类目的核心决策点与内容策略。",
-        "cover_image": "images/torque-wrench-hero.jpg"
+        "cover_image": "images/torque-wrench-hero.jpg",
+        "reading_time": "9 分钟阅读"
     },
     {
         "id": "dash-cam",
         "title": "亚马逊深度竞品分析报告：行车记录仪（G3.0）",
-        "date": "2026-02-01",
+        "date": "2026-01-30",
         "tag": "车载电子",
         "summary": "聚焦夜视、安装便利性与 App 体验，梳理行车记录仪赛道的真实差评与转化机会。",
-        "cover_image": "images/power-tools-hero.jpg"
+        "cover_image": "images/power-tools-hero.jpg",
+        "reading_time": "8 分钟阅读"
     },
     {
         "id": "power-tools",
         "title": "亚马逊深度竞品分析报告：家用手电钻 / 起子机（G3.0）",
-        "date": "2026-02-01",
+        "date": "2026-01-24",
         "tag": "五金工具",
         "summary": "从家具组装到挂画安装，全方位分析 8V-20V 家用电动工具的细分机会与高频痛点。",
-        "cover_image": "images/power-tools-hero.jpg"
+        "cover_image": "images/power-tools-hero.jpg",
+        "reading_time": "6 分钟阅读"
     },
     {
         "id": "laser-level",
         "title": "亚马逊深度竞品分析报告：激光水平仪（O5.1）",
-        "date": "2026-02-01",
+        "date": "2026-01-18",
         "tag": "五金工具",
         "summary": "围绕精度、可视性与户外施工场景，分析激光水平仪市场的用户诉求与升级路径。",
-        "cover_image": "images/torque-wrench-hero.jpg"
+        "cover_image": "images/torque-wrench-hero.jpg",
+        "reading_time": "11 分钟阅读"
     }
 ]

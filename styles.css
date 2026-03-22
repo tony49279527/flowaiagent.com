@@ -2345,6 +2345,10 @@ textarea:focus {
     line-height: 1;
 }
 
+.stat-card::before {
+    content: none;
+}
+
 .testimonial-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);

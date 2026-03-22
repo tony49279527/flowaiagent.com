@@ -313,7 +313,7 @@
                 </a>
                 <nav class="main-nav" id="mainNav" aria-label="Main navigation">
                     <a href="index_en.html" class="nav-link">Home</a>
-                    <a href="create_en.html" class="nav-link">Create Analysis</a>
+                    <a href="create_en.html" class="nav-link">Competitor Analysis</a>
                     <a href="discovery_en.html" class="nav-link active">Product Discovery</a>
                     <a href="cases_en.html" class="nav-link">Case Studies</a>
                     <a href="blog_en.html" class="nav-link">Blog</a>
@@ -336,7 +336,7 @@
         <div class="mobile-menu-overlay" id="mobileMenuOverlay">
             <nav class="mobile-nav">
                 <a href="index_en.html" class="mobile-nav-link">Home</a>
-                <a href="create_en.html" class="mobile-nav-link">Create Analysis</a>
+                <a href="create_en.html" class="mobile-nav-link">Competitor Analysis</a>
                 <a href="discovery_en.html" class="mobile-nav-link active">Product Discovery</a>
                 <a href="cases_en.html" class="mobile-nav-link">Case Studies</a>
                 <a href="blog_en.html" class="mobile-nav-link">Blog</a>
@@ -562,7 +562,7 @@
                     <h4>Quick Links</h4>
                     <ul class="footer-links">
                         <li><a href="index_en.html">Home</a></li>
-                        <li><a href="create_en.html">Create Analysis</a></li>
+                        <li><a href="create_en.html">Competitor Analysis</a></li>
                         <li><a href="discovery_en.html">Product Discovery</a></li>
                         <li><a href="cases_en.html">Case Studies</a></li>
                         <li><a href="blog_en.html">Blog</a></li>
@@ -881,7 +881,7 @@
 
                 sessionStorage.setItem('discovery_email', userEmail);
                 setTimeout(function () {
-                    window.location.href = `discovery_processing.html?taskId=${taskId}&model=${encodeURIComponent(finalPayload.ai_model)}&lang=en`;
+                    window.location.href = `discovery_processing.html?taskId=${taskId}&lang=en`;
                 }, 800);
 
             } catch (error) {

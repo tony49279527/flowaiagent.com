@@ -465,12 +465,13 @@
                                 <path d="M9 13v2" />
                             </svg>
                         </div>
-                        <span class="logo-text">FlowAI 竞品分析 <span class="logo-sub">Amazon Analysis Platform</span></span>
+                        <span class="logo-text">FlowAI Agent <span class="logo-sub">Amazon Analysis Platform</span></span>
                     </div>
                 </a>
                 <nav class="main-nav" id="mainNav" aria-label="Main navigation">
                     <a href="index.html" class="nav-link">首页</a>
                     <a href="create-analysis.html" class="nav-link">竞品分析</a>
+                <a href="discovery.html" class="nav-link">选品开发</a>
                     <a href="cases.html" class="nav-link">案例展示</a>
                     <a href="blog.html" class="nav-link">博客</a>
                 </nav>
@@ -494,6 +495,7 @@
             <nav class="mobile-nav">
                 <a href="index.html" class="mobile-nav-link">首页</a>
                 <a href="create-analysis.html" class="mobile-nav-link">竞品分析</a>
+                <a href="discovery.html" class="mobile-nav-link">选品开发</a>
                 <a href="cases.html" class="mobile-nav-link">案例展示</a>
                 <a href="blog.html" class="mobile-nav-link">博客</a>
                 <a href="payment_en.html" class="mobile-nav-link">EN</a>
@@ -692,6 +694,7 @@
                     <ul class="footer-links">
                         <li><a href="index.html">首页</a></li>
                         <li><a href="create-analysis.html">竞品分析</a></li>
+                        <li><a href="discovery.html">选品开发</a></li>
                         <li><a href="cases.html">案例展示</a></li>
                         <li><a href="blog.html">博客</a></li>
                     </ul>
@@ -736,7 +739,30 @@
         const normalizedOrderType = orderType === 'discovery' ? 'discovery' : 'competitor';
 
         if (!activeOrderId) {
-            orderIdElement.textContent = 'INVALID';
+            const paymentSidebar = document.querySelector('.payment-sidebar');
+            const lockMask = document.querySelector('.lock-mask');
+            const orderIdRow = orderIdElement.closest('.order-id');
+            if (orderIdRow) {
+                orderIdRow.textContent = t('订单号：待创建', 'Order ID: pending');
+            }
+            if (paymentSidebar) {
+                paymentSidebar.innerHTML = `
+                    <div class="payment-box">
+                        <h3>${t('当前订单无效', 'No valid order yet')}</h3>
+                        <p style="color: var(--text-secondary); line-height: 1.8; margin-top: 12px;">
+                            ${normalizedOrderType === 'discovery'
+                                ? t('请返回选品开发页面重新提交，系统会先创建订单，再进入支付页面。', 'Please return to the Product Discovery page and resubmit so a valid order can be created.')
+                                : t('请返回竞品分析页面重新提交，系统会先创建订单，再进入支付页面。', 'Please return to the competitor analysis page and resubmit so a valid order can be created.')}
+                        </p>
+                        <a href="${normalizedOrderType === 'discovery' ? 'discovery.html' : 'create-analysis.html'}" class="confirm-btn" style="display:inline-flex;justify-content:center;text-decoration:none;margin-top:20px;">
+                            ${normalizedOrderType === 'discovery' ? t('返回选品开发', 'Back to Product Discovery') : t('返回竞品分析', 'Back to Competitor Analysis')}
+                        </a>
+                    </div>
+                `;
+            }
+            if (lockMask) {
+                lockMask.style.display = 'none';
+            }
             if (confirmBtn) confirmBtn.disabled = true;
             showMsg(
                 normalizedOrderType === 'discovery'
@@ -790,6 +816,7 @@
 
         function showMsg(text, type) {
             const box = document.getElementById('msgBox');
+            if (!box) return;
             box.textContent = text;
             box.className = 'msg-box show ' + type;
         }
