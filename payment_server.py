@@ -16,6 +16,7 @@ from flask import Flask, jsonify, request, send_from_directory, redirect
 from flask_cors import CORS
 import logging
 from datetime import datetime, timedelta
+import base64
 import os
 import requests
 import threading
@@ -27,6 +28,7 @@ import uuid
 import smtplib
 import re
 from io import BytesIO
+from pathlib import Path
 from html import escape
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -34,6 +36,15 @@ from email.mime.application import MIMEApplication
 from docx import Document
 from docx.oxml.ns import qn
 from docx.shared import Pt
+try:
+    from cryptography.hazmat.primitives import hashes, serialization
+    from cryptography.hazmat.primitives.asymmetric import padding
+    from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+except ImportError:
+    hashes = None
+    serialization = None
+    padding = None
+    AESGCM = None
 try:
     from google.cloud import firestore
 except ImportError:
@@ -175,6 +186,324 @@ def normalize_amazon_asin_list(raw):
             seen.add(clean)
             out.append(clean)
     return out
+
+
+def read_text_file(path_value):
+    path_text = str(path_value or '').strip()
+    if not path_text:
+        return ''
+    path = Path(path_text)
+    if not path.exists():
+        return ''
+    return path.read_text(encoding='utf-8')
+
+
+def sanitize_external_url(raw_url):
+    value = str(raw_url or '').strip()
+    if not value:
+        return ''
+    if value.startswith('https://'):
+        return value
+    if value.startswith('http://localhost') or value.startswith('http://127.0.0.1'):
+        return value
+    return ''
+
+
+def normalize_payment_center_context(data, order_data):
+    sources = [data or {}, order_data or {}, (order_data or {}).get('payment_center') or {}]
+    def pick(*keys):
+        for src in sources:
+            for key in keys:
+                value = src.get(key)
+                if value not in (None, ''):
+                    return value
+        return ''
+
+    context = {
+        'project_code': str(pick('project_code', 'projectCode') or '').strip(),
+        'project_name': str(pick('project_name', 'projectName') or '').strip(),
+        'return_url': sanitize_external_url(pick('return_url', 'returnUrl', 'success_redirect_url', 'successRedirectUrl')),
+        'retry_url': sanitize_external_url(pick('retry_url', 'retryUrl')),
+        'callback_url': sanitize_external_url(pick('callback_url', 'callbackUrl')),
+        'callback_token': str(pick('callback_token', 'callbackToken') or '').strip(),
+        'external_reference': str(pick('external_reference', 'externalReference', 'biz_order_id', 'bizOrderId') or '').strip(),
+    }
+    return {k: v for k, v in context.items() if v}
+
+
+def wechatpay_is_configured():
+    required = [
+        WECHATPAY_MCHID,
+        WECHATPAY_APPID,
+        WECHATPAY_API_V3_KEY,
+        WECHATPAY_SERIAL_NO,
+        WECHATPAY_PRIVATE_KEY_PATH,
+    ]
+    return all(required) and Path(WECHATPAY_PRIVATE_KEY_PATH).exists()
+
+
+def get_wechatpay_private_key():
+    global _wechatpay_private_key
+    if _wechatpay_private_key is not None:
+        return _wechatpay_private_key
+    if serialization is None:
+        raise RuntimeError("cryptography dependency is missing")
+    key_bytes = Path(WECHATPAY_PRIVATE_KEY_PATH).read_bytes()
+    _wechatpay_private_key = serialization.load_pem_private_key(key_bytes, password=None)
+    return _wechatpay_private_key
+
+
+def build_wechatpay_authorization(method, canonical_url, body_text=''):
+    private_key = get_wechatpay_private_key()
+    timestamp = str(int(time.time()))
+    nonce_str = uuid.uuid4().hex
+    message = f"{method.upper()}\n{canonical_url}\n{timestamp}\n{nonce_str}\n{body_text}\n"
+    signature = base64.b64encode(
+        private_key.sign(
+            message.encode('utf-8'),
+            padding.PKCS1v15(),
+            hashes.SHA256(),
+        )
+    ).decode('utf-8')
+    token = (
+        f'mchid="{WECHATPAY_MCHID}",'
+        f'nonce_str="{nonce_str}",'
+        f'signature="{signature}",'
+        f'timestamp="{timestamp}",'
+        f'serial_no="{WECHATPAY_SERIAL_NO}"'
+    )
+    return f'WECHATPAY2-SHA256-RSA2048 {token}'
+
+
+def wechatpay_request(method, path, *, params=None, json_body=None, timeout=20):
+    if not wechatpay_is_configured():
+        raise RuntimeError("WeChat Pay is not configured yet")
+
+    body_text = json.dumps(json_body, ensure_ascii=False, separators=(',', ':')) if json_body else ''
+    canonical_url = path
+    if params:
+        query = requests.models.RequestEncodingMixin._encode_params(params)
+        canonical_url = f"{path}?{query}"
+
+    headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': build_wechatpay_authorization(method, canonical_url, body_text),
+        'User-Agent': 'FlowAIAgent/1.0',
+    }
+
+    url = f"{WECHATPAY_API_BASE}{path}"
+    response = requests.request(
+        method=method.upper(),
+        url=url,
+        params=params,
+        data=body_text if body_text else None,
+        headers=headers,
+        timeout=timeout,
+    )
+    return response
+
+
+def get_order_row(order_id):
+    conn = get_db_connection()
+    try:
+        row = conn.execute(
+            'SELECT id, status, order_data, email, updated_at FROM orders WHERE id = ?',
+            (order_id,)
+        ).fetchone()
+        return row
+    finally:
+        conn.close()
+
+
+def load_order_data(row):
+    if not row or not row['order_data']:
+        return {}
+    try:
+        return json.loads(row['order_data'])
+    except json.JSONDecodeError:
+        return {}
+
+
+def get_payment_description(order_data):
+    payment_center = order_data.get('payment_center') or {}
+    project_name = str(payment_center.get('project_name') or '').strip()
+    if project_name:
+        return f'{project_name} 订单支付'
+    feature = str(
+        order_data.get('payment_type')
+        or order_data.get('analysis_type')
+        or order_data.get('type')
+        or ''
+    ).lower()
+    if 'discovery' in feature:
+        return 'FlowAI Agent 选品开发分析'
+    return 'FlowAI Agent 竞品分析报告'
+
+
+def should_trigger_local_analysis(order_data):
+    source = str(order_data.get('source') or '').strip().lower()
+    payment_center = order_data.get('payment_center') or {}
+    if payment_center.get('project_code') and payment_center.get('project_code') != 'flowaiagent':
+        return False
+    return source in {'create-analysis', 'payment-success', 'competitor-submit'} or bool(
+        order_data.get('main_asins') or order_data.get('mainAsins')
+    )
+
+
+def notify_external_project(order_id, order_data):
+    payment_center = order_data.get('payment_center') or {}
+    callback_url = payment_center.get('callback_url')
+    if not callback_url:
+        return False
+
+    payload = {
+        'provider': 'wechatpay',
+        'status': 'SUCCESS',
+        'order_id': str(order_id),
+        'project_code': payment_center.get('project_code', ''),
+        'project_name': payment_center.get('project_name', ''),
+        'external_reference': payment_center.get('external_reference', ''),
+        'amount_cents': ((order_data.get('wechatpay') or {}).get('amount_cents') or PAYMENT_AMOUNT_CENTS),
+        'description': get_payment_description(order_data),
+        'paid_at': ((order_data.get('wechatpay') or {}).get('success_time') or datetime.now().isoformat()),
+        'user_email': normalize_email(order_data.get('user_email') or order_data.get('email')),
+        'order_data': order_data,
+    }
+    headers = {'Content-Type': 'application/json'}
+    callback_token = payment_center.get('callback_token')
+    if callback_token:
+        headers['X-Payment-Center-Token'] = callback_token
+
+    try:
+        response = requests.post(callback_url, json=payload, headers=headers, timeout=20)
+        logger.info(f"Payment-center callback -> {callback_url}: {response.status_code} {response.text[:160]}")
+        return response.ok
+    except Exception as e:
+        logger.error(f"Payment-center callback failed for order {order_id}: {e}")
+        return False
+
+
+def update_order_record(order_id, new_status, order_data, email='', trigger_webhook=False):
+    updated_at = datetime.now().isoformat()
+    conn = get_db_connection()
+    try:
+        row = conn.execute(
+            'SELECT status, order_data, email FROM orders WHERE id = ?',
+            (order_id,)
+        ).fetchone()
+        previous_status = row['status'] if row else None
+        final_email = normalize_email(email or (row['email'] if row else '') or order_data.get('user_email') or order_data.get('email'))
+        serialized_order_data = json.dumps(order_data or {}, ensure_ascii=False)
+        if row:
+            conn.execute(
+                'UPDATE orders SET status = ?, updated_at = ?, order_data = ?, email = ? WHERE id = ?',
+                (new_status, updated_at, serialized_order_data, final_email, order_id)
+            )
+        else:
+            conn.execute(
+                'INSERT INTO orders (id, status, updated_at, order_data, email) VALUES (?, ?, ?, ?, ?)',
+                (order_id, new_status, updated_at, serialized_order_data, final_email)
+            )
+        conn.commit()
+    finally:
+        conn.close()
+
+    should_trigger_success_actions = trigger_webhook and new_status == 'SUCCESS' and previous_status != 'SUCCESS' and bool(order_data)
+    callback_triggered = False
+    webhook_triggered = False
+    if should_trigger_success_actions:
+        payment_center = order_data.get('payment_center') or {}
+        if payment_center.get('callback_url'):
+            callback_triggered = True
+            callback_thread = threading.Thread(target=notify_external_project, args=(order_id, order_data))
+            callback_thread.daemon = True
+            callback_thread.start()
+
+        if should_trigger_local_analysis(order_data):
+            webhook_triggered = True
+            logger.info(f"WeChat Pay success for order {order_id}; triggering local n8n webhook")
+            thread = threading.Thread(target=trigger_n8n_webhook, args=(order_data,))
+            thread.daemon = True
+            thread.start()
+
+    return {
+        'order_id': str(order_id),
+        'status': new_status,
+        'updated_at': updated_at,
+        'webhook_triggered': webhook_triggered,
+        'callback_triggered': callback_triggered,
+    }
+
+
+def sync_wechatpay_order_status(order_id, row=None):
+    order_id = parse_order_id(order_id)
+    if order_id is None:
+        return None
+    row = row or get_order_row(order_id)
+    if not row:
+        return None
+    order_data = load_order_data(row)
+    wechatpay_meta = order_data.get('wechatpay') or {}
+    if row['status'] == 'SUCCESS' or not wechatpay_meta.get('out_trade_no'):
+        return {
+            'status': row['status'],
+            'updated_at': row['updated_at'],
+            'trade_state': wechatpay_meta.get('trade_state'),
+        }
+
+    response = wechatpay_request(
+        'GET',
+        f"/v3/pay/transactions/out-trade-no/{wechatpay_meta['out_trade_no']}",
+        params={'mchid': WECHATPAY_MCHID},
+        timeout=15,
+    )
+    body = response.json() if response.headers.get('Content-Type', '').startswith('application/json') else {}
+    logger.info(f"WeChat Pay query for order {order_id}: {response.status_code} {str(body)[:200]}")
+
+    if response.status_code == 200:
+        trade_state = str(body.get('trade_state') or '').upper()
+        wechatpay_meta.update({
+            'trade_state': trade_state,
+            'transaction_id': body.get('transaction_id', wechatpay_meta.get('transaction_id', '')),
+            'success_time': body.get('success_time', wechatpay_meta.get('success_time', '')),
+            'last_query_at': datetime.now().isoformat(),
+        })
+        order_data['wechatpay'] = wechatpay_meta
+
+        if trade_state == 'SUCCESS':
+            update_order_record(order_id, 'SUCCESS', order_data, trigger_webhook=True)
+            return {'status': 'SUCCESS', 'updated_at': datetime.now().isoformat(), 'trade_state': trade_state}
+        if trade_state in {'CLOSED', 'REVOKED', 'PAYERROR'}:
+            update_order_record(order_id, 'FAILED', order_data)
+            return {'status': 'FAILED', 'updated_at': datetime.now().isoformat(), 'trade_state': trade_state}
+
+        return {'status': 'PENDING', 'updated_at': row['updated_at'], 'trade_state': trade_state}
+
+    return {
+        'status': row['status'],
+        'updated_at': row['updated_at'],
+        'trade_state': wechatpay_meta.get('trade_state'),
+        'query_error': body.get('message') or response.text[:120],
+    }
+
+
+def decrypt_wechatpay_resource(resource):
+    if AESGCM is None:
+        raise RuntimeError("cryptography dependency is missing")
+    ciphertext = resource.get('ciphertext')
+    nonce = resource.get('nonce')
+    associated_data = resource.get('associated_data', '')
+    if not ciphertext or not nonce:
+        raise ValueError("Invalid WeChat Pay callback payload")
+
+    aesgcm = AESGCM(WECHATPAY_API_V3_KEY.encode('utf-8'))
+    plaintext = aesgcm.decrypt(
+        nonce.encode('utf-8'),
+        base64.b64decode(ciphertext),
+        associated_data.encode('utf-8'),
+    )
+    return json.loads(plaintext.decode('utf-8'))
 
 def init_db():
     try:
@@ -1410,18 +1739,195 @@ def check_status():
             conn.close()
             return jsonify({"error": "order_id is required"}), 400
 
-        row = conn.execute('SELECT status, updated_at FROM orders WHERE id = ?', (order_id,)).fetchone()
+        row = conn.execute('SELECT status, updated_at, order_data FROM orders WHERE id = ?', (order_id,)).fetchone()
              
         conn.close()
         
         if row:
-            return jsonify(dict(row))
+            payload = dict(row)
+            try:
+                order_data = json.loads(payload.get('order_data') or '{}')
+            except json.JSONDecodeError:
+                order_data = {}
+
+            if payload.get('status') == 'PENDING' and (order_data.get('wechatpay') or {}).get('out_trade_no'):
+                try:
+                    synced = sync_wechatpay_order_status(order_id, row)
+                    if synced:
+                        payload.update(synced)
+                except Exception as e:
+                    logger.warning(f"WeChat status sync failed for order {order_id}: {e}")
+
+            payload.pop('order_data', None)
+            return jsonify(payload)
         else:
             return jsonify({"status": "NOT_FOUND"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+@app.route('/api/wechatpay/native_order', methods=['POST'])
+def create_wechatpay_native_order():
+    data = request.get_json(silent=True) or {}
+    order_id = parse_order_id(data.get('order_id'))
+    if order_id is None:
+        return jsonify({"error": "order_id is required"}), 400
+
+    if not wechatpay_is_configured():
+        return jsonify({
+            "error": "WeChat Pay is not configured on the server yet",
+            "configured": False,
+        }), 503
+
+    row = get_order_row(order_id)
+    if not row:
+        return jsonify({"error": "Order not found"}), 404
+
+    order_data = load_order_data(row)
+    if row['status'] == 'SUCCESS':
+        return jsonify({
+            "status": "SUCCESS",
+            "order_id": str(order_id),
+            "message": "Order already paid",
+        })
+
+    wechatpay_meta = order_data.get('wechatpay') or {}
+    if wechatpay_meta.get('code_url'):
+        return jsonify({
+            "status": row['status'],
+            "order_id": str(order_id),
+            "code_url": wechatpay_meta.get('code_url'),
+            "expires_at": wechatpay_meta.get('expires_at'),
+            "description": wechatpay_meta.get('description') or get_payment_description(order_data),
+            "amount_cents": wechatpay_meta.get('amount_cents') or PAYMENT_AMOUNT_CENTS,
+        })
+
+    expire_at = (datetime.utcnow() + timedelta(minutes=WECHATPAY_ORDER_EXPIRE_MINUTES)).strftime('%Y-%m-%dT%H:%M:%SZ')
+    payload = {
+        "appid": WECHATPAY_APPID,
+        "mchid": WECHATPAY_MCHID,
+        "description": get_payment_description(order_data),
+        "out_trade_no": str(order_id),
+        "notify_url": WECHATPAY_NOTIFY_URL,
+        "attach": normalize_quota_feature(order_data.get('payment_type') or order_data.get('analysis_type')),
+        "time_expire": expire_at,
+        "amount": {
+            "total": PAYMENT_AMOUNT_CENTS,
+            "currency": "CNY",
+        },
+    }
+
+    response = wechatpay_request('POST', '/v3/pay/transactions/native', json_body=payload, timeout=20)
+    body = response.json() if response.headers.get('Content-Type', '').startswith('application/json') else {}
+    logger.info(f"WeChat Native create order {order_id}: {response.status_code} {str(body)[:200]}")
+
+    if response.status_code not in (200, 201):
+        return jsonify({
+            "error": body.get('message') or 'Failed to create WeChat Pay order',
+            "status_code": response.status_code,
+        }), 502
+
+    code_url = body.get('code_url')
+    if not code_url:
+        return jsonify({"error": "WeChat Pay did not return code_url"}), 502
+
+    wechatpay_meta.update({
+        "provider": "wechatpay",
+        "mode": "native",
+        "out_trade_no": str(order_id),
+        "code_url": code_url,
+        "description": payload['description'],
+        "amount_cents": PAYMENT_AMOUNT_CENTS,
+        "expires_at": expire_at,
+        "created_at": datetime.now().isoformat(),
+        "trade_state": "NOTPAY",
+    })
+    order_data['wechatpay'] = wechatpay_meta
+    order_data['payment_method'] = 'wechatpay'
+    order_data['payment_mode'] = 'native'
+    update_order_record(order_id, 'PENDING', order_data)
+
+    return jsonify({
+        "status": "PENDING",
+        "order_id": str(order_id),
+        "code_url": code_url,
+        "expires_at": expire_at,
+        "description": payload['description'],
+        "amount_cents": PAYMENT_AMOUNT_CENTS,
+        "provider": "wechatpay",
+    })
+
+
+@app.route('/api/order_summary', methods=['GET'])
+@app.route('/api/payment_center/order_summary', methods=['GET'])
+def order_summary():
+    order_id = parse_order_id(request.args.get('order_id'))
+    if order_id is None:
+        return jsonify({"error": "order_id is required"}), 400
+
+    row = get_order_row(order_id)
+    if not row:
+        return jsonify({"error": "Order not found"}), 404
+
+    order_data = load_order_data(row)
+    payment_center = order_data.get('payment_center') or {}
+    wechatpay_meta = order_data.get('wechatpay') or {}
+
+    return jsonify({
+        "order_id": str(order_id),
+        "status": row['status'],
+        "updated_at": row['updated_at'],
+        "user_email": normalize_email(order_data.get('user_email') or order_data.get('email') or row['email']),
+        "type": normalize_quota_feature(order_data.get('payment_type') or order_data.get('analysis_type')),
+        "project_code": payment_center.get('project_code', ''),
+        "project_name": payment_center.get('project_name', ''),
+        "return_url": payment_center.get('return_url', ''),
+        "retry_url": payment_center.get('retry_url', ''),
+        "external_reference": payment_center.get('external_reference', ''),
+        "description": get_payment_description(order_data),
+        "amount_cents": wechatpay_meta.get('amount_cents') or PAYMENT_AMOUNT_CENTS,
+    })
+
+
+@app.route('/api/wechatpay/notify', methods=['POST'])
+def wechatpay_notify():
+    payload = request.get_json(silent=True) or {}
+    resource = payload.get('resource') or {}
+    try:
+        notify_data = decrypt_wechatpay_resource(resource)
+        out_trade_no = parse_order_id(notify_data.get('out_trade_no'))
+        if out_trade_no is None:
+            raise ValueError("Missing out_trade_no")
+
+        row = get_order_row(out_trade_no)
+        if not row:
+            raise ValueError("Order not found")
+
+        order_data = load_order_data(row)
+        wechatpay_meta = order_data.get('wechatpay') or {}
+        trade_state = str(notify_data.get('trade_state') or 'SUCCESS').upper()
+        wechatpay_meta.update({
+            "trade_state": trade_state,
+            "transaction_id": notify_data.get('transaction_id', ''),
+            "success_time": notify_data.get('success_time', ''),
+            "notified_at": datetime.now().isoformat(),
+        })
+        order_data['wechatpay'] = wechatpay_meta
+
+        if trade_state == 'SUCCESS':
+            update_order_record(out_trade_no, 'SUCCESS', order_data, trigger_webhook=True)
+        elif trade_state in {'CLOSED', 'REVOKED', 'PAYERROR'}:
+            update_order_record(out_trade_no, 'FAILED', order_data)
+        else:
+            update_order_record(out_trade_no, 'PENDING', order_data)
+
+        return jsonify({"code": "SUCCESS", "message": "成功"})
+    except Exception as e:
+        logger.error(f"WeChat Pay notify error: {e}")
+        return jsonify({"code": "FAIL", "message": "处理失败"}), 400
+
 @app.route('/api/create_order', methods=['POST'])
+@app.route('/api/payment_center/create_order', methods=['POST'])
 def create_order():
     """Create a paid order that can later be manually confirmed by admin."""
     data = request.get_json(silent=True) or {}
@@ -1433,6 +1939,10 @@ def create_order():
     email = str(order_data.get('user_email') or data.get('email') or '').strip().lower()
     if not email:
         return jsonify({"error": "user email is required"}), 400
+
+    payment_center_context = normalize_payment_center_context(data, order_data)
+    if payment_center_context:
+        order_data['payment_center'] = payment_center_context
 
     updated_at = datetime.now().isoformat()
     conn = get_db_connection()
@@ -1467,6 +1977,25 @@ N8N_WEBHOOK_URL = os.environ.get(
     'N8N_WEBHOOK_URL',
     'https://tony4927.app.n8n.cloud/webhook/1573cd32-8e6a-46ac-9d74-1e6f7c9ea5e7',
 )
+WECHATPAY_MCHID = os.environ.get('WECHATPAY_MCHID', '').strip()
+WECHATPAY_APPID = os.environ.get('WECHATPAY_APPID', '').strip()
+WECHATPAY_API_V3_KEY = os.environ.get('WECHATPAY_API_V3_KEY', '').strip()
+WECHATPAY_SERIAL_NO = os.environ.get('WECHATPAY_SERIAL_NO', '').strip()
+WECHATPAY_PRIVATE_KEY_PATH = os.environ.get(
+    'WECHATPAY_PRIVATE_KEY_PATH',
+    '/root/flowaiagent.com/certs/wechatpay/apiclient_key.pem'
+).strip()
+WECHATPAY_NOTIFY_URL = os.environ.get(
+    'WECHATPAY_NOTIFY_URL',
+    'https://flowaiagent.com/api/wechatpay/notify'
+).strip()
+WECHATPAY_API_BASE = os.environ.get(
+    'WECHATPAY_API_BASE',
+    'https://api.mch.weixin.qq.com'
+).rstrip('/')
+PAYMENT_AMOUNT_CENTS = int(os.environ.get('PAYMENT_AMOUNT_CENTS', 29900))
+WECHATPAY_ORDER_EXPIRE_MINUTES = int(os.environ.get('WECHATPAY_ORDER_EXPIRE_MINUTES', 15))
+_wechatpay_private_key = None
 
 def _normalize_n8n_payload(order_data):
     normalized = dict(order_data or {})

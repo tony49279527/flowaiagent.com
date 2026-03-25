@@ -144,6 +144,12 @@
             color: var(--text-secondary);
         }
 
+        .success-note {
+            margin-top: 16px;
+            font-size: 0.95rem;
+            color: var(--primary-color);
+        }
+
         .confetti {
             position: fixed;
             top: 0; left: 0;
@@ -260,6 +266,8 @@
                     </a>
                 </div>
 
+                <p class="success-note" id="successNote" hidden></p>
+
                 <div class="help-text">
                     <strong>提示：</strong>报告通常在 5-10 分钟内生成完成。如果超过 30 分钟未收到，请检查垃圾邮件文件夹或联系客服。
                 </div>
@@ -314,6 +322,7 @@
                 <p>&copy; 2025-2026 FlowAI Agent - 数据驱动决策 <span
                         style="opacity: 0.5; font-size: 0.8em; margin-left: 10px;">v2.9</span></p>
                 <div class="footer-legal">
+                    <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">陕ICP备2026006155号</a>
                     <a href="privacy.html">隐私政策</a>
                     <a href="terms.html">服务条款</a>
                 </div>
@@ -346,10 +355,38 @@
             const continueBtn = document.getElementById('continueBtn');
             const continueBtnText = document.getElementById('continueBtnText');
             const subtitleEl = document.querySelector('.success-subtitle');
+            const successNote = document.getElementById('successNote');
             if (orderType === 'discovery') {
                 if (continueBtn) continueBtn.href = 'discovery.html';
                 if (continueBtnText) continueBtnText.textContent = '继续做下一个选品分析';
                 if (subtitleEl) subtitleEl.textContent = '您的完整选品开发报告已解锁，将在 10 分钟内发送至您的邮箱。';
+            }
+
+            if (orderNo) {
+                fetch('/api/order_summary?order_id=' + encodeURIComponent(orderNo))
+                    .then(res => res.ok ? res.json() : null)
+                    .then(data => {
+                        if (!data) return;
+                        if (data.user_email) {
+                            document.getElementById('userEmail').textContent = data.user_email;
+                        }
+                        if (data.updated_at) {
+                            document.getElementById('payTime').textContent = new Date(data.updated_at).toLocaleString('zh-CN');
+                        }
+                        const projectName = data.project_name || '';
+                        if (projectName && subtitleEl) {
+                            subtitleEl.textContent = `您的付款已完成，${projectName} 将继续处理这笔订单。`;
+                        }
+                        if (data.return_url && continueBtn) {
+                            continueBtn.href = data.return_url;
+                            continueBtnText.textContent = projectName ? `返回 ${projectName}` : '返回业务系统';
+                            if (successNote) {
+                                successNote.hidden = false;
+                                successNote.textContent = '付款结果已同步，点击按钮即可返回原系统继续处理。';
+                            }
+                        }
+                    })
+                    .catch(() => {});
             }
 
             createConfetti();

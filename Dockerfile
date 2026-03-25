@@ -6,7 +6,11 @@ WORKDIR /app
 
 # Install dependencies (single source of truth with requirements.txt)
 COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir \
+      -i https://mirrors.aliyun.com/pypi/simple/ \
+      --trusted-host mirrors.aliyun.com \
+      -r requirements.txt
 
 # Copy the current directory contents into the container at /app
 COPY . /app

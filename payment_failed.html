@@ -147,6 +147,12 @@
             font-size: 0.9rem;
             color: var(--text-secondary);
         }
+
+        .status-note {
+            margin-top: 16px;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
     </style>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#667eea">
@@ -222,7 +228,7 @@
                 </div>
 
                 <div class="action-buttons">
-                    <a href="payment.html" class="primary-btn">
+                    <a href="payment.html" class="primary-btn" id="retryBtn">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
                             <path d="M21 3v5h-5" />
@@ -231,10 +237,12 @@
                         </svg>
                         重新支付
                     </a>
-                    <a href="index.html" class="secondary-btn">
+                    <a href="index.html" class="secondary-btn" id="backBtn">
                         返回首页
                     </a>
                 </div>
+
+                <p class="status-note" id="statusNote" hidden></p>
 
                 <div class="help-text">
                     如需帮助，请联系客服 contact@amzaiagent.com 或查看常见问题解答。
@@ -290,6 +298,7 @@
                 <p>&copy; 2025-2026 FlowAI Agent - 数据驱动决策 <span
                         style="opacity: 0.5; font-size: 0.8em; margin-left: 10px;">v2.9</span></p>
                 <div class="footer-legal">
+                    <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">陕ICP备2026006155号</a>
                     <a href="privacy.html">隐私政策</a>
                     <a href="terms.html">服务条款</a>
                 </div>
@@ -297,6 +306,40 @@
         </footer>
     </div>
     <script src="mobile-menu.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderNo = urlParams.get('order');
+            const retryBtn = document.getElementById('retryBtn');
+            const backBtn = document.getElementById('backBtn');
+            const statusNote = document.getElementById('statusNote');
+            if (!orderNo) return;
+
+            if (retryBtn) {
+                retryBtn.href = 'payment.html?order_id=' + encodeURIComponent(orderNo);
+            }
+
+            fetch('/api/order_summary?order_id=' + encodeURIComponent(orderNo))
+                .then(res => res.ok ? res.json() : null)
+                .then(data => {
+                    if (!data) return;
+                    if (data.retry_url && retryBtn) {
+                        retryBtn.href = data.retry_url;
+                    } else if (retryBtn) {
+                        retryBtn.href = 'payment.html?order_id=' + encodeURIComponent(orderNo);
+                    }
+                    if (data.return_url && backBtn) {
+                        backBtn.href = data.return_url;
+                        backBtn.textContent = data.project_name ? `返回 ${data.project_name}` : '返回业务系统';
+                    }
+                    if (statusNote && data.project_name) {
+                        statusNote.hidden = false;
+                        statusNote.textContent = `当前订单来自 ${data.project_name}，如需继续可返回原系统。`;
+                    }
+                })
+                .catch(() => {});
+        });
+    </script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

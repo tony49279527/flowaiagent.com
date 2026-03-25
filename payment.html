@@ -355,6 +355,28 @@
             margin-bottom: 12px;
         }
 
+        .dynamic-qr {
+            display: none;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .dynamic-qr.active {
+            display: flex;
+        }
+
+        .dynamic-qr img,
+        .dynamic-qr canvas {
+            max-width: 220px;
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            background: #fff;
+            padding: 8px;
+            box-sizing: border-box;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+        }
+
         .qr-display .scan-text {
             font-size: 0.9rem;
             color: #333;
@@ -653,15 +675,18 @@
 
                         <!-- 收款码显示区 -->
                         <div class="qr-display">
+                            <div id="wechatQrWrap" class="dynamic-qr active">
+                                <div id="wechatQrCode"></div>
+                            </div>
                             <img id="qrImage" src="wechat_qr.jpg" alt="收款码"
                                 onerror="this.src='https://via.placeholder.com/180x180/667eea/fff?text=请添加收款码'"
                                 loading="lazy">
                             <p class="amount-text">请扫码支付 ¥299</p>
                             <p class="scan-text">使用 <span id="methodText">微信</span> 扫一扫</p>
-                            <p class="tip-text">支付后请点击下方按钮确认</p>
+                            <p class="tip-text" id="tipText">支付成功后系统会自动检测，若已支付可手动刷新一次</p>
                         </div>
 
-                        <button class="confirm-btn" onclick="confirmPayment()">我已完成支付</button>
+                        <button class="confirm-btn" id="confirmBtn" onclick="confirmPayment()">刷新支付状态</button>
                         <div class="msg-box" id="msgBox"></div>
 
                         <div class="safe-note">
@@ -719,6 +744,7 @@
                 <p>© 2025-2026 FlowAI Agent - 数据驱动决策 <span
                         style="opacity: 0.5; font-size: 0.8em; margin-left: 10px;">v2.9</span></p>
                 <div class="footer-legal">
+                    <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">陕ICP备2026006155号</a>
                     <a href="privacy.html">隐私政策</a>
                     <a href="terms.html">服务条款</a>
                 </div>
@@ -726,17 +752,26 @@
         </footer>
     </div>
     <script src="mobile-menu.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <script>
         const params = new URLSearchParams(window.location.search);
         const isEnglishUI = params.get('lang') === 'en';
         const t = (zhText, enText) => isEnglishUI ? enText : zhText;
 
         const orderIdElement = document.getElementById('orderId');
-        const confirmBtn = document.querySelector('.confirm-btn');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const qrImg = document.getElementById('qrImage');
+        const methodText = document.getElementById('methodText');
+        const tipText = document.getElementById('tipText');
+        const wechatQrWrap = document.getElementById('wechatQrWrap');
+        const wechatQrCode = document.getElementById('wechatQrCode');
         const orderIdFromUrl = params.get('order_id');
         const activeOrderId = /^\d+$/.test(orderIdFromUrl || '') ? orderIdFromUrl : '';
         const orderType = (params.get('type') || 'competitor').toLowerCase();
         const normalizedOrderType = orderType === 'discovery' ? 'discovery' : 'competitor';
+        let activeMethod = 'wechat';
+        let wechatCodeUrl = '';
+        let wechatInitStarted = false;
 
         if (!activeOrderId) {
             const paymentSidebar = document.querySelector('.payment-sidebar');
@@ -774,20 +809,72 @@
             orderIdElement.textContent = activeOrderId;
         }
 
+        function renderWechatQr(codeUrl) {
+            if (!wechatQrCode || !window.QRCode) return;
+            wechatQrCode.innerHTML = '';
+            new QRCode(wechatQrCode, {
+                text: codeUrl,
+                width: 220,
+                height: 220,
+                colorDark: '#111827',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        async function ensureWechatQr() {
+            if (!activeOrderId || wechatInitStarted || wechatCodeUrl) return;
+            wechatInitStarted = true;
+            showMsg(t('正在创建微信支付二维码...', 'Creating your WeChat Pay QR code...'), 'info');
+            try {
+                const res = await fetch('/api/wechatpay/native_order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ order_id: activeOrderId })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to create WeChat Pay order');
+                }
+                wechatCodeUrl = data.code_url || '';
+                if (!wechatCodeUrl) {
+                    throw new Error('Missing WeChat QR code');
+                }
+                renderWechatQr(wechatCodeUrl);
+                showMsg(t('微信二维码已生成，请使用微信扫码支付。', 'WeChat Pay QR code is ready. Please scan it with WeChat.'), 'info');
+            } catch (error) {
+                console.error(error);
+                wechatInitStarted = false;
+                qrImg.style.display = 'block';
+                wechatQrWrap.classList.remove('active');
+                showMsg(t('微信支付暂时不可用，请稍后重试或改用其他方式。', 'WeChat Pay is temporarily unavailable. Please try again later or switch payment method.'), 'warn');
+            }
+        }
+
         // 切换支付方式
         function switchQR(method) {
+            activeMethod = method;
             document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(method + 'Btn').classList.add('active');
 
-            const qrImg = document.getElementById('qrImage');
-            const methodText = document.getElementById('methodText');
-
             if (method === 'wechat') {
-                qrImg.src = 'wechat_qr.jpg';
+                if (wechatCodeUrl) {
+                    renderWechatQr(wechatCodeUrl);
+                } else {
+                    ensureWechatQr();
+                }
+                qrImg.style.display = 'none';
+                wechatQrWrap.classList.add('active');
                 methodText.textContent = t('微信', 'WeChat');
+                tipText.textContent = t('支付成功后系统会自动检测，若已支付可手动刷新一次', 'The system checks automatically after payment. You can also tap once to refresh status.');
+                if (confirmBtn) confirmBtn.textContent = t('刷新支付状态', 'Refresh payment status');
             } else {
                 qrImg.src = 'alipay_qr.jpg';
+                qrImg.style.display = 'block';
+                wechatQrWrap.classList.remove('active');
                 methodText.textContent = t('支付宝', 'Alipay');
+                tipText.textContent = t('如已付款，可点击下方按钮检查状态', 'If you have already paid, click the button below to check the status.');
+                if (confirmBtn) confirmBtn.textContent = t('我已完成支付', 'I have completed payment');
             }
         }
 
@@ -803,7 +890,7 @@
                         if (data.status === 'SUCCESS') {
                             window.location.href = 'payment_success.html?order=' + activeOrderId + '&type=' + encodeURIComponent(normalizedOrderType);
                         } else if (data.status === 'FAILED') {
-                            window.location.href = 'payment_failed.html?type=' + encodeURIComponent(normalizedOrderType);
+                            window.location.href = 'payment_failed.html?order=' + activeOrderId + '&type=' + encodeURIComponent(normalizedOrderType);
                         } else {
                             showMsg(t('尚未收到付款通知，请稍后重试。', 'Payment not confirmed yet. Please try again shortly.'), 'warn');
                         }
@@ -835,11 +922,15 @@
                             window.location.href = 'payment_success.html?order=' + activeOrderId + '&type=' + encodeURIComponent(normalizedOrderType);
                         }, 1000);
                     } else if (data.status === 'FAILED') {
-                        window.location.href = 'payment_failed.html?type=' + encodeURIComponent(normalizedOrderType);
+                        window.location.href = 'payment_failed.html?order=' + activeOrderId + '&type=' + encodeURIComponent(normalizedOrderType);
                     }
                 })
                 .catch(err => console.log('Polling server...'));
         }, 3000);
+
+        if (activeOrderId) {
+            switchQR('wechat');
+        }
     </script>
     <script>
         if ('serviceWorker' in navigator) {
