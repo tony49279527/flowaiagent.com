@@ -668,9 +668,9 @@
                                 <img src="images/wechat-pay.svg" alt="微信" loading="lazy">
                                 微信支付
                             </button>
-                            <button class="method-btn" id="alipayBtn" onclick="switchQR('alipay')">
+                            <button class="method-btn" id="alipayBtn" type="button" onclick="switchQR('alipay')">
                                 <img src="images/alipay.svg" alt="支付宝" loading="lazy">
-                                支付宝
+                                支付宝（暂未开通）
                             </button>
                         </div>
 
@@ -1061,18 +1061,24 @@
                 tipText.textContent = t('支付成功后系统会自动检测，若已支付可手动刷新一次', 'The system checks automatically after payment. You can also tap once to refresh status.');
                 if (confirmBtn) confirmBtn.textContent = t('刷新支付状态', 'Refresh payment status');
             } else {
-                qrImg.src = 'alipay_qr.jpg';
-                qrImg.style.display = 'block';
                 wechatQrWrap.classList.remove('active');
+                qrImg.style.display = 'none';
+                if (wechatQrCode) {
+                    wechatQrCode.innerHTML = `<div style="width:220px;height:220px;display:flex;align-items:center;justify-content:center;text-align:center;color:#6b7280;font-size:14px;line-height:1.7;padding:24px;">${t('支付宝暂未开通，请切换回微信支付完成付款。', 'Alipay is not enabled yet. Please switch back to WeChat Pay to complete the order.')}</div>`;
+                }
                 methodText.textContent = t('支付宝', 'Alipay');
-                tipText.textContent = t('如已付款，可点击下方按钮检查状态', 'If you have already paid, click the button below to check the status.');
-                if (confirmBtn) confirmBtn.textContent = t('我已完成支付', 'I have completed payment');
+                tipText.textContent = t('当前仅支持微信支付，请切换回微信支付。', 'Only WeChat Pay is available right now. Please switch back to WeChat Pay.');
+                if (confirmBtn) confirmBtn.textContent = t('返回微信支付', 'Back to WeChat Pay');
             }
         }
 
         // 确认支付 (手动)
         function confirmPayment() {
             if (!activeOrderId) return;
+            if (activeMethod === 'alipay') {
+                switchQR('wechat');
+                return;
+            }
             showMsg(t('正在验证支付状态...', 'Checking payment status...'), 'info');
             setTimeout(() => {
                 // 主动调用查询 API
