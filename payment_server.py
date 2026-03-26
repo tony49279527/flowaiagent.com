@@ -126,7 +126,17 @@ def get_db_connection():
     return conn
 
 def normalize_email(email):
-    return str(email or '').strip().lower()
+    normalized = str(email or '').strip().lower()
+    if '@' not in normalized:
+        return normalized
+
+    local_part, domain = normalized.split('@', 1)
+    if domain in {'gmail.com', 'googlemail.com'}:
+        # Treat Gmail dot aliases and plus-addresses as the same mailbox so
+        # users cannot bypass free quota with equivalent aliases.
+        local_part = local_part.split('+', 1)[0].replace('.', '')
+        domain = 'gmail.com'
+    return f'{local_part}@{domain}'
 
 def normalize_quota_feature(feature):
     raw = str(feature or '').strip().lower()
