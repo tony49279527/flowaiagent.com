@@ -1,5 +1,5 @@
 
-const CACHE_NAME = 'flowai-v3';
+const CACHE_NAME = 'flowai-v4';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -40,6 +40,26 @@ self.addEventListener('fetch', (event) => {
             fetch(request)
                 .then((response) => response)
                 .catch(() => caches.match('./index.html'))
+        );
+        return;
+    }
+
+    const sameOrigin = new URL(request.url).origin === self.location.origin;
+    if (sameOrigin && (
+        request.destination === 'script' ||
+        request.destination === 'style' ||
+        request.destination === 'worker'
+    )) {
+        event.respondWith(
+            fetch(request)
+                .then((response) => {
+                    if (response && response.status === 200) {
+                        const responseClone = response.clone();
+                        caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
+                    }
+                    return response;
+                })
+                .catch(() => caches.match(request))
         );
         return;
     }
