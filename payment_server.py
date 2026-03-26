@@ -1792,7 +1792,15 @@ def create_wechatpay_native_order():
         })
 
     wechatpay_meta = order_data.get('wechatpay') or {}
-    if wechatpay_meta.get('code_url'):
+    expires_at_raw = str(wechatpay_meta.get('expires_at') or '').strip()
+    qr_expired = False
+    if expires_at_raw:
+        try:
+            qr_expired = datetime.strptime(expires_at_raw, '%Y-%m-%dT%H:%M:%SZ') <= datetime.utcnow()
+        except ValueError:
+            qr_expired = False
+
+    if wechatpay_meta.get('code_url') and not qr_expired:
         return jsonify({
             "status": row['status'],
             "order_id": str(order_id),
