@@ -679,7 +679,7 @@
                             <div id="wechatQrWrap" class="dynamic-qr active">
                                 <div id="wechatQrCode"></div>
                             </div>
-                            <img id="qrImage" src="wechat_qr.jpg" alt="收款码"
+                            <img id="qrImage" src="wechat_qr.jpg" alt="收款码" style="display:none;"
                                 onerror="this.src='https://via.placeholder.com/180x180/667eea/fff?text=请添加收款码'"
                                 loading="lazy">
                             <p class="amount-text" id="amountText">请扫码支付 ¥299</p>
@@ -955,6 +955,10 @@
         async function ensureWechatQr() {
             if (!activeOrderId || wechatInitStarted || wechatCodeUrl) return;
             wechatInitStarted = true;
+            if (wechatQrCode) {
+                wechatQrCode.innerHTML = `<div style="width:220px;height:220px;display:flex;align-items:center;justify-content:center;text-align:center;color:#6b7280;font-size:14px;line-height:1.7;padding:24px;">${t('正在创建微信支付二维码，请稍候...', 'Creating your WeChat Pay QR code...')}</div>`;
+            }
+            qrImg.style.display = 'none';
             showMsg(t('正在创建微信支付二维码...', 'Creating your WeChat Pay QR code...'), 'info');
             try {
                 const res = await fetch('/api/wechatpay/native_order', {
@@ -975,8 +979,11 @@
             } catch (error) {
                 console.error(error);
                 wechatInitStarted = false;
-                qrImg.style.display = 'block';
+                qrImg.style.display = 'none';
                 wechatQrWrap.classList.remove('active');
+                if (wechatQrCode) {
+                    wechatQrCode.innerHTML = `<div style="width:220px;height:220px;display:flex;align-items:center;justify-content:center;text-align:center;color:#ef4444;font-size:14px;line-height:1.7;padding:24px;">${t('微信支付二维码生成失败，请稍后重试。', 'Failed to generate the WeChat Pay QR code. Please try again later.')}</div>`;
+                }
                 showMsg(t('微信支付暂时不可用，请稍后重试或改用其他方式。', 'WeChat Pay is temporarily unavailable. Please try again later or switch payment method.'), 'warn');
             }
         }
