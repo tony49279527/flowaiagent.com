@@ -1,15 +1,9 @@
 """
-Unified Payment Polling Server (SQLite Version)
+Unified Payment Polling Server.
 
-Features:
-1. Stores payment status in SQLite database (orders.db)
-2. Provides /api/check_status for frontend polling
-3. Provides /api/update_status for admin trigger
-4. Auto-creates SQLite table on startup
-
-Usage:
-1. Run: python payment_server.py
-2. Expose: ngrok http 8080
+By default this app stores payment and quota state in SQLite files. On
+containerized deployments, point ORDERS_DB_FILE / DISCOVERY_DB_FILE (or
+APP_DATA_DIR) at a host-mounted directory so quota data survives rebuilds.
 """
 
 from flask import Flask, jsonify, request, send_from_directory, redirect
@@ -72,7 +66,27 @@ SMTP_PORT = int(os.environ.get('SMTP_PORT', 587))
 SMTP_USER = os.environ.get('SMTP_USER', '')
 SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD', '')
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', SMTP_USER)
-DISCOVERY_DB_FILE = 'discovery_tasks.db'
+
+
+def resolve_db_path(env_name, default_name):
+    configured_path = os.environ.get(env_name, '').strip()
+    base_dir = os.environ.get('APP_DATA_DIR', '').strip()
+
+    if configured_path:
+        path = configured_path
+    elif base_dir:
+        path = os.path.join(base_dir, default_name)
+    else:
+        path = default_name
+
+    absolute_path = os.path.abspath(path)
+    parent_dir = os.path.dirname(absolute_path)
+    if parent_dir:
+        os.makedirs(parent_dir, exist_ok=True)
+    return absolute_path
+
+
+DISCOVERY_DB_FILE = resolve_db_path('DISCOVERY_DB_FILE', 'discovery_tasks.db')
 cors_origins = [
     origin.strip()
     for origin in os.environ.get(
@@ -90,7 +104,7 @@ else:
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-DB_FILE = 'orders.db'
+DB_FILE = resolve_db_path('ORDERS_DB_FILE', 'orders.db')
 FREE_QUOTA_LIMIT = 2
 VALID_QUOTA_FEATURES = {'competitor', 'discovery'}
 PERSISTENCE_BACKEND = os.environ.get('PERSISTENCE_BACKEND', 'auto').strip().lower()
@@ -1026,6 +1040,8 @@ def increment_quota_usage(email, feature, amount=1):
 sync_user_quota_backfill()
 sync_discovery_task_backfill()
 logger.info(f"Persistence backend: {'firestore' if using_firestore() else 'sqlite'}")
+logger.info(f"Orders DB path: {DB_FILE}")
+logger.info(f"Discovery DB path: {DISCOVERY_DB_FILE}")
 
 def _generate_discovery_report(form_data):
     """Generate AI report for product discovery."""
