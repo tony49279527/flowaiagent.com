@@ -834,7 +834,9 @@ def sync_user_quota_backfill():
 
         dconn = get_discovery_db()
         discovery_rows = dconn.execute(
-            "SELECT user_email, COUNT(*) AS usage FROM discovery_tasks WHERE status IN ('COMPLETED','COMPLETED_NO_EMAIL') GROUP BY user_email"
+            "SELECT user_email, COUNT(*) AS usage FROM discovery_tasks "
+            "WHERE user_email IS NOT NULL AND TRIM(user_email) != '' "
+            "GROUP BY user_email"
         ).fetchall()
         dconn.close()
 
@@ -1330,12 +1332,12 @@ def _generate_discovery_report(form_data):
         return f"ERROR: Failed to generate report. {str(e)}"
 
 def _record_discovery_usage(email):
-    """Increment quota_usage for discovery (选品分析) completion."""
+    """Reserve one discovery credit at submission time."""
     if not email:
         return
     try:
         increment_quota_usage(email, 'discovery', 1)
-        logger.info(f"Discovery: Recorded discovery usage for {normalize_email(email)}")
+        logger.info(f"Discovery: Reserved discovery usage for {normalize_email(email)}")
     except Exception as e:
         logger.error(f"Discovery record_usage error: {e}")
 
@@ -1604,7 +1606,6 @@ def _discovery_worker(task_id, user_name, user_email, form_data):
             report_content=report,
             error_message=''
         )
-        _record_discovery_usage(user_email)
         logger.info(f"Discovery task {task_id} completed.")
     except Exception as e:
         logger.error(f"Discovery Worker Error for {task_id}: {e}")
@@ -1633,6 +1634,11 @@ def discovery_submit():
         }), 403
 
     create_discovery_task_record(task_id, user_name, user_email, industry, data)
+    try:
+        _record_discovery_usage(user_email)
+    except Exception:
+        update_discovery_task_record(task_id, status='FAILED', error_message='Quota reservation failed')
+        return jsonify({"error": "Unable to reserve discovery quota"}), 500
 
     thread = threading.Thread(target=_discovery_worker, args=(task_id, user_name, user_email, data))
     thread.start()
