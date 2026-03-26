@@ -527,13 +527,13 @@
         <main class="main-content">
             <div class="payment-page">
                 <!-- 左侧: 报告预览 70% -->
-                <div class="report-preview">
+                <div class="report-preview" id="reportPreview">
                     <div class="report-preview-header">
-                        <h2>📊 无线蓝牙耳机竞品分析报告</h2>
-                        <p class="meta">ASIN: B08N5WRWNW · 生成时间: 2026-01-24 09:30</p>
+                        <h2 id="previewTitle">📊 无线蓝牙耳机竞品分析报告</h2>
+                        <p class="meta" id="previewMeta">ASIN: B08N5WRWNW · 生成时间: 2026-01-24 09:30</p>
                     </div>
 
-                    <div class="report-scroll">
+                    <div class="report-scroll" id="reportScroll">
                         <!-- 1. 市场概况 -->
                         <div class="report-section">
                             <h3 class="section-title">📈 1. 市场概况</h3>
@@ -631,29 +631,30 @@
                     </div>
 
                     <!-- 锁定遮罩 -->
-                    <div class="lock-mask">
+                    <div class="lock-mask" id="lockMask">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                             <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                         </svg>
-                        <h3>🔒 支付后解锁完整报告</h3>
-                        <p>剩余 85% 内容需付费查看</p>
+                        <h3 id="lockTitle">🔒 支付后解锁完整报告</h3>
+                        <p id="lockSubtitle">剩余 85% 内容需付费查看</p>
                     </div>
                 </div>
 
                 <!-- 右侧: 支付面板 30% -->
                 <div class="payment-sidebar">
                     <div class="payment-box">
-                        <h3>🔓 解锁完整报告</h3>
+                        <h3 id="paymentHeading">🔓 解锁完整报告</h3>
+                        <p id="projectSummary" style="display:none;color:var(--text-secondary);line-height:1.7;margin-top:10px;"></p>
                         <p class="order-id">订单号: ORD<span id="orderId">20260124001</span></p>
 
                         <div class="price-card">
-                            <span class="old">¥599</span>
-                            <span class="now">¥299</span>
-                            <span class="tag">限时5折</span>
+                            <span class="old" id="oldPrice">¥599</span>
+                            <span class="now" id="currentPrice">¥299</span>
+                            <span class="tag" id="priceTag">限时5折</span>
                         </div>
 
-                        <ul class="benefits">
+                        <ul class="benefits" id="benefitsList">
                             <li>完整竞品对比分析 (20+维度)</li>
                             <li>用户情感与痛点深度挖掘</li>
                             <li>YouTube视频营销洞察</li>
@@ -681,7 +682,7 @@
                             <img id="qrImage" src="wechat_qr.jpg" alt="收款码"
                                 onerror="this.src='https://via.placeholder.com/180x180/667eea/fff?text=请添加收款码'"
                                 loading="lazy">
-                            <p class="amount-text">请扫码支付 ¥299</p>
+                            <p class="amount-text" id="amountText">请扫码支付 ¥299</p>
                             <p class="scan-text">使用 <span id="methodText">微信</span> 扫一扫</p>
                             <p class="tip-text" id="tipText">支付成功后系统会自动检测，若已支付可手动刷新一次</p>
                         </div>
@@ -765,6 +766,19 @@
         const tipText = document.getElementById('tipText');
         const wechatQrWrap = document.getElementById('wechatQrWrap');
         const wechatQrCode = document.getElementById('wechatQrCode');
+        const previewTitle = document.getElementById('previewTitle');
+        const previewMeta = document.getElementById('previewMeta');
+        const reportScroll = document.getElementById('reportScroll');
+        const lockMask = document.getElementById('lockMask');
+        const lockTitle = document.getElementById('lockTitle');
+        const lockSubtitle = document.getElementById('lockSubtitle');
+        const paymentHeading = document.getElementById('paymentHeading');
+        const projectSummary = document.getElementById('projectSummary');
+        const oldPrice = document.getElementById('oldPrice');
+        const currentPrice = document.getElementById('currentPrice');
+        const priceTag = document.getElementById('priceTag');
+        const benefitsList = document.getElementById('benefitsList');
+        const amountText = document.getElementById('amountText');
         const orderIdFromUrl = params.get('order_id');
         const activeOrderId = /^\d+$/.test(orderIdFromUrl || '') ? orderIdFromUrl : '';
         const orderType = (params.get('type') || 'competitor').toLowerCase();
@@ -772,6 +786,121 @@
         let activeMethod = 'wechat';
         let wechatCodeUrl = '';
         let wechatInitStarted = false;
+        let orderSummaryLoaded = false;
+
+        function formatCents(amountCents) {
+            const amount = Number(amountCents || 0) / 100;
+            return '¥' + amount.toFixed(amount % 1 === 0 ? 0 : 2);
+        }
+
+        function updateBenefits(items) {
+            if (!benefitsList || !Array.isArray(items) || !items.length) return;
+            benefitsList.innerHTML = items.map(item => `<li>${item}</li>`).join('');
+        }
+
+        function applyExternalOrderSummary(data) {
+            const projectName = data.project_name || '';
+            const amountLabel = formatCents(data.amount_cents);
+            const description = data.description || t('外部项目订单支付', 'External project payment');
+
+            if (currentPrice) currentPrice.textContent = amountLabel;
+            if (amountText) amountText.textContent = t(`请扫码支付 ${amountLabel}`, `Scan to pay ${amountLabel}`);
+            if (oldPrice) oldPrice.style.display = 'none';
+            if (priceTag) {
+                priceTag.textContent = t('统一支付中心', 'Payment Center');
+            }
+
+            if (projectName) {
+                if (paymentHeading) paymentHeading.textContent = t(`💳 支付 ${projectName} 订单`, `💳 Pay ${projectName} order`);
+                if (projectSummary) {
+                    projectSummary.style.display = 'block';
+                    projectSummary.textContent = t(
+                        `当前订单来自 ${projectName}，支付完成后将返回原系统继续处理。`,
+                        `This order comes from ${projectName}. After payment, you can return to the original system to continue.`
+                    );
+                }
+                if (previewTitle) previewTitle.textContent = t(`📦 ${projectName} 订单确认`, `📦 ${projectName} order confirmation`);
+            } else {
+                if (paymentHeading) paymentHeading.textContent = t('💳 外部项目订单支付', '💳 External project payment');
+                if (previewTitle) previewTitle.textContent = t('📦 外部项目订单确认', '📦 External project order confirmation');
+            }
+
+            if (previewMeta) {
+                const parts = [];
+                parts.push(`${t('订单号', 'Order ID')}: ORD${data.order_id}`);
+                if (data.external_reference) {
+                    parts.push(`${t('业务单号', 'Reference')}: ${data.external_reference}`);
+                }
+                parts.push(`${t('支付金额', 'Amount')}: ${amountLabel}`);
+                previewMeta.textContent = parts.join(' · ');
+            }
+
+            if (reportScroll) {
+                reportScroll.innerHTML = `
+                    <div class="report-section">
+                        <h3 class="section-title">${t('🧾 订单摘要', '🧾 Order summary')}</h3>
+                        <p class="report-text">${description}</p>
+                        <table class="data-table">
+                            <tbody>
+                                <tr>
+                                    <td>${t('订单号', 'Order ID')}</td>
+                                    <td>ORD${data.order_id}</td>
+                                </tr>
+                                <tr>
+                                    <td>${t('项目名称', 'Project')}</td>
+                                    <td>${projectName || t('外部项目', 'External project')}</td>
+                                </tr>
+                                <tr>
+                                    <td>${t('支付金额', 'Amount')}</td>
+                                    <td>${amountLabel}</td>
+                                </tr>
+                                <tr>
+                                    <td>${t('支付状态', 'Status')}</td>
+                                    <td>${data.status || 'PENDING'}</td>
+                                </tr>
+                                ${data.external_reference ? `<tr><td>${t('业务单号', 'Reference')}</td><td>${data.external_reference}</td></tr>` : ''}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="report-section">
+                        <h3 class="section-title">${t('📌 支付说明', '📌 Payment notes')}</h3>
+                        <div class="suggestion-box">
+                            <h4>${t('统一支付中心', 'Payment center')}</h4>
+                            <p>${t('请使用微信扫码完成支付。支付成功后，系统会自动检测并同步结果，您可以返回原业务系统继续后续流程。', 'Please scan with WeChat to complete payment. Once successful, the system will sync the result automatically and you can return to the original system to continue.')}</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (lockTitle) lockTitle.textContent = t('🔒 支付后继续后续流程', '🔒 Continue after payment');
+            if (lockSubtitle) lockSubtitle.textContent = t('支付结果会自动同步到原业务系统', 'Payment status will sync back to the original system');
+
+            updateBenefits([
+                t(`支付金额：${amountLabel}`, `Amount: ${amountLabel}`),
+                t(`项目名称：${projectName || '外部项目'}`, `Project: ${projectName || 'External project'}`),
+                t('微信扫码后自动回传支付状态', 'Payment status syncs automatically after scan'),
+                t('支付成功后可返回原业务系统', 'Return to the original system after payment'),
+                t('无需重复提交订单', 'No need to submit the order again')
+            ]);
+        }
+
+        async function loadOrderSummary() {
+            if (!activeOrderId || orderSummaryLoaded) return;
+            try {
+                const res = await fetch('/api/order_summary?order_id=' + encodeURIComponent(activeOrderId));
+                if (!res.ok) return;
+                const data = await res.json();
+                orderSummaryLoaded = true;
+                const amountLabel = formatCents(data.amount_cents);
+                if (currentPrice) currentPrice.textContent = amountLabel;
+                if (amountText) amountText.textContent = t(`请扫码支付 ${amountLabel}`, `Scan to pay ${amountLabel}`);
+                if (data.project_code && data.project_code !== 'flowaiagent') {
+                    applyExternalOrderSummary(data);
+                }
+            } catch (error) {
+                console.warn('Failed to load order summary', error);
+            }
+        }
 
         if (!activeOrderId) {
             const paymentSidebar = document.querySelector('.payment-sidebar');
@@ -807,6 +936,7 @@
             );
         } else {
             orderIdElement.textContent = activeOrderId;
+            loadOrderSummary();
         }
 
         function renderWechatQr(codeUrl) {
