@@ -798,6 +798,94 @@
             benefitsList.innerHTML = items.map(item => `<li>${item}</li>`).join('');
         }
 
+        function renderOrderSummaryTable(data, amountLabel, projectName, description) {
+            if (!reportScroll) return;
+            reportScroll.innerHTML = `
+                <div class="report-section">
+                    <h3 class="section-title">${t('🧾 订单摘要', '🧾 Order summary')}</h3>
+                    <p class="report-text">${description}</p>
+                    <table class="data-table">
+                        <tbody>
+                            <tr>
+                                <td>${t('订单号', 'Order ID')}</td>
+                                <td>ORD${data.order_id}</td>
+                            </tr>
+                            <tr>
+                                <td>${t('项目名称', 'Project')}</td>
+                                <td>${projectName}</td>
+                            </tr>
+                            <tr>
+                                <td>${t('支付金额', 'Amount')}</td>
+                                <td>${amountLabel}</td>
+                            </tr>
+                            <tr>
+                                <td>${t('支付状态', 'Status')}</td>
+                                <td>${data.status || 'PENDING'}</td>
+                            </tr>
+                            ${data.external_reference ? `<tr><td>${t('业务单号', 'Reference')}</td><td>${data.external_reference}</td></tr>` : ''}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="report-section">
+                    <h3 class="section-title">${t('📌 支付说明', '📌 Payment notes')}</h3>
+                    <div class="suggestion-box">
+                        <h4>${t('支付流程', 'Payment flow')}</h4>
+                        <p>${t('请使用微信扫码完成支付。支付成功后，系统会自动检测状态并跳转到对应结果页面。', 'Please scan with WeChat to complete payment. Once successful, the system will detect the payment and redirect automatically.')}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function applyInternalOrderSummary(data) {
+            const amountLabel = formatCents(data.amount_cents);
+            const type = (data.type || normalizedOrderType || 'competitor').toLowerCase();
+            const isDiscoveryOrder = type === 'discovery';
+            const projectName = isDiscoveryOrder
+                ? t('选品开发分析', 'Product Discovery Analysis')
+                : t('竞品分析报告', 'Competitor Analysis Report');
+            const description = data.description || (
+                isDiscoveryOrder
+                    ? t('这是一次选品开发订单支付。支付成功后，系统将继续进行选品开发分析并进入后续流程。', 'This payment is for a product discovery order. After payment, the system will continue the discovery workflow.')
+                    : t('这是一次竞品分析订单支付。支付成功后，系统将继续生成完整竞品分析结果。', 'This payment is for a competitor analysis order. After payment, the system will continue generating the full competitor analysis.')
+            );
+
+            if (paymentHeading) paymentHeading.textContent = isDiscoveryOrder ? t('💳 支付选品开发订单', '💳 Pay Product Discovery order') : t('💳 支付竞品分析订单', '💳 Pay Competitor Analysis order');
+            if (previewTitle) previewTitle.textContent = isDiscoveryOrder ? t('📦 选品开发订单确认', '📦 Product Discovery order confirmation') : t('📦 竞品分析订单确认', '📦 Competitor Analysis order confirmation');
+            if (previewMeta) previewMeta.textContent = `${t('订单号', 'Order ID')}: ORD${data.order_id} · ${t('支付金额', 'Amount')}: ${amountLabel}`;
+            if (projectSummary) {
+                projectSummary.style.display = 'block';
+                projectSummary.textContent = isDiscoveryOrder
+                    ? t('这是选品开发付费订单，支付成功后系统会自动继续分析。', 'This is a paid product discovery order. The workflow will continue automatically after payment.')
+                    : t('这是竞品分析付费订单，支付成功后系统会自动继续生成完整报告。', 'This is a paid competitor analysis order. The full report workflow will continue automatically after payment.');
+            }
+            if (currentPrice) currentPrice.textContent = amountLabel;
+            if (amountText) amountText.textContent = t(`请扫码支付 ${amountLabel}`, `Scan to pay ${amountLabel}`);
+            if (oldPrice) oldPrice.style.display = 'none';
+            if (priceTag) priceTag.textContent = isDiscoveryOrder ? t('选品开发', 'Discovery') : t('竞品分析', 'Competitor');
+            if (lockTitle) lockTitle.textContent = isDiscoveryOrder ? t('🔒 支付后继续选品开发流程', '🔒 Continue discovery after payment') : t('🔒 支付后继续竞品分析流程', '🔒 Continue competitor analysis after payment');
+            if (lockSubtitle) lockSubtitle.textContent = isDiscoveryOrder ? t('支付结果确认后将自动开始选品开发分析', 'The discovery workflow will start automatically after payment confirmation') : t('支付结果确认后将自动继续生成完整竞品分析报告', 'The full competitor analysis will continue automatically after payment confirmation');
+
+            updateBenefits(
+                isDiscoveryOrder
+                    ? [
+                        t(`支付金额：${amountLabel}`, `Amount: ${amountLabel}`),
+                        t('继续完整选品开发分析流程', 'Continue the full discovery workflow'),
+                        t('自动检查支付状态并跳转', 'Auto-check payment status and redirect'),
+                        t('支付成功后进入结果流程', 'Continue to result flow after payment'),
+                        t('无需重复提交需求', 'No need to resubmit the request')
+                    ]
+                    : [
+                        t(`支付金额：${amountLabel}`, `Amount: ${amountLabel}`),
+                        t('继续完整竞品分析报告生成', 'Continue generating the full competitor report'),
+                        t('自动检查支付状态并跳转', 'Auto-check payment status and redirect'),
+                        t('支付成功后进入结果流程', 'Continue to result flow after payment'),
+                        t('无需重复提交订单', 'No need to resubmit the order')
+                    ]
+            );
+
+            renderOrderSummaryTable(data, amountLabel, projectName, description);
+        }
+
         function applyExternalOrderSummary(data) {
             const projectName = data.project_name || '';
             const amountLabel = formatCents(data.amount_cents);
@@ -835,42 +923,7 @@
                 previewMeta.textContent = parts.join(' · ');
             }
 
-            if (reportScroll) {
-                reportScroll.innerHTML = `
-                    <div class="report-section">
-                        <h3 class="section-title">${t('🧾 订单摘要', '🧾 Order summary')}</h3>
-                        <p class="report-text">${description}</p>
-                        <table class="data-table">
-                            <tbody>
-                                <tr>
-                                    <td>${t('订单号', 'Order ID')}</td>
-                                    <td>ORD${data.order_id}</td>
-                                </tr>
-                                <tr>
-                                    <td>${t('项目名称', 'Project')}</td>
-                                    <td>${projectName || t('外部项目', 'External project')}</td>
-                                </tr>
-                                <tr>
-                                    <td>${t('支付金额', 'Amount')}</td>
-                                    <td>${amountLabel}</td>
-                                </tr>
-                                <tr>
-                                    <td>${t('支付状态', 'Status')}</td>
-                                    <td>${data.status || 'PENDING'}</td>
-                                </tr>
-                                ${data.external_reference ? `<tr><td>${t('业务单号', 'Reference')}</td><td>${data.external_reference}</td></tr>` : ''}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="report-section">
-                        <h3 class="section-title">${t('📌 支付说明', '📌 Payment notes')}</h3>
-                        <div class="suggestion-box">
-                            <h4>${t('统一支付中心', 'Payment center')}</h4>
-                            <p>${t('请使用微信扫码完成支付。支付成功后，系统会自动检测并同步结果，您可以返回原业务系统继续后续流程。', 'Please scan with WeChat to complete payment. Once successful, the system will sync the result automatically and you can return to the original system to continue.')}</p>
-                        </div>
-                    </div>
-                `;
-            }
+            renderOrderSummaryTable(data, amountLabel, projectName || t('外部项目', 'External project'), description);
 
             if (lockTitle) lockTitle.textContent = t('🔒 支付后继续后续流程', '🔒 Continue after payment');
             if (lockSubtitle) lockSubtitle.textContent = t('支付结果会自动同步到原业务系统', 'Payment status will sync back to the original system');
@@ -896,6 +949,8 @@
                 if (amountText) amountText.textContent = t(`请扫码支付 ${amountLabel}`, `Scan to pay ${amountLabel}`);
                 if (data.project_code && data.project_code !== 'flowaiagent') {
                     applyExternalOrderSummary(data);
+                } else {
+                    applyInternalOrderSummary(data);
                 }
             } catch (error) {
                 console.warn('Failed to load order summary', error);
