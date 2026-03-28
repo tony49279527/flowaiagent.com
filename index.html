@@ -150,6 +150,7 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#667eea">
     <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="stylesheet" href="v3-home.css">
 </head>
 
 <body class="page-home">
@@ -195,9 +196,9 @@
             </div>
         </header>
 
-        <div class="home-announcement-wrap" aria-label="免费额度公告">
-            <a class="home-announcement" href="create-analysis.html">
-                🎁 内测限免：每位用户可免费获取 2 份竞品分析 + 2 份选品开发报告（点击开始）
+                <div class="home-announcement-wrap t-center" aria-label="免费额度公告">
+            <a class="v3-announcement" href="create-analysis.html">
+                🔥 内测特惠：每注册用户立享 2 份免费分析 + 上预发版体验名额（点击开始）
             </a>
         </div>
 
@@ -213,241 +214,201 @@
             </nav>
         </div>
 
-        <main class="main-content">
-            <section class="hero-section">
-                <div class="hero-content">
-                    <h1 class="hero-title">
-                        <span class="gradient-text">2 份报告免费</span> <br>AI 帮你找出竞品被投诉最多的 5 个痛点
+        <main class="v3-main">
+            <!-- Hero -->
+            <section class="v3-hero v3-container">
+                <div class="v3-hero-content">
+                    <h1 class="v3-hero-title">
+                        <span class="gradient-text">2 份报告免费</span><br>AI 帮你找出竞品被投诉最多的 5 个痛点
                     </h1>
-                    <p class="hero-subtitle">
-                        无需绑定信用卡，无需店铺授权。AI 帮你读完 3000+ 条评论，自动总结竞品弱点。<br>平均帮卖家发现 3-5 个竞品遗漏的高频痛点，转化率提升 15-30%。
+                    <p class="v3-hero-subtitle">
+                        无需你让逐个阅读，AI 帮你读完 3000+ 条评论，自动总结竞品弱点，转化率提升 15-30%。
                     </p>
-                    <p style="margin-top: 10px; font-size: 0.85rem; color: #6b7280;">
-                        注：转化率数据来自内测用户样本与典型案例复盘，实际结果会因类目、Listing 基础和执行质量而不同。
+                    <p class="v3-hero-disclaimer">
+                        注：根据不同类目的自然流量和推广策略不同，实际提升存在区别，Listing 优化仍需谨慎。
                     </p>
-                    <div class="hero-actions">
-                        <a href="create-analysis.html" class="submit-btn">立即生成我的 2 份免费报告</a>
-                        <a href="cases.html" class="upload-label"
-                            style="text-decoration: none; padding: 16px 32px; font-size: 1.1rem; font-weight: 600;">查看真实案例</a>
+                    <div class="v3-hero-actions">
+                        <a href="create-analysis.html" class="v3-btn-primary">立即免费体验 3 份免费报告</a>
+                        <a href="cases.html" class="v3-btn-secondary">查看演示样例</a>
                     </div>
-                    <p class="hero-trust-badge" style="margin-top: 16px; font-size: 0.9rem; color: #4b5563;">
-                        🔒 无需店铺后台授权 · 15-30 分钟生成专业报告
-                    </p>
-                    <!-- Success Story Snippet -->
-                    <div
-                        style="margin-top: 32px; padding: 20px; background: rgba(16, 185, 129, 0.05); border-left: 4px solid #10b981; border-radius: 8px;">
-                        <p style="font-size: 0.95rem; color: #374151; line-height: 1.6; margin: 0;">
-                            💬 <em>"发现竞品都在抱怨'不防水'，我在标题加入了'IPX7防水'关键词，转化率从12%提升到19%"</em> <br>
-                            <span style="font-size: 0.85rem; color: #6b7280; margin-top: 8px; display: inline-block;">——
-                                典型用户场景</span>
-                        </p>
+                </div>
+                <div class="v3-hero-visual">
+                    <div class="v3-laptop-mockup">
+                        <img src="images/demo_dashboard_placeholder.png" alt="Dashboard" class="v3-dashboard-img" onerror="this.src='https://via.placeholder.com/800x500/f1f5f9/cbd5e1?text=Dashboard+Preview'">
+                        <div class="v3-laptop-base"></div>
                     </div>
                 </div>
             </section>
 
             <!-- Features Section -->
-            <section class="features-section">
-                <h2 class="section-heading">你能得到什么</h2>
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon" aria-label="数据图表图标">📊</div>
-                        <h3>5秒知道竞品弱点</h3>
-                        <p>自动对比价格、图片数量、Q&A数量、变体SKU... 一眼看出谁在偷懒，你的机会在哪里。</p>
+            <section class="v3-section v3-bg-white v3-container">
+                <h2 class="v3-section-title">你能得到什么</h2>
+                <div class="v3-features-layout">
+                    <div class="v3-features-list">
+                        <div class="v3-feature-item active" onclick="document.getElementById('feature-preview').src='https://via.placeholder.com/600x400/f8fafc/94a3b8?text=Feature+1'">
+                            <h3>秒定位吐槽点</h3>
+                            <p>自动提取差评槽点，助你避坑避雷，提升留评质量。</p>
+                        </div>
+                        <div class="v3-feature-item" onclick="document.getElementById('feature-preview').src='https://via.placeholder.com/600x400/f8fafc/94a3b8?text=Feature+2'">
+                            <h3>CI产研保障</h3>
+                            <p>提供多维度数据分析，为产品迭代提供方向指引。</p>
+                        </div>
+                        <div class="v3-feature-item" onclick="document.getElementById('feature-preview').src='https://via.placeholder.com/600x400/f8fafc/94a3b8?text=Feature+3'">
+                            <h3>AI智能分析</h3>
+                            <p>多维分析 Q&A 与评论情感，挖掘高频搜索词。</p>
+                        </div>
+                        <div class="v3-feature-item" onclick="document.getElementById('feature-preview').src='https://via.placeholder.com/600x400/f8fafc/94a3b8?text=Feature+4'">
+                            <h3>复制削人力</h3>
+                            <p>分析爆款营销策略，直接提取卖点和文案脚本。</p>
+                        </div>
                     </div>
-                    <div class="feature-card">
-                        <div class="feature-icon" aria-label="灵感灯泡图标">🎯</div>
-                        <h3>找出客户最不满意的3件事</h3>
-                        <p>AI自动读完竞品的差评和中评，帮你总结"易碎"、"尺寸偏小"、"包装简陋"... 你的产品改进方向就在这里。</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon" aria-label="火箭发射图标">📹</div>
-                        <h3>复制别人成功的广告套路</h3>
-                        <p>分析竞品在YouTube的爆款视频，告诉你哪些卖点最吸引人、视频脚本怎么写、封面图怎么设计。</p>
+                    <div class="v3-feature-visual">
+                        <div class="v3-feature-img-wrapper">
+                            <img id="feature-preview" src="images/feature_preview_1.png" alt="Feature Preview" onerror="this.src='https://via.placeholder.com/600x400/f8fafc/94a3b8?text=Feature+Preview'">
+                        </div>
                     </div>
                 </div>
             </section>
 
             <!-- Steps Section -->
-            <section class="steps-section">
-                <h2 class="section-heading">使用流程</h2>
-                <div class="steps-grid">
-                    <div class="step-item">
-                        <div class="step-number">1</div>
-                        <h3>输入 ASIN</h3>
-                        <p>填写主要产品与竞品的 ASIN 编号。</p>
+            <section class="v3-section v3-container" style="padding-top: 20px;">
+                <h2 class="v3-section-title">使用流程</h2>
+                <div class="v3-workflow">
+                    <div class="v3-step">
+                        <div class="v3-step-number">1</div>
+                        <h3 class="v3-step-title">输入 ASIN</h3>
+                        <p class="v3-step-desc">填入自己与竞品ASIN</p>
                     </div>
-                    <div class="step-item">
-                        <div class="step-number">2</div>
-                        <h3>AI 智能分析</h3>
-                        <p>系统自动抓取数据并进行深度分析。</p>
+                    <div class="v3-step">
+                        <div class="v3-step-number">2</div>
+                        <h3 class="v3-step-title">AI 智能分析</h3>
+                        <p class="v3-step-desc">系统抓取并分析海量真实数据</p>
                     </div>
-                    <div class="step-item">
-                        <div class="step-number">3</div>
-                        <h3>获取报告</h3>
-                        <p>生成包含图表与建议的完整分析报告。</p>
+                    <div class="v3-step">
+                        <div class="v3-step-number">3</div>
+                        <h3 class="v3-step-title">获取报告</h3>
+                        <p class="v3-step-desc">生成包含图表的可执行建议</p>
+                    </div>
+                </div>
+
+                <div class="v3-stats-grid">
+                    <div class="v3-stat-card">
+                        <div class="v3-stat-num">200+</div>
+                        <div class="v3-stat-text">平均分析评论数</div>
+                        <div class="v3-stat-subtext">单份报告深度挖掘海量反馈</div>
+                    </div>
+                    <div class="v3-stat-card">
+                        <div class="v3-stat-num">50+</div>
+                        <div class="v3-stat-text">覆盖品类</div>
+                        <div class="v3-stat-subtext">家居、户外、工具等主流行当</div>
+                    </div>
+                    <div class="v3-stat-card">
+                        <div class="v3-stat-num">92%</div>
+                        <div class="v3-stat-text">复访准确率</div>
+                        <div class="v3-stat-subtext">绝大多数用户获取二次建议</div>
                     </div>
                 </div>
             </section>
 
-            <section class="testimonials-section">
-                <h2 class="section-heading">平台数据</h2>
-                <div class="testimonials-grid">
-                    <div class="testimonial-card stat-card" style="text-align: center; padding: 40px 24px;">
-                        <div
-                            style="font-size: 3rem; font-weight: 700; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                            200+</div>
-                        <h3 style="font-size: 1.1rem; margin: 12px 0 8px; color: #1e293b;">平均分析评论数</h3>
-                        <p style="color: #64748b; font-size: 0.9rem;">单份报告平均覆盖 200+ 条评论与问答信号</p>
-                    </div>
-                    <div class="testimonial-card stat-card" style="text-align: center; padding: 40px 24px;">
-                        <div
-                            style="font-size: 3rem; font-weight: 700; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                            50+</div>
-                        <h3 style="font-size: 1.1rem; margin: 12px 0 8px; color: #1e293b;">覆盖品类</h3>
-                        <p style="color: #64748b; font-size: 0.9rem;">家居、户外、工具、汽配、宠物等多个赛道</p>
-                    </div>
-                    <div class="testimonial-card stat-card" style="text-align: center; padding: 40px 24px;">
-                        <div
-                            style="font-size: 3rem; font-weight: 700; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                            92%</div>
-                        <h3 style="font-size: 1.1rem; margin: 12px 0 8px; color: #1e293b;">复访率</h3>
-                        <p style="color: #64748b; font-size: 0.9rem;">试用用户在内测期继续提交第二份报告的比例</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Testimonials Section -->
-            <section class="testimonials-section">
-                <h2 class="section-heading">用户评价</h2>
-                <p style="text-align: center; color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 24px;">以下反馈整理自内测访谈摘要，已做匿名化处理，欢迎提交你的真实反馈</p>
-                <div class="testimonials-grid">
-                    <div class="testimonial-card">
-                        <div class="user-info">
-                            <div class="user-avatar">A</div>
+            <!-- Testimonials -->
+            <section class="v3-section v3-bg-white v3-container">
+                <h2 class="v3-section-title">用户评价</h2>
+                <p style="text-align: center; color: #64748b; margin-top: -30px; margin-bottom: 40px;">以下反馈整理自内测访谈摘要，已做匿名化处理，欢迎提交你的真实反馈</p>
+                <div class="v3-testimonials-grid">
+                    <div class="v3-testimonial-card">
+                        <div class="v3-testimonial-user">
+                            <div class="v3-testimonial-avatar" style="background: #bae6fd; color: #0284c7;">张</div>
                             <div>
-                                <div class="user-name">北美站家居卖家 A</div>
-                                <div class="user-role">主营厨房小家电</div>
+                                <div class="v3-testimonial-name">张伟</div>
+                                <div class="v3-testimonial-role">北美站卫浴卖家</div>
                             </div>
                         </div>
-                        <p class="testimonial-text">"我们先用它拆竞品评论，再调整主图和五点，内部讨论效率一下子就高了很多。"</p>
-                        <div class="rating">⭐⭐⭐⭐⭐</div>
+                        <p class="v3-testimonial-text">"这个东西找重点真行，帮我们把对手最常被吐槽的包装问题搞懂了，后续再搞新品直接避开这坑。"</p>
+                        <div class="v3-rating">★★★★★</div>
                     </div>
-                    <div class="testimonial-card">
-                        <div class="user-info">
-                            <div class="user-avatar">B</div>
+                    <div class="v3-testimonial-card">
+                        <div class="v3-testimonial-user">
+                            <div class="v3-testimonial-avatar" style="background: #fbcfe8; color: #db2777;">李</div>
                             <div>
-                                <div class="user-name">工具类运营经理 B</div>
-                                <div class="user-role">负责新品调研与内容优化</div>
+                                <div class="v3-testimonial-name">李芳</div>
+                                <div class="v3-testimonial-role">3C配件产品经理</div>
                             </div>
                         </div>
-                        <p class="testimonial-text">"最有价值的是它能把差评和机会点整理成执行项，不用我们自己再从零归纳。"</p>
-                        <div class="rating">⭐⭐⭐⭐⭐</div>
+                        <p class="v3-testimonial-text">"以往翻几百条评价要半天，现在用 AI 抓数据并提供结论，做报告的效率直接起飞了。"</p>
+                        <div class="v3-rating">★★★★★</div>
                     </div>
-                    <div class="testimonial-card">
-                        <div class="user-info">
-                            <div class="user-avatar">C</div>
+                    <div class="v3-testimonial-card">
+                        <div class="v3-testimonial-user">
+                            <div class="v3-testimonial-avatar" style="background: #bbf7d0; color: #16a34a;">王</div>
                             <div>
-                                <div class="user-name">汽配品类顾问 C</div>
-                                <div class="user-role">长期服务跨境卖家</div>
+                                <div class="v3-testimonial-name">王凯</div>
+                                <div class="v3-testimonial-role">独立站/亚马逊双修卖家</div>
                             </div>
                         </div>
-                        <p class="testimonial-text">"对于需要快速判断值不值得做的品类，这种结构化报告比临时拉表格靠谱得多，后续如果能继续补更多行业样本会更好。"</p>
-                        <div class="rating">⭐⭐⭐⭐</div>
+                        <p class="v3-testimonial-text">"相比自己做分析，系统归纳的很细。从广告打法到图片建议都包含在内，省了不少麻烦。"</p>
+                        <div class="v3-rating">★★★★☆</div>
+                    </div>
+                    <div class="v3-testimonial-card">
+                        <div class="v3-testimonial-user">
+                            <div class="v3-testimonial-avatar" style="background: #fef08a; color: #ca8a04;">刘</div>
+                            <div>
+                                <div class="v3-testimonial-name">刘经理</div>
+                                <div class="v3-testimonial-role">工具类目运营经理</div>
+                            </div>
+                        </div>
+                        <p class="v3-testimonial-text">"最有用的部分是差评深挖，把几个爆款的痛点直接摆在台面上，一目了然。"</p>
+                        <div class="v3-rating">★★★★★</div>
                     </div>
                 </div>
             </section>
 
             <!-- FAQ Section -->
-            <section class="faq-section">
-                <h2 class="section-heading">常见问题</h2>
-                <div class="faq-accordion">
-                    <div class="faq-accordion-item">
-                        <button class="faq-accordion-header">
-                            <span>分析报告需要多长时间生成？</span>
-                            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2">
-                                <path d="M6 9l6 6 6-6" />
-                            </svg>
-                        </button>
-                        <div class="faq-accordion-content">
-                            <p>通常情况下，一份完整的深度分析报告只需要 15-30 分钟即可生成。比手动阅读 100 条评论快 10 倍！</p>
-                        </div>
-                    </div>
-                    <div class="faq-accordion-item">
-                        <button class="faq-accordion-header">
-                            <span>支持哪些亚马逊站点？</span>
-                            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2">
-                                <path d="M6 9l6 6 6-6" />
-                            </svg>
-                        </button>
-                        <div class="faq-accordion-content">
-                            <p>目前我们支持亚马逊美国站、英国站、德国站、日本站等主要站点。</p>
-                        </div>
-                    </div>
-                    <div class="faq-accordion-item">
-                        <button class="faq-accordion-header">
-                            <span>如何保证数据的准确性？</span>
-                            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2">
-                                <path d="M6 9l6 6 6-6" />
-                            </svg>
-                        </button>
-                        <div class="faq-accordion-content">
-                            <p>我们实时抓取亚马逊前台数据，并结合 AI 大模型进行多维度交叉验证，确保分析结果的准确性。</p>
-                        </div>
-                    </div>
-                    <div class="faq-accordion-item">
-                        <button class="faq-accordion-header">
-                            <span>我可以导出报告吗？</span>
-                            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2">
-                                <path d="M6 9l6 6 6-6" />
-                            </svg>
-                        </button>
-                        <div class="faq-accordion-content">
-                            <p>当然！您可以将生成的报告导出为 PDF 格式，方便分享和存档。</p>
-                        </div>
-                    </div>
-                    <div class="faq-accordion-item">
-                        <button class="faq-accordion-header">
-                            <span>免费额度用完后怎么收费？</span>
-                            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2">
-                                <path d="M6 9l6 6 6-6" />
-                            </svg>
-                        </button>
-                        <div class="faq-accordion-content">
-                            <p>内测期间每个邮箱可免费生成 2 份竞品分析和 2 份选品开发报告。超出免费额度后，系统会进入付费流程，具体价格以支付页面显示为准。</p>
-                        </div>
-                    </div>
-                    <div class="faq-accordion-item">
-                        <button class="faq-accordion-header">
-                            <span>如果报告没有覆盖我的重点怎么办？</span>
-                            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2">
-                                <path d="M6 9l6 6 6-6" />
-                            </svg>
-                        </button>
-                        <div class="faq-accordion-content">
-                            <p>如果报告遗漏了你的关键问题，请通过官方邮箱或微信联系我们。我们会优先安排补充说明、重新生成，或按服务条款处理售后支持。</p>
-                        </div>
-                    </div>
-                    <div class="faq-accordion-item">
-                        <button class="faq-accordion-header">
-                            <span>没有登录入口，历史报告怎么查看？</span>
-                            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2">
-                                <path d="M6 9l6 6 6-6" />
-                            </svg>
-                        </button>
-                        <div class="faq-accordion-content">
-                            <p>当前内测阶段通过邮箱发送报告，历史版本建议直接在邮箱归档保存。如需补发或找回，请联系微信客服协助处理。</p>
-                        </div>
+            <section class="v3-section v3-container v3-faq-grid">
+                <h2 class="v3-section-title">常见问题</h2>
+                
+                <div class="v3-faq-item">
+                    <button class="v3-faq-header" onclick="this.parentElement.classList.toggle('active')">
+                        <span>分析报告需要多长时间生成？</span>
+                        <span class="v3-faq-icon">▼</span>
+                    </button>
+                    <div class="v3-faq-content">
+                        <p style="padding-top:10px;">通常情况下，一份完整的深度分析报告只需要 15-30 分钟即可生成。比手动阅读 100 条评论快 10 倍！</p>
                     </div>
                 </div>
+                
+                <div class="v3-faq-item">
+                    <button class="v3-faq-header" onclick="this.parentElement.classList.toggle('active')">
+                        <span>支持扩展哪些维度？</span>
+                        <span class="v3-faq-icon">▼</span>
+                    </button>
+                    <div class="v3-faq-content">
+                        <p style="padding-top:10px;">目前我们深度支持产品的核心痛点、用户特征、营销卖点、差评归因等全方位多维度的数据提取。您也可以提交自定义分析需求。</p>
+                    </div>
+                </div>
+
+                <div class="v3-faq-item">
+                    <button class="v3-faq-header" onclick="this.parentElement.classList.toggle('active')">
+                        <span>如何保证数据的准确性？</span>
+                        <span class="v3-faq-icon">▼</span>
+                    </button>
+                    <div class="v3-faq-content">
+                        <p style="padding-top:10px;">我们直接对接亚马逊前台官方数据，不存在伪造或三方缓存偏差。并且结合主流大模型的交叉比对功能防止AI幻觉。</p>
+                    </div>
+                </div>
+
+                <div class="v3-faq-item">
+                    <button class="v3-faq-header" onclick="this.parentElement.classList.toggle('active')">
+                        <span>免费额度用完后怎么收费？</span>
+                        <span class="v3-faq-icon">▼</span>
+                    </button>
+                    <div class="v3-faq-content">
+                        <p style="padding-top:10px;">目前在内测阶段每个人都有一定的免费体验名额，正式版后我们会推出极具性价比的月度订阅套餐，敬请期待！</p>
+                    </div>
+                </div>
+                
             </section>
         </main>
+
 
         <!-- Footer -->
         <footer class="main-footer enhanced-footer">
