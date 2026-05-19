@@ -1,0 +1,1172 @@
+[
+  {
+    "file": "/tmp/flowaiagent.com/404.html",
+    "url": "",
+    "issues": [
+      "MISSING: og:description",
+      "MISSING: og:image",
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "页面未找到 - 404 | FlowAI Agent",
+    "h1": "页面未找到",
+    "meta_description": "抱歉，您访问的页面不存在。",
+    "canonical": "https://flowaiagent.com/404",
+    "og_url": "https://flowaiagent.com/404",
+    "og_title": null,
+    "og_description": "missing",
+    "og_image": null,
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/404_en.html",
+    "url": "",
+    "issues": [
+      "MISSING: meta description",
+      "MISSING: og:description",
+      "MISSING: og:image",
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "Page Not Found | FlowAI Agent",
+    "h1": "Page not found",
+    "meta_description": null,
+    "canonical": "https://flowaiagent.com/404_en",
+    "og_url": "https://flowaiagent.com/404_en",
+    "og_title": null,
+    "og_description": "missing",
+    "og_image": null,
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/admin_console.html",
+    "url": "",
+    "issues": [
+      "MISSING: <h1>",
+      "MISSING: meta description",
+      "MISSING: og:description",
+      "MISSING: og:image",
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "FlowAI Payment Console",
+    "h1": null,
+    "meta_description": null,
+    "canonical": "https://flowaiagent.com/admin_console",
+    "og_url": "https://flowaiagent.com/admin_console",
+    "og_title": null,
+    "og_description": "missing",
+    "og_image": null,
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/agentic-ai-amazon-operations-2025.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "告别“数据搬运工”：为什么 2025 年亚马逊运营的决胜点是 Agentic AI - 竞品分析助手博客",
+    "h1": "告别“数据搬运工”：为什么 2025 年亚马逊运营的决胜点是 Agentic AI，而非更多 SaaS 工具？",
+    "meta_description": "2025年亚马逊运营不再是 SaaS 工具的堆砌。了解 Agentic AI（智能体）如何填充“战略洞察鸿沟”，将您从数据搬运工升级为决策者。FlowAI Agent 重新定义电商分析。",
+    "canonical": "https://flowaiagent.com/agentic-ai-amazon-operations-2025.html",
+    "og_url": "https://flowaiagent.com/agentic-ai-amazon-operations-2025.html",
+    "og_title": "告别“数据搬运工”：为什么 2025 年亚马逊运营的决胜点是 Agentic AI - 竞品分析助手博客",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/agentic-ai-amazon-operations-2025.html",
+      "en": "https://flowaiagent.com/agentic-ai-amazon-operations-2025_en.html",
+      "x-default": "https://flowaiagent.com/agentic-ai-amazon-operations-2025.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/agentic-ai-amazon-operations-2025_en.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "Farewell to \"Data Movers\": Why 2025 Amazon Victory Point is Agentic AI - AI Competitor Analysis Blog",
+    "h1": "Farewell to \"Data Movers\": Why the 2025 Amazon Victory Point is\n                            Agentic AI, Not More SaaS To",
+    "meta_description": "Amazon operations in 2025 aren",
+    "canonical": "https://flowaiagent.com/agentic-ai-amazon-operations-2025_en.html",
+    "og_url": "https://flowaiagent.com/agentic-ai-amazon-operations-2025_en.html",
+    "og_title": "Farewell to",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/agentic-ai-amazon-operations-2025.html",
+      "en": "https://flowaiagent.com/agentic-ai-amazon-operations-2025_en.html",
+      "x-default": "https://flowaiagent.com/agentic-ai-amazon-operations-2025.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/amazon-agency-sop-automation-ai-scalability.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "SOP自动化革命：如何用AI解决跨境电商团队\"人才断层\"与\"服务标准化\"难题？ - 竞品分析助手博客",
+    "h1": "SOP自动化革命：如何用AI解决跨境电商团队“人才断层”与“服务标准化”难题？",
+    "meta_description": "资深运营难招，初级运营交付不稳定？探索如何利用 FlowAI Agent 实现 SOP 自动化，消除“人才断层”，将一周的人工调研压缩至分钟级，帮助 Agency 实现规模化扩张。",
+    "canonical": "https://flowaiagent.com/amazon-agency-sop-automation-ai-scalability.html",
+    "og_url": "https://flowaiagent.com/amazon-agency-sop-automation-ai-scalability.html",
+    "og_title": "SOP自动化革命：如何用AI解决跨境电商团队",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/amazon-agency-sop-automation-ai-scalability.html",
+      "en": "https://flowaiagent.com/amazon-agency-sop-automation-ai-scalability_en.html",
+      "x-default": "https://flowaiagent.com/amazon-agency-sop-automation-ai-scalability.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/amazon-agency-sop-automation-ai-scalability_en.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "The SOP Automation Revolution: Solving the \"Talent Gap\" and Scaling Your Amazon Agency with AI - AI\n        Competitor Analysis Blog",
+    "h1": "The SOP Automation Revolution: Solving the \"Talent Gap\" and Scaling\n                            Your Amazon Agency with ",
+    "meta_description": "Hard to hire senior staff? Inconsistent deliverables? Discover how to use FlowAI Agent to automate SOPs, bridge the",
+    "canonical": "https://flowaiagent.com/amazon-agency-sop-automation-ai-scalability_en.html",
+    "og_url": "https://flowaiagent.com/amazon-agency-sop-automation-ai-scalability_en.html",
+    "og_title": "The SOP Automation Revolution: Solving the",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/amazon-agency-sop-automation-ai-scalability.html",
+      "en": "https://flowaiagent.com/amazon-agency-sop-automation-ai-scalability_en.html",
+      "x-default": "https://flowaiagent.com/amazon-agency-sop-automation-ai-scalability.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/amazon-case-study-polishing-wheel-blue-ocean.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "实战复盘：一款普通的\"抛光轮\"如何通过AI挖掘出被巨头忽视的细分蓝海？ - 竞品分析助手博客",
+    "h1": "实战复盘：一款普通的\"抛光轮\"如何通过AI挖掘出被巨头忽视的细分蓝海？",
+    "meta_description": "面对 3M 等巨头的垄断，中小卖家如何突围？本文复盘一款普通的抛光轮，如何利用 FlowAI Agent 分析 50+ YouTube 视频，构建“专家级”内容护城河，成功切入细分蓝海。",
+    "canonical": "https://flowaiagent.com/amazon-case-study-polishing-wheel-blue-ocean.html",
+    "og_url": "https://flowaiagent.com/amazon-case-study-polishing-wheel-blue-ocean.html",
+    "og_title": "实战复盘：一款普通的",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/amazon-case-study-polishing-wheel-blue-ocean.html",
+      "en": "https://flowaiagent.com/amazon-case-study-polishing-wheel-blue-ocean_en.html",
+      "x-default": "https://flowaiagent.com/amazon-case-study-polishing-wheel-blue-ocean.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/amazon-case-study-polishing-wheel-blue-ocean_en.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "Case Study: How a Generic \"Polishing Wheel\" Found a Blue Ocean Ignored by 3M Using AI - AI Competitor\n        Analysis Blog",
+    "h1": "Case Study: How a Generic \"Polishing Wheel\" Found a Blue Ocean Ignored\n                            by 3M Using AI",
+    "meta_description": "Stuck in a price war with giants like 3M? See how FlowAI Agent helped a generic",
+    "canonical": "https://flowaiagent.com/amazon-case-study-polishing-wheel-blue-ocean_en.html",
+    "og_url": "https://flowaiagent.com/amazon-case-study-polishing-wheel-blue-ocean_en.html",
+    "og_title": "Case Study: How a Generic",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/amazon-case-study-polishing-wheel-blue-ocean.html",
+      "en": "https://flowaiagent.com/amazon-case-study-polishing-wheel-blue-ocean_en.html",
+      "x-default": "https://flowaiagent.com/amazon-case-study-polishing-wheel-blue-ocean.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/amazon-competitor-analysis-efficiency-cost-calculator.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "你的运营团队还在\"手搓\"竞品分析？算一算隐形人效成本 - 竞品分析助手博客",
+    "h1": "你的运营团队还在\"手搓\"竞品分析？算一算被浪费的“隐形人效成本”",
+    "meta_description": "深度拆解传统人工竞品调研的真实成本。了解 FlowAI Agent 如何通过自动化处理数据“脏活”，释放团队的高价值生产力。",
+    "canonical": "https://flowaiagent.com/amazon-competitor-analysis-efficiency-cost-calculator.html",
+    "og_url": "https://flowaiagent.com/amazon-competitor-analysis-efficiency-cost-calculator.html",
+    "og_title": "你的运营团队还在",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/amazon-competitor-analysis-efficiency-cost-calculator.html",
+      "en": "https://flowaiagent.com/amazon-competitor-analysis-efficiency-cost-calculator_en.html",
+      "x-default": "https://flowaiagent.com/amazon-competitor-analysis-efficiency-cost-calculator.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/amazon-competitor-analysis-efficiency-cost-calculator_en.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "Is Your Operations Team Still \"Hand-Rolling\" Competitor Analysis? Calculate the $800/Week \"Hidden Tax\" - AI\n        Competitor Analysis Blog",
+    "h1": "Is Your Operations Team Still \"Hand-Rolling\" Competitor Analysis?\n                            Calculate the $800/Week \"H",
+    "meta_description": "Is your team trapped in",
+    "canonical": "https://flowaiagent.com/amazon-competitor-analysis-efficiency-cost-calculator_en.html",
+    "og_url": "https://flowaiagent.com/amazon-competitor-analysis-efficiency-cost-calculator_en.html",
+    "og_title": "Is Your Operations Team Still",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/amazon-competitor-analysis-efficiency-cost-calculator.html",
+      "en": "https://flowaiagent.com/amazon-competitor-analysis-efficiency-cost-calculator_en.html",
+      "x-default": "https://flowaiagent.com/amazon-competitor-analysis-efficiency-cost-calculator.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/amazon-cosmo-rufus-algorithm-intent-graph.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "解密 COSMO 与 Rufus 算法：让您的 Listing 在 AI 搜索时代存活 - 竞品分析助手博客",
+    "h1": "解密 COSMO 与 Rufus 算法：如何利用“意图图谱”让您的 Listing 在 AI 搜索时代存活？",
+    "meta_description": "传统的关键词堆砌已失效。深入解析亚马逊 COSMO 算法与 Rufus 助手，学习如何利用“意图图谱”和场景化埋词。",
+    "canonical": "https://flowaiagent.com/amazon-cosmo-rufus-algorithm-intent-graph.html",
+    "og_url": "https://flowaiagent.com/amazon-cosmo-rufus-algorithm-intent-graph.html",
+    "og_title": "解密 COSMO 与 Rufus 算法：让您的 Listing 在 AI 搜索时代存活 - 竞品分析助手博客",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/amazon-cosmo-rufus-algorithm-intent-graph.html",
+      "en": "https://flowaiagent.com/amazon-cosmo-rufus-algorithm-intent-graph_en.html",
+      "x-default": "https://flowaiagent.com/amazon-cosmo-rufus-algorithm-intent-graph.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/amazon-cosmo-rufus-algorithm-intent-graph_en.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "Deciphering COSMO & Rufus: How to Use \"Intent Graphs\" to Survive in the AI Search Era - AI Competitor\n        Analysis Blog",
+    "h1": "Deciphering COSMO & Rufus: How to Use \"Intent Graphs\" to Survive in\n                            the AI Search Era",
+    "meta_description": "Traditional keyword stuffing is dead. Decode the Amazon COSMO algorithm and Rufus assistant. Learn how to use",
+    "canonical": "https://flowaiagent.com/amazon-cosmo-rufus-algorithm-intent-graph_en.html",
+    "og_url": "https://flowaiagent.com/amazon-cosmo-rufus-algorithm-intent-graph_en.html",
+    "og_title": "Deciphering COSMO & Rufus: How to Use",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/amazon-cosmo-rufus-algorithm-intent-graph.html",
+      "en": "https://flowaiagent.com/amazon-cosmo-rufus-algorithm-intent-graph_en.html",
+      "x-default": "https://flowaiagent.com/amazon-cosmo-rufus-algorithm-intent-graph.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/amazon-listing-image-optimization-ai-visual-script.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "拒绝\"自嗨型\"作图：如何用AI生成视觉脚本？ - 竞品分析助手博客",
+    "h1": "拒绝“自嗨型”作图：如何用 AI 生成“视觉脚本”，指挥摄影师拍出高转化图片？",
+    "meta_description": "图片很好看，就是不转化？了解 FlowAI Agent 如何将用户痛点转化为“视觉脚本”，指挥摄影师拍出神图。",
+    "canonical": "https://flowaiagent.com/amazon-listing-image-optimization-ai-visual-script.html",
+    "og_url": "https://flowaiagent.com/amazon-listing-image-optimization-ai-visual-script.html",
+    "og_title": "拒绝",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/amazon-listing-image-optimization-ai-visual-script.html",
+      "en": "https://flowaiagent.com/amazon-listing-image-optimization-ai-visual-script_en.html",
+      "x-default": "https://flowaiagent.com/amazon-listing-image-optimization-ai-visual-script.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/amazon-listing-image-optimization-ai-visual-script_en.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "Stop \"Guesswork Design\": How to Use AI to Generate \"Visual Scripts\" for High-Converting Photography - AI\n        Competitor Analysis Blog",
+    "h1": "Stop \"Guesswork Design\": How to Use AI to Generate \"Visual Scripts\"\n                            for High-Converting Phot",
+    "meta_description": "Are your images beautiful but low-converting? You might be trapped in",
+    "canonical": "https://flowaiagent.com/amazon-listing-image-optimization-ai-visual-script_en.html",
+    "og_url": "https://flowaiagent.com/amazon-listing-image-optimization-ai-visual-script_en.html",
+    "og_title": "Stop",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/amazon-listing-image-optimization-ai-visual-script.html",
+      "en": "https://flowaiagent.com/amazon-listing-image-optimization-ai-visual-script_en.html",
+      "x-default": "https://flowaiagent.com/amazon-listing-image-optimization-ai-visual-script.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/blog-template.html",
+    "url": "",
+    "issues": [
+      "MISSING: canonical",
+      "MISSING: og:url",
+      "MISSING: og:description",
+      "MISSING: og:image",
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "文章标题 - 竞品分析助手博客",
+    "h1": "如何利用 AI 进行高效的亚马逊竞品分析？",
+    "meta_description": "文章简介摘�?..",
+    "canonical": null,
+    "og_url": null,
+    "og_title": null,
+    "og_description": "missing",
+    "og_image": null,
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/blog-template_en.html",
+    "url": "",
+    "issues": [
+      "MISSING: canonical",
+      "MISSING: og:url",
+      "MISSING: og:description",
+      "MISSING: og:image",
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "Article Title - AI Competitor Analysis Blog",
+    "h1": "How to Use AI for Efficient Amazon Competitor Analysis?",
+    "meta_description": "Article summary...",
+    "canonical": null,
+    "og_url": null,
+    "og_title": null,
+    "og_description": "missing",
+    "og_image": null,
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/blog.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "博客 - AI 竞品分析 | FlowAI Agent",
+    "h1": "最新文章",
+    "meta_description": "FlowAI Agent 博客 - 分享亚马逊运营策略、AI工具应用及市场趋势分析。",
+    "canonical": "https://flowaiagent.com/blog.html",
+    "og_url": "https://flowaiagent.com/blog.html",
+    "og_title": "博客 - AI 竞品分析 | FlowAI Agent",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/blog.html",
+      "en": "https://flowaiagent.com/blog_en.html",
+      "x-default": "https://flowaiagent.com/blog.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/blog_backup_en.html",
+    "url": "",
+    "issues": [
+      "MISSING: canonical",
+      "MISSING: og:url",
+      "MISSING: og:description",
+      "MISSING: og:image",
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "Blog - AI Competitor Analysis",
+    "h1": "Blog Insights",
+    "meta_description": "Latest insights on Amazon seller strategies, AI tools, and market trends.",
+    "canonical": null,
+    "og_url": null,
+    "og_title": null,
+    "og_description": "missing",
+    "og_image": null,
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/blog_en.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "Blog - AI Amazon Competitor Analysis | FlowAI Agent",
+    "h1": "Blog Insights",
+    "meta_description": "Latest insights on Amazon seller strategies, AI tools, and market trends.",
+    "canonical": "https://flowaiagent.com/blog_en.html",
+    "og_url": "https://flowaiagent.com/blog_en.html",
+    "og_title": "Blog - AI Competitor Analysis",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/blog.html",
+      "en": "https://flowaiagent.com/blog_en.html",
+      "x-default": "https://flowaiagent.com/blog.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/cases.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "成功案例 - AI亚马逊竞品分析 | FlowAI Agent",
+    "h1": "成功案例",
+    "meta_description": "查看FlowAI Agent真实成功案例。了解卖家如何通过AI竞品分析发现竞品痛点，优化产品策略，提升销量和转化率。",
+    "canonical": "https://flowaiagent.com/cases.html",
+    "og_url": "https://flowaiagent.com/cases.html",
+    "og_title": "成功案例 - AI亚马逊竞品分析 | FlowAI Agent",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/cases.html",
+      "en": "https://flowaiagent.com/cases_en.html",
+      "x-default": "https://flowaiagent.com/cases.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/cases_en.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "Case Studies - AI Amazon Competitor Analysis | FlowAI Agent",
+    "h1": "Success Stories",
+    "meta_description": "Explore real-world examples of how FlowAI Agent helps Amazon sellers achieve success through AI-powered competitor analysis.",
+    "canonical": "https://flowaiagent.com/cases_en.html",
+    "og_url": "https://flowaiagent.com/cases_en.html",
+    "og_title": "Case Studies - AI Competitor Analysis",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/cases.html",
+      "en": "https://flowaiagent.com/cases_en.html",
+      "x-default": "https://flowaiagent.com/cases.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/create-analysis.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "竞品分析 - 输入ASIN生成报告 | FlowAI Agent",
+    "h1": "AI 深度分析\n                    \n                    竞品分析报告",
+    "meta_description": "输入亚马逊ASIN，15分钟生成深度竞品分析报告。AI自动分析评论、挖掘痛点、提供差异化营销策略。新用户享2次免费分析。",
+    "canonical": "https://flowaiagent.com/create-analysis.html",
+    "og_url": "https://flowaiagent.com/create-analysis.html",
+    "og_title": "竞品分析 - 输入ASIN生成报告 | FlowAI Agent",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/create-analysis.html",
+      "en": "https://flowaiagent.com/create_en.html",
+      "x-default": "https://flowaiagent.com/create-analysis.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/create_en.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "Create Competitor Analysis | FlowAI Agent",
+    "h1": "AI Driven Analysis\n                    \n                    Create Competitor Analysis Report",
+    "meta_description": "Generate AI-powered Amazon competitor analysis reports by entering ASINs. Get fast, data-driven insights for listings and strategy.",
+    "canonical": "https://flowaiagent.com/create_en.html",
+    "og_url": "https://flowaiagent.com/create_en.html",
+    "og_title": "Create Analysis | FlowAI Agent",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/create-analysis.html",
+      "en": "https://flowaiagent.com/create_en.html",
+      "x-default": "https://flowaiagent.com/create-analysis.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/discovery.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "选品开发分析 - Product Discovery | FlowAI Agent",
+    "h1": "AI 选品开发分析从关键词到产品方向，一次走通",
+    "meta_description": "面向亚马逊美国/英国/德国等站点的选品与产品开发分析。输入类目与关键词，AI输出市场进入、差异化与定价建议。",
+    "canonical": "https://flowaiagent.com/discovery.html",
+    "og_url": "https://flowaiagent.com/discovery.html",
+    "og_title": "选品开发分析 - Product Discovery | FlowAI Agent",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/discovery.html",
+      "en": "https://flowaiagent.com/discovery_en.html",
+      "x-default": "https://flowaiagent.com/discovery.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/discovery_admin.html",
+    "url": "",
+    "issues": [
+      "MISSING: meta description",
+      "MISSING: og:description",
+      "MISSING: og:image",
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "Discovery Admin | FlowAI Agent",
+    "h1": "Discovery Admin",
+    "meta_description": null,
+    "canonical": "https://flowaiagent.com/discovery_admin",
+    "og_url": "https://flowaiagent.com/discovery_admin",
+    "og_title": null,
+    "og_description": "missing",
+    "og_image": null,
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/discovery_en.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "Product Discovery - AI Amazon Product Research | FlowAI Agent",
+    "h1": "AI Product DiscoveryFrom Keywords to Product Direction",
+    "meta_description": "AI-powered product discovery for Amazon US/UK/DE/JP. Input category and keywords to get market entry, differentiation and pricing recommendations.",
+    "canonical": "https://flowaiagent.com/discovery_en.html",
+    "og_url": "https://flowaiagent.com/discovery_en.html",
+    "og_title": "Product Discovery - AI Amazon Product Research | FlowAI Agent",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/discovery.html",
+      "en": "https://flowaiagent.com/discovery_en.html",
+      "x-default": "https://flowaiagent.com/discovery.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/discovery_processing.html",
+    "url": "",
+    "issues": [
+      "MISSING: meta description",
+      "MISSING: canonical",
+      "MISSING: og:url",
+      "MISSING: og:description",
+      "MISSING: og:image",
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)",
+      "MISSING: favicon"
+    ],
+    "title": "分析进行中 - Product Discovery | FlowAI Agent",
+    "h1": "AI 选品专家正在分析中...",
+    "meta_description": null,
+    "canonical": null,
+    "og_url": null,
+    "og_title": null,
+    "og_description": "missing",
+    "og_image": null,
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": false
+  },
+  {
+    "file": "/tmp/flowaiagent.com/fix_navigation.html",
+    "url": "",
+    "issues": [
+      "MISSING: <title>",
+      "MISSING: <h1>",
+      "MISSING: meta description",
+      "MISSING: canonical",
+      "MISSING: og:url",
+      "MISSING: og:description",
+      "MISSING: og:image",
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)",
+      "MISSING: viewport meta",
+      "MISSING: favicon"
+    ],
+    "title": null,
+    "h1": null,
+    "meta_description": null,
+    "canonical": null,
+    "og_url": null,
+    "og_title": null,
+    "og_description": "missing",
+    "og_image": null,
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": false,
+    "has_favicon": false
+  },
+  {
+    "file": "/tmp/flowaiagent.com/index.html",
+    "url": "",
+    "issues": [],
+    "title": "AI亚马逊竞品分析工具 | FlowAI Agent - 自动化选品与评论分析",
+    "h1": "2 份报告免费 AI 帮你找出竞品被投诉最多的 5 个痛点",
+    "meta_description": "FlowAI Agent - 专业AI驱动的亚马逊竞品分析工具。15分钟生成深度报告，自动分析评论情感、挖掘痛点、提供差异化营销策略。支持美国/欧洲/日本站点。",
+    "canonical": "https://flowaiagent.com/",
+    "og_url": "https://flowaiagent.com/index.html",
+    "og_title": "AI亚马逊竞品分析工具 | FlowAI Agent",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/index.html",
+      "en": "https://flowaiagent.com/index_en.html",
+      "x-default": "https://flowaiagent.com/index.html"
+    },
+    "schema_types": [
+      "Organization",
+      "WebSite",
+      "SoftwareApplication",
+      "FAQPage"
+    ],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/index_backup_seo.html",
+    "url": "",
+    "issues": [
+      "MISSING: <title>",
+      "MISSING: <h1>",
+      "MISSING: meta description",
+      "MISSING: canonical",
+      "MISSING: og:url",
+      "MISSING: og:description",
+      "MISSING: og:image",
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)",
+      "MISSING: viewport meta",
+      "MISSING: favicon"
+    ],
+    "title": null,
+    "h1": null,
+    "meta_description": null,
+    "canonical": null,
+    "og_url": null,
+    "og_title": null,
+    "og_description": "missing",
+    "og_image": null,
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": false,
+    "has_favicon": false
+  },
+  {
+    "file": "/tmp/flowaiagent.com/index_en.html",
+    "url": "",
+    "issues": [],
+    "title": "AI Amazon Competitor Analysis Tool | FlowAI Agent",
+    "h1": "Free 2nd Report!\n                        Find Top 5 Competitor Pain Points in 15-30 Minutes",
+    "meta_description": "FlowAI Agent - Professional AI-powered Amazon competitor analysis tool. Generate in-depth reports in 15 minutes. Analyze reviews, find pain points, get marketing strategies.",
+    "canonical": "https://flowaiagent.com/index_en.html",
+    "og_url": "https://flowaiagent.com/index_en.html",
+    "og_title": "AI Amazon Competitor Analysis Tool | FlowAI Agent",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/index.html",
+      "en": "https://flowaiagent.com/index_en.html",
+      "x-default": "https://flowaiagent.com/index.html"
+    },
+    "schema_types": [
+      "Organization",
+      "WebSite",
+      "SoftwareApplication",
+      "FAQPage"
+    ],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/payment.html",
+    "url": "",
+    "issues": [
+      "MISSING: <h1>",
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "解锁完整报告 - 支付 | FlowAI Agent",
+    "h1": null,
+    "meta_description": "解锁FlowAI Agent完整竞品分析报告。包含20+维度竞品对比、用户痛点挖掘、YouTube营销洞察，支持PDF导出。",
+    "canonical": "https://flowaiagent.com/payment.html",
+    "og_url": "https://flowaiagent.com/payment.html",
+    "og_title": "解锁完整报告 - 支付 | FlowAI Agent",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/payment_en.html",
+    "url": "",
+    "issues": [
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "Payment Preview - AI Competitor Analysis Assistant",
+    "h1": "Report Preview",
+    "meta_description": "Preview your AI competitor analysis report and proceed to payment to unlock the full content.",
+    "canonical": "https://flowaiagent.com/payment_en.html",
+    "og_url": "https://flowaiagent.com/payment_en.html",
+    "og_title": "Report Preview | FlowAI Agent",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/payment_failed.html",
+    "url": "",
+    "issues": [
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "支付失败 - AI亚马逊竞品分析 | FlowAI Agent",
+    "h1": "支付未完成",
+    "meta_description": "支付未完成，请重试或联系客服获取帮助。",
+    "canonical": "https://flowaiagent.com/payment_failed.html",
+    "og_url": "https://flowaiagent.com/payment_failed.html",
+    "og_title": "支付失败 - AI亚马逊竞品分析 | FlowAI Agent",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/payment_success.html",
+    "url": "",
+    "issues": [
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "支付成功 - AI亚马逊竞品分析 | FlowAI Agent",
+    "h1": "支付成功！",
+    "meta_description": "支付成功！您的完整竞品分析报告已解锁，将在10分钟内发送至您的邮箱。",
+    "canonical": "https://flowaiagent.com/payment_success.html",
+    "og_url": "https://flowaiagent.com/payment_success.html",
+    "og_title": "支付成功 - AI亚马逊竞品分析 | FlowAI Agent",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/privacy.html",
+    "url": "",
+    "issues": [
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "隐私政策 | FlowAI Agent",
+    "h1": "隐私政策",
+    "meta_description": "FlowAI Agent 隐私政策。了解我们如何收集、使用和保护您的个人信息。",
+    "canonical": "https://flowaiagent.com/privacy.html",
+    "og_url": "https://flowaiagent.com/privacy.html",
+    "og_title": "隐私政策 | FlowAI Agent",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/privacy_en.html",
+    "url": "",
+    "issues": [
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "Privacy Policy | FlowAI Agent",
+    "h1": "Privacy Policy",
+    "meta_description": "FlowAI Agent Privacy Policy. Learn how we collect, use, and protect your personal information.",
+    "canonical": "https://flowaiagent.com/privacy_en.html",
+    "og_url": "https://flowaiagent.com/privacy_en.html",
+    "og_title": "Privacy Policy | FlowAI Agent",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/reduce-amazon-fba-returns-packaging-ai-analysis.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "FBA 利润杀手：如何从差评中挖掘价值百万的\"包装改良\"方案？ - 竞品分析助手博客",
+    "h1": "FBA 利润杀手：如何从差评中挖掘价值百万的“包装改良”方案？",
+    "meta_description": "退货率高居不下？了解 FlowAI Agent 如何分析上千条差评，精准锁定包装缺陷，助您降低 30% 退货率。",
+    "canonical": "https://flowaiagent.com/reduce-amazon-fba-returns-packaging-ai-analysis.html",
+    "og_url": "https://flowaiagent.com/reduce-amazon-fba-returns-packaging-ai-analysis.html",
+    "og_title": "FBA 利润杀手：如何从差评中挖掘价值百万的",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/reduce-amazon-fba-returns-packaging-ai-analysis.html",
+      "en": "https://flowaiagent.com/reduce-amazon-fba-returns-packaging-ai-analysis_en.html",
+      "x-default": "https://flowaiagent.com/reduce-amazon-fba-returns-packaging-ai-analysis.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/reduce-amazon-fba-returns-packaging-ai-analysis_en.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "FBA Profit Killer: How to Use AI to Mine Million-Dollar \"Packaging Improvements\" from Negative Reviews? - AI\n        Competitor Analysis Blog",
+    "h1": "FBA Profit Killer: How to Use AI to Mine Million-Dollar \"Packaging\n                            Improvements\" from Negati",
+    "meta_description": "High return rates are the invisible killer of FBA profits. Learn how FlowAI Agent pinpoints",
+    "canonical": "https://flowaiagent.com/reduce-amazon-fba-returns-packaging-ai-analysis_en.html",
+    "og_url": "https://flowaiagent.com/reduce-amazon-fba-returns-packaging-ai-analysis_en.html",
+    "og_title": "FBA Profit Killer: How to Use AI to Mine Million-Dollar",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/reduce-amazon-fba-returns-packaging-ai-analysis.html",
+      "en": "https://flowaiagent.com/reduce-amazon-fba-returns-packaging-ai-analysis_en.html",
+      "x-default": "https://flowaiagent.com/reduce-amazon-fba-returns-packaging-ai-analysis.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/report.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "分析报告 | FlowAI Agent",
+    "h1": "加载中...",
+    "meta_description": "查看AI自动生成的市场概况、用户情感分析和营销策略建议。",
+    "canonical": "https://flowaiagent.com/report.html",
+    "og_url": "https://flowaiagent.com/report.html",
+    "og_title": "分析报告 | FlowAI Agent",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/report.html",
+      "en": "https://flowaiagent.com/report_en.html",
+      "x-default": "https://flowaiagent.com/report.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/report_airfryer.html",
+    "url": "",
+    "issues": [
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "空气炸锅竞品报告预览 | FlowAI Agent",
+    "h1": "空气炸锅竞品报告预览",
+    "meta_description": "空气炸锅品类竞品分析报告预览，包含市场洞察、用户画像和优化方向。",
+    "canonical": "https://flowaiagent.com/report_airfryer.html",
+    "og_url": "https://flowaiagent.com/report_airfryer.html",
+    "og_title": "空气炸锅竞品报告预览 | FlowAI Agent",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/report_airfryer_en.html",
+    "url": "",
+    "issues": [
+      "MISSING: meta description",
+      "MISSING: og:description",
+      "MISSING: og:image",
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "Air Fryer Report | FlowAI Agent",
+    "h1": "Redirecting...",
+    "meta_description": null,
+    "canonical": "https://flowaiagent.com/report_airfryer_en",
+    "og_url": "https://flowaiagent.com/report_airfryer_en",
+    "og_title": null,
+    "og_description": "missing",
+    "og_image": null,
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/report_en.html",
+    "url": "",
+    "issues": [
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "Wireless Earbuds Competitor Analysis Report | FlowAI Agent",
+    "h1": "Wireless Earbuds Competitor Analysis Report",
+    "meta_description": "Preview an AI-generated Amazon competitor analysis report with market insights, sentiment analysis, and strategy recommendations.",
+    "canonical": "https://flowaiagent.com/report_en.html",
+    "og_url": "https://flowaiagent.com/report_en.html",
+    "og_title": "Competitor Analysis Report | FlowAI Agent",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 3,
+    "hreflangs": {
+      "zh": "https://flowaiagent.com/report.html",
+      "en": "https://flowaiagent.com/report_en.html",
+      "x-default": "https://flowaiagent.com/report.html"
+    },
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/success.html",
+    "url": "",
+    "issues": [
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "提交成功 | FlowAI Agent",
+    "h1": "提交成功！报告正在生成中",
+    "meta_description": "分析请求已提交成功，AI正在生成竞品分析报告，完成后将发送至您的邮箱。",
+    "canonical": "https://flowaiagent.com/success.html",
+    "og_url": "https://flowaiagent.com/success.html",
+    "og_title": "提交成功 | FlowAI Agent",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/success_en.html",
+    "url": "",
+    "issues": [
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "Submission Successful | FlowAI Agent",
+    "h1": "Submission Successful!",
+    "meta_description": "Your analysis request has been submitted successfully. The AI-generated competitor analysis report will be sent to your email shortly.",
+    "canonical": "https://flowaiagent.com/success_en.html",
+    "og_url": "https://flowaiagent.com/success_en.html",
+    "og_title": "Submission Successful | FlowAI Agent",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/template_backup.html",
+    "url": "",
+    "issues": [
+      "MISSING: <h1>",
+      "MISSING: canonical",
+      "MISSING: og:url",
+      "MISSING: og:description",
+      "MISSING: og:image",
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "博客 - 竞品分析助手",
+    "h1": null,
+    "meta_description": "浏览我们的最新文章，获取亚马逊运营技巧、竞品分析策略和行业洞察�",
+    "canonical": null,
+    "og_url": null,
+    "og_title": null,
+    "og_description": "missing",
+    "og_image": null,
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/terms.html",
+    "url": "",
+    "issues": [
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "服务条款 | FlowAI Agent",
+    "h1": "服务条款",
+    "meta_description": "FlowAI Agent 服务条款。使用我们的服务前，请仔细阅读本条款。",
+    "canonical": "https://flowaiagent.com/terms.html",
+    "og_url": "https://flowaiagent.com/terms.html",
+    "og_title": "服务条款 | FlowAI Agent",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  },
+  {
+    "file": "/tmp/flowaiagent.com/terms_en.html",
+    "url": "",
+    "issues": [
+      "MISSING: hreflang",
+      "MISSING: Schema (application/ld+json)"
+    ],
+    "title": "Terms of Service | FlowAI Agent",
+    "h1": "Terms of Service",
+    "meta_description": "FlowAI Agent Terms of Service. Please read these terms carefully before using our services.",
+    "canonical": "https://flowaiagent.com/terms_en.html",
+    "og_url": "https://flowaiagent.com/terms_en.html",
+    "og_title": "Terms of Service | FlowAI Agent",
+    "og_description": "present",
+    "og_image": "https://flowaiagent.com/demo_screenshot.png",
+    "hreflang_count": 0,
+    "hreflangs": {},
+    "schema_types": [],
+    "has_viewport": true,
+    "has_favicon": true
+  }
+]
